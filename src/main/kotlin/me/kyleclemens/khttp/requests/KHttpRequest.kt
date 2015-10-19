@@ -5,65 +5,11 @@
  */
 package me.kyleclemens.khttp.requests
 
-import me.kyleclemens.khttp.structures.authorization.Authorization
-import me.kyleclemens.khttp.structures.parameters.Parameters
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.InputStream
 
 interface KHttpRequest {
-
-    // Request
-    /**
-     * The URL to perform this request on.
-     */
-    val url: String
-    /**
-     * The headers to use for this request.
-     */
-    val headers: Map<String, String>
-    /**
-     * The URL parameters to use for this request.
-     */
-    val params: Parameters
-    /**
-     * The data for the body of this request.
-     */
-    val data: Any?
-    /**
-     * The HTTP basic auth username and password.
-     */
-    val auth: Authorization?
-    /**
-     * A Map of cookies to send with this request. Note that
-     * [CookieJar][me.kyleclemens.khttp.structures.cookie.CookieJar] is a map. It also has a constructor that takes a
-     * map, for easy conversion.
-     */
-    val cookies: Map<String, Any>?
-    /**
-     * An object to use as the JSON payload for this request. Some special things happen if this isn't `null`.
-     *
-     * If this is not `null`,
-     * - whatever is specified in [data] will be overwritten
-     * - the `Content-Type` header becomes `application/json`
-     * - the object specified is coerced into either a [JSONArray] or a [JSONObject]
-     *   - JSONObjects and JSONArrays are treated as such and will not undergo coercion
-     *   - Maps become JSONObjects by using the appropriate constructor. Keys are converted to Strings, with `null`
-     *     becoming `"null"`
-     *   - Collections becomes JSONArrays by using the appropriate constructor.
-     *   - Arrays become JSONArrays by using the appropriate constructor.
-     *   - any other Iterables becomes JSONArrays using a custom method.
-     *   - any other object throws an [IllegalArgumentException]
-     */
-    val json: Any?
-    /**
-     * The amount of time to wait, in seconds, for the server to send data.
-     */
-    val timeout: Int
-    /**
-     * If redirects should be followed.
-     */
-    val allowRedirects: Boolean
 
     // Response
     val status: Int

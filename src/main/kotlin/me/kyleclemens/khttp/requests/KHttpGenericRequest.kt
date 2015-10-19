@@ -20,15 +20,56 @@ import java.net.URL
 import java.net.URLEncoder
 
 abstract class KHttpGenericRequest(
-    route: String,
-    override val params: Parameters,
+    /**
+     * The URL to perform this request on.
+     */
+    url: String,
+    /**
+     * The URL parameters to use for this request.
+     */
+    val params: Parameters,
+    /**
+     * The headers to use for this request.
+     */
     headers: MutableMap<String, String>,
+    /**
+     * The data for the body of this request.
+     */
     data: Any?,
-    override val json: Any?,
-    override val auth: Authorization?,
-    override val cookies: Map<String, Any>?,
-    override val timeout: Int,
-    override val allowRedirects: Boolean
+    /**
+     * An object to use as the JSON payload for this request. Some special things happen if this isn't `null`.
+     *
+     * If this is not `null`,
+     * - whatever is specified in [data] will be overwritten
+     * - the `Content-Type` header becomes `application/json`
+     * - the object specified is coerced into either a [JSONArray] or a [JSONObject]
+     *   - JSONObjects and JSONArrays are treated as such and will not undergo coercion
+     *   - Maps become JSONObjects by using the appropriate constructor. Keys are converted to Strings, with `null`
+     *     becoming `"null"`
+     *   - Collections becomes JSONArrays by using the appropriate constructor.
+     *   - Arrays become JSONArrays by using the appropriate constructor.
+     *   - any other Iterables becomes JSONArrays using a custom method.
+     *   - any other object throws an [IllegalArgumentException]
+     */
+    val json: Any?,
+    /**
+     * The HTTP basic auth username and password.
+     */
+    val auth: Authorization?,
+    /**
+     * A Map of cookies to send with this request. Note that
+     * [CookieJar][me.kyleclemens.khttp.structures.cookie.CookieJar] is a map. It also has a constructor that takes a
+     * map, for easy conversion.
+     */
+    val cookies: Map<String, Any>?,
+    /**
+     * The amount of time to wait, in seconds, for the server to send data.
+     */
+    val timeout: Int,
+    /**
+     * If redirects should be followed.
+     */
+    val allowRedirects: Boolean
 ) : KHttpRequest {
 
     companion object {
@@ -48,9 +89,46 @@ abstract class KHttpGenericRequest(
         )
     }
 
-    override val url: String
-    override val headers: Map<String, String>
+    // Request
+    val url: String
+    val headers: Map<String, String>
+    val data: Any?
 
+    // Response
+    private var _connection: HttpURLConnection? = null
+    private val connection: HttpURLConnection
+        get() {
+            if (this._connection == null) {
+                this._connection = (URL(this.url).openConnection() as HttpURLConnection).apply {
+                    (this@KHttpGenericRequest.defaultStartInitializers + this@KHttpGenericRequest.initializers + this@KHttpGenericRequest.defaultEndInitializers).forEach { it(this) }
+                    this.connect()
+                }
+            }
+            return this._connection ?: throw IllegalStateException("Set to null by another thread")
+        }
+
+    override val status: Int
+        get() = this.connection.responseCode
+
+    override val raw: InputStream
+        get() = this.connection.inputStream
+
+    private var _text: String? = null
+    override val text: String
+        get() {
+            if (this._text == null) {
+                this._text = this.raw.reader().use { it.readText() }
+            }
+            return this._text ?: throw IllegalStateException("Set to null by another thread")
+        }
+
+    override val jsonObject: JSONObject
+        get() = JSONObject(this.text)
+
+    override val jsonArray: JSONArray
+        get() = JSONArray(this.text)
+
+    // Initializers
     private val defaultStartInitializers: MutableList<(HttpURLConnection) -> Unit> = arrayListOf(
         { connection ->
             for ((key, value) in this@KHttpGenericRequest.headers) {
@@ -89,40 +167,8 @@ abstract class KHttpGenericRequest(
     )
     val initializers: MutableList<(HttpURLConnection) -> Unit> = arrayListOf()
 
-    private var _connection: HttpURLConnection? = null
-    private val connection: HttpURLConnection
-        get() {
-            if (this._connection == null) {
-                this._connection = (URL(this.url).openConnection() as HttpURLConnection).apply {
-                    (this@KHttpGenericRequest.defaultStartInitializers + this@KHttpGenericRequest.initializers + this@KHttpGenericRequest.defaultEndInitializers).forEach { it(this) }
-                    this.connect()
-                }
-            }
-            return this._connection ?: throw IllegalStateException("Set to null by another thread")
-        }
-
-    override val status: Int
-        get() = this.connection.responseCode
-    override val data: Any?
-    override val raw: InputStream
-        get() = this.connection.inputStream
-    private var _text: String? = null
-    override val text: String
-        get() {
-            if (this._text == null) {
-                this._text = this.raw.reader().use { it.readText() }
-            }
-            return this._text ?: throw IllegalStateException("Set to null by another thread")
-        }
-
-    override val jsonObject: JSONObject
-        get() = JSONObject(this.text)
-
-    override val jsonArray: JSONArray
-        get() = JSONArray(this.text)
-
     init {
-        this.url = this.makeRoute(route)
+        this.url = this.makeRoute(url)
         if (URI(this.url).scheme !in setOf("http", "https")) {
             throw IllegalArgumentException("Invalid schema. Only http:// and https:// are supported.")
         }
