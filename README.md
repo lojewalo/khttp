@@ -6,3 +6,14 @@
 [![Gratipay](https://img.shields.io/gratipay/jkcclemens.svg)](https://gratipay.com/~jkcclemens/)
 
 khttp is a simple library for HTTP requests in Kotlin. It functions similarly to Python's `requests` module.
+
+```kotlin
+import me.kyleclemens.khttp.get
+
+fun main(args: Array<out String>) {
+    // Get our IP
+    println(get("http://httpbin.org/ip").jsonObject.getString("origin"))
+    // Get our IP in a simpler way
+    println(get("http://icanhazip.com").string)
+}
+```
