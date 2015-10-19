@@ -5,7 +5,9 @@
  */
 package me.kyleclemens.khttp.structures.cookie
 
-class CookieJar(vararg val cookies: Cookie = arrayOf()) : Map<String, Any> by cookies.toMap({ it.key }, { it.value }) {
+import java.util.HashMap
+
+class CookieJar(vararg val cookies: Cookie = arrayOf()) : MutableMap<String, String> by (cookies.toMap({ it.key }, { it.valueWithAttributes }) as HashMap<String, String>) {
 
     companion object {
         private fun Map<String, Any>.toCookieArray(): Array<Cookie> {
@@ -21,6 +23,15 @@ class CookieJar(vararg val cookies: Cookie = arrayOf()) : Map<String, Any> by co
     }
 
     constructor(cookies: Map<String, Any>) : this(*cookies.toCookieArray())
+
+    fun getCookie(key: String): Cookie? {
+        val value = this[key] ?: return null
+        return Cookie("$key=$value")
+    }
+
+    fun setCookie(cookie: Cookie) {
+        this[cookie.key] = cookie.valueWithAttributes
+    }
 
     override fun toString() = this.cookies.joinToString("; ") { "${it.key}=${it.value}" }
 }

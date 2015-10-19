@@ -5,6 +5,7 @@
  */
 package me.kyleclemens.khttp.requests
 
+import me.kyleclemens.khttp.structures.cookie.CookieJar
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.InputStream
@@ -36,5 +37,9 @@ interface KHttpRequest {
      * The response as a UTF-8-encode JSON array.
      */
     val jsonArray: JSONArray
+    /**
+     * The cookies from the request.
+     */
+    val cookies: CookieJar
 
 }

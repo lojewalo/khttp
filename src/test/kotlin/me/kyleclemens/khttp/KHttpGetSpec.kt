@@ -11,6 +11,7 @@ import org.jetbrains.spek.api.shouldThrow
 import java.net.SocketTimeoutException
 import java.net.URLEncoder
 import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
 class KHttpGetSpec : MavenSpek() {
@@ -75,6 +76,15 @@ class KHttpGetSpec : MavenSpek() {
                 }
             }
         }
+        given("a get request that redirects five times") {
+            val request = get("http://httpbin.org/redirect/5")
+            on("accessing the json") {
+                val json = request.jsonObject
+                it("should have the get url") {
+                    assertEquals("http://httpbin.org/get", json.getString("url"))
+                }
+            }
+        }
         given("a get request that takes ten seconds to complete") {
             val request = get("http://httpbin.org/delay/10", timeout = 1)
             on("accessing anything") {
@@ -82,6 +92,58 @@ class KHttpGetSpec : MavenSpek() {
                     shouldThrow(SocketTimeoutException::class.java) {
                         request.raw
                     }
+                }
+            }
+        }
+        given("a get request that sets cookies without redirects") {
+            val cookieName = "test"
+            val cookieValue = "quite"
+            val request = get("http://httpbin.org/cookies/set?$cookieName=$cookieValue", allowRedirects = false)
+            on("connection") {
+                val cookies = request.cookies
+                it("should set a cookie") {
+                    assertEquals(1, cookies.size())
+                }
+                val cookie = cookies.getCookie(cookieName)
+                val text = cookies[cookieName]
+                it("should have the specified cookie name") {
+                    assertNotNull(cookie)
+                }
+                it("should have the specified text") {
+                    assertNotNull(text)
+                }
+                it("should have the same value") {
+                    assertEquals(cookieValue, cookie!!.value)
+                }
+                it("should have the same text value") {
+                    // Attributes ignored
+                    assertEquals(cookieValue, text!!.toString().split(";")[0])
+                }
+            }
+        }
+        given("a get request that sets cookies with redirects") {
+            val cookieName = "test"
+            val cookieValue = "quite"
+            val request = get("http://httpbin.org/cookies/set?$cookieName=$cookieValue")
+            on("connection") {
+                val cookies = request.cookies
+                it("should set a cookie") {
+                    assertEquals(1, cookies.size())
+                }
+                val cookie = cookies.getCookie(cookieName)
+                val text = cookies[cookieName]
+                it("should have the specified cookie name") {
+                    assertNotNull(cookie)
+                }
+                it("should have the specified text") {
+                    assertNotNull(text)
+                }
+                it("should have the same value") {
+                    assertEquals(cookieValue, cookie!!.value)
+                }
+                it("should have the same text value") {
+                    // Attributes ignored
+                    assertEquals(cookieValue, text!!.toString().split(";")[0])
                 }
             }
         }

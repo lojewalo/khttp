@@ -18,7 +18,7 @@ abstract class KHttpMethodRequest(
     data: Any?,
     json: Any?,
     auth: Authorization?,
-    cookies: Map<String, Any>?,
+    cookies: Map<String, String>?,
     timeout: Int,
     allowRedirects: Boolean
 ) : KHttpGenericRequest(route, parameters, headers, data, json, auth, cookies, timeout, allowRedirects) {

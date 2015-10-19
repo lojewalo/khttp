@@ -6,6 +6,7 @@
 package me.kyleclemens.khttp.requests
 
 import me.kyleclemens.khttp.structures.authorization.Authorization
+import me.kyleclemens.khttp.structures.cookie.Cookie
 import me.kyleclemens.khttp.structures.cookie.CookieJar
 import me.kyleclemens.khttp.structures.parameters.FormParameters
 import me.kyleclemens.khttp.structures.parameters.Parameters
@@ -61,7 +62,7 @@ abstract class KHttpGenericRequest(
      * [CookieJar][me.kyleclemens.khttp.structures.cookie.CookieJar] is a map. It also has a constructor that takes a
      * map, for easy conversion.
      */
-    val cookies: Map<String, Any>?,
+    val requestCookies: Map<String, String>?,
     /**
      * The amount of time to wait, in seconds, for the server to send data.
      */
@@ -89,6 +90,18 @@ abstract class KHttpGenericRequest(
         )
     }
 
+    private fun URL.openRedirectingConnection(receiver: HttpURLConnection.() -> Unit): HttpURLConnection {
+        val connection = (this.openConnection() as HttpURLConnection).apply {
+            this.instanceFollowRedirects = false
+            this.receiver()
+            this.connect()
+        }
+        if (this@KHttpGenericRequest.allowRedirects && connection.responseCode in 301..303) {
+            return this.toURI().resolve(connection.getHeaderField("Location")).toURL().openRedirectingConnection(receiver)
+        }
+        return connection
+    }
+
     // Request
     val url: String
     val requestHeaders: Map<String, String>
@@ -99,9 +112,8 @@ abstract class KHttpGenericRequest(
     private val connection: HttpURLConnection
         get() {
             if (this._connection == null) {
-                this._connection = (URL(this.url).openConnection() as HttpURLConnection).apply {
+                this._connection = URL(this.url).openRedirectingConnection {
                     (this@KHttpGenericRequest.defaultStartInitializers + this@KHttpGenericRequest.initializers + this@KHttpGenericRequest.defaultEndInitializers).forEach { it(this) }
-                    this.connect()
                 }
             }
             return this._connection ?: throw IllegalStateException("Set to null by another thread")
@@ -131,6 +143,13 @@ abstract class KHttpGenericRequest(
     override val jsonArray: JSONArray
         get() = JSONArray(this.text)
 
+    private val _cookies = CookieJar()
+    override val cookies: CookieJar
+        get() {
+            this.connection // Ensure that we've connected
+            return this._cookies
+        }
+
     // Initializers
     private val defaultStartInitializers: MutableList<(HttpURLConnection) -> Unit> = arrayListOf(
         { connection ->
@@ -139,9 +158,11 @@ abstract class KHttpGenericRequest(
             }
         },
         { connection ->
-            val cookies = this.cookies
+            val cookies = this.requestCookies
             if (cookies != null) {
                 val cookieJar = if (cookies is CookieJar) cookies else CookieJar(cookies)
+                // Add the cookies from our current cookie jar to the other cookies to be sent
+                cookieJar.putAll(this._cookies)
                 connection.setRequestProperty("Cookie", cookieJar.toString())
             }
         },
@@ -150,7 +171,7 @@ abstract class KHttpGenericRequest(
             connection.readTimeout = this.timeout * 1000
         },
         { connection ->
-            connection.instanceFollowRedirects = this.allowRedirects
+            connection.instanceFollowRedirects = false
         }
     )
     private val defaultEndInitializers: MutableList<(HttpURLConnection) -> Unit> = arrayListOf(
@@ -166,6 +187,12 @@ abstract class KHttpGenericRequest(
                     })
                 }
             }
+        },
+        { connection ->
+            // Add all the cookies from every response to our cookie jar
+            this._cookies.putAll(
+                CookieJar(*connection.headerFields.filter { it.key == "Set-Cookie" }.flatMap { it.value }.map { Cookie(it) }.toTypedArray())
+            )
         }
     )
     val initializers: MutableList<(HttpURLConnection) -> Unit> = arrayListOf()
