@@ -44,5 +44,15 @@ class KHttpGetSpec : MavenSpek() {
                 }
             }
         }
+        given("a get request with cookies") {
+            val request = get("http://httpbin.org/cookies", cookies = mapOf("test" to "success"))
+            on("accessing the json") {
+                val json = request.jsonObject
+                it("should have the same cookies") {
+                    val cookies = json.getJSONObject("cookies")
+                    assertEquals("success", cookies.getString("test"))
+                }
+            }
+        }
     }
 }

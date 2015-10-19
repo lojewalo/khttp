@@ -35,6 +35,12 @@ interface KHttpRequest {
      */
     val auth: Authorization?
     /**
+     * A Map of cookies to send with this request. Note that
+     * [CookieJar][me.kyleclemens.khttp.structures.cookie.CookieJar] is a map. It also has a constructor that takes a
+     * map, for easy conversion.
+     */
+    val cookies: Map<String, Any>?
+    /**
      * An object to use as the JSON payload for this request. Some special things happen if this isn't `null`.
      *
      * If this is not `null`,

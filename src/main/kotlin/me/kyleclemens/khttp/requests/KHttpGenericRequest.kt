@@ -6,6 +6,7 @@
 package me.kyleclemens.khttp.requests
 
 import me.kyleclemens.khttp.structures.authorization.Authorization
+import me.kyleclemens.khttp.structures.cookie.CookieJar
 import me.kyleclemens.khttp.structures.parameters.FormParameters
 import me.kyleclemens.khttp.structures.parameters.Parameters
 import org.json.JSONArray
@@ -18,7 +19,15 @@ import java.net.URI
 import java.net.URL
 import java.net.URLEncoder
 
-abstract class KHttpGenericRequest(route: String, override val params: Parameters, headers: MutableMap<String, String>, data: Any?, override val json: Any?, override val auth: Authorization?) : KHttpRequest {
+abstract class KHttpGenericRequest(
+    route: String,
+    override val params: Parameters,
+    headers: MutableMap<String, String>,
+    data: Any?,
+    override val json: Any?,
+    override val auth: Authorization?,
+    override val cookies: Map<String, Any>?
+) : KHttpRequest {
 
     companion object {
         val DEFAULT_HEADERS = mapOf(
@@ -43,7 +52,14 @@ abstract class KHttpGenericRequest(route: String, override val params: Parameter
     private val defaultStartInitializers: MutableList<(HttpURLConnection) -> Unit> = arrayListOf(
         { connection ->
             for ((key, value) in this@KHttpGenericRequest.headers) {
-                connection.addRequestProperty(key, value)
+                connection.setRequestProperty(key, value)
+            }
+        },
+        { connection ->
+            val cookies = this.cookies
+            if (cookies != null) {
+                val cookieJar = if (cookies is CookieJar) cookies else CookieJar(cookies)
+                connection.setRequestProperty("Cookie", cookieJar.toString())
             }
         }
     )
