@@ -5,6 +5,7 @@
  */
 package me.kyleclemens.khttp
 
+import me.kyleclemens.khttp.helpers.StringIterable
 import me.kyleclemens.khttp.structures.parameters.FormParameters
 import me.kyleclemens.khttp.structures.parameters.Parameters
 import kotlin.test.assertEquals
@@ -60,6 +61,45 @@ class KHttpPostSpec : MavenSpek() {
                 }
                 it("should have the same book author") {
                     assertEquals(firstBook["author"], firstReturnedBook.getString("author"))
+                }
+            }
+        }
+        given("a request with json as an Iterable") {
+            val jsonArray = StringIterable("a word")
+            val request = post("http://httpbin.org/post", json = jsonArray)
+            on("accessing the json") {
+                val json = request.jsonObject
+                val returnedJSON = json.getJSONArray("json")
+                it("should be equal") {
+                    assertEquals(jsonArray.string, String(returnedJSON.mapIndexed { i, any -> returnedJSON.getString(i).charAt(0) }.toCharArray()))
+                }
+            }
+        }
+        given("a request with json as a List") {
+            val jsonList = listOf("A thing", "another thing")
+            val request = post("https://httpbin.org/post", json = jsonList)
+            on("accessing the json") {
+                val json = request.jsonObject
+                val returnedJSON = json.getJSONArray("json")
+                it("should have an equal first element") {
+                    assertEquals(jsonList[0], returnedJSON.getString(0))
+                }
+                it("should have an equal second element") {
+                    assertEquals(jsonList[1], returnedJSON.getString(1))
+                }
+            }
+        }
+        given("a request with json as an Array") {
+            val jsonArray = arrayOf("A thing", "another thing")
+            val request = post("https://httpbin.org/post", json = jsonArray)
+            on("accessing the json") {
+                val json = request.jsonObject
+                val returnedJSON = json.getJSONArray("json")
+                it("should have an equal first element") {
+                    assertEquals(jsonArray[0], returnedJSON.getString(0))
+                }
+                it("should have an equal second element") {
+                    assertEquals(jsonArray[1], returnedJSON.getString(1))
                 }
             }
         }
