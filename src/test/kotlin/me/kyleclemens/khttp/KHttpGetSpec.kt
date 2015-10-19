@@ -5,8 +5,10 @@
  */
 package me.kyleclemens.khttp
 
-import me.kyleclemens.khttp.structures.Parameters
+import me.kyleclemens.khttp.structures.authorization.BasicAuthorization
+import me.kyleclemens.khttp.structures.parameters.Parameters
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 class KHttpGetSpec : MavenSpek() {
     override fun test() {
@@ -27,6 +29,18 @@ class KHttpGetSpec : MavenSpek() {
                     val args = json.getJSONObject("args")
                     assertEquals("b", args.getString("a"))
                     assertEquals("d", args.getString("c"))
+                }
+            }
+        }
+        given("a get request with basic auth") {
+            val request = get("http://httpbin.org/basic-auth/khttp/isawesome", auth = BasicAuthorization("khttp", "isawesome"))
+            on("accessing the json") {
+                val json = request.jsonObject
+                it("should be authenticated") {
+                    assertTrue(json.getBoolean("authenticated"))
+                }
+                it("should have the correct user") {
+                    assertEquals("khttp", json.getString("user"))
                 }
             }
         }

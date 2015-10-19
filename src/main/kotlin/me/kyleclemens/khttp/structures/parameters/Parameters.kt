@@ -3,6 +3,6 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
-package me.kyleclemens.khttp.structures
+package me.kyleclemens.khttp.structures.parameters
 
-class FormParameters(vararg parameters: Pair<String, String>) : Parameters(*parameters)
+open class Parameters(vararg val parameters: Pair<String, String>) : Map<String, String> by mapOf(*parameters)

@@ -3,6 +3,10 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
-package me.kyleclemens.khttp.structures
+package me.kyleclemens.khttp.structures.authorization
 
-open class Parameters(vararg val parameters: Pair<String, String>) : Map<String, String> by mapOf(*parameters)
+interface Authorization {
+
+    val header: Pair<String, String>
+
+}

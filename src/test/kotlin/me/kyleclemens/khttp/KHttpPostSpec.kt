@@ -5,8 +5,8 @@
  */
 package me.kyleclemens.khttp
 
-import me.kyleclemens.khttp.structures.FormParameters
-import me.kyleclemens.khttp.structures.Parameters
+import me.kyleclemens.khttp.structures.parameters.FormParameters
+import me.kyleclemens.khttp.structures.parameters.Parameters
 import kotlin.test.assertEquals
 
 class KHttpPostSpec : MavenSpek() {

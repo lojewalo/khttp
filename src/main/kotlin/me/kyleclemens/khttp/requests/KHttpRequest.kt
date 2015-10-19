@@ -5,7 +5,8 @@
  */
 package me.kyleclemens.khttp.requests
 
-import me.kyleclemens.khttp.structures.Parameters
+import me.kyleclemens.khttp.structures.authorization.Authorization
+import me.kyleclemens.khttp.structures.parameters.Parameters
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.InputStream
@@ -16,7 +17,7 @@ interface KHttpRequest {
     /**
      * The URL to perform this request on.
      */
-    val route: String
+    val url: String
     /**
      * The headers to use for this request.
      */
@@ -24,11 +25,15 @@ interface KHttpRequest {
     /**
      * The URL parameters to use for this request.
      */
-    val parameters: Parameters
+    val params: Parameters
     /**
      * The data for the body of this request.
      */
     val data: Any?
+    /**
+     * The HTTP basic auth username and password.
+     */
+    val auth: Authorization?
     /**
      * An object to use as the JSON payload for this request. Some special things happen if this isn't `null`.
      *

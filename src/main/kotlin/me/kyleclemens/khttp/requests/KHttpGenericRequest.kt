@@ -5,8 +5,9 @@
  */
 package me.kyleclemens.khttp.requests
 
-import me.kyleclemens.khttp.structures.FormParameters
-import me.kyleclemens.khttp.structures.Parameters
+import me.kyleclemens.khttp.structures.authorization.Authorization
+import me.kyleclemens.khttp.structures.parameters.FormParameters
+import me.kyleclemens.khttp.structures.parameters.Parameters
 import org.json.JSONArray
 import org.json.JSONObject
 import org.json.JSONWriter
@@ -17,7 +18,7 @@ import java.net.URI
 import java.net.URL
 import java.net.URLEncoder
 
-abstract class KHttpGenericRequest(route: String, override val parameters: Parameters, headers: MutableMap<String, String>, data: Any?, override val json: Any?) : KHttpRequest {
+abstract class KHttpGenericRequest(route: String, override val params: Parameters, headers: MutableMap<String, String>, data: Any?, override val json: Any?, override val auth: Authorization?) : KHttpRequest {
 
     companion object {
         val DEFAULT_HEADERS = mapOf(
@@ -36,7 +37,7 @@ abstract class KHttpGenericRequest(route: String, override val parameters: Param
         )
     }
 
-    override val route: String
+    override val url: String
     override val headers: Map<String, String>
 
     private val defaultStartInitializers: MutableList<(HttpURLConnection) -> Unit> = arrayListOf(
@@ -67,7 +68,7 @@ abstract class KHttpGenericRequest(route: String, override val parameters: Param
     private val connection: HttpURLConnection
         get() {
             if (this._connection == null) {
-                this._connection = (URL(this.route).openConnection() as HttpURLConnection).apply {
+                this._connection = (URL(this.url).openConnection() as HttpURLConnection).apply {
                     (this@KHttpGenericRequest.defaultStartInitializers + this@KHttpGenericRequest.initializers + this@KHttpGenericRequest.defaultEndInitializers).forEach { it(this) }
                     this.connect()
                 }
@@ -91,8 +92,8 @@ abstract class KHttpGenericRequest(route: String, override val parameters: Param
         get() = JSONArray(this.text)
 
     init {
-        this.route = this.makeRoute(route)
-        if (URI(this.route).scheme !in setOf("http", "https")) {
+        this.url = this.makeRoute(route)
+        if (URI(this.url).scheme !in setOf("http", "https")) {
             throw IllegalArgumentException("Invalid schema. Only http:// and https:// are supported.")
         }
         val json = this.json
@@ -112,6 +113,11 @@ abstract class KHttpGenericRequest(route: String, override val parameters: Param
         }
         if (this.data is FormParameters) {
             headers += KHttpGenericRequest.DEFAULT_FORM_HEADERS
+        }
+        val auth = this.auth
+        if (auth != null) {
+            val header = auth.header
+            headers[header.first] = header.second
         }
         this.headers = headers
     }
@@ -147,7 +153,7 @@ abstract class KHttpGenericRequest(route: String, override val parameters: Param
 
     private fun makeRoute(route: String) = route + this.makeParams()
 
-    protected fun makeParams(parameters: Parameters = this.parameters): String {
+    protected fun makeParams(parameters: Parameters = this.params): String {
         if (parameters.size() < 1) return ""
         val builder = StringBuilder()
         for ((key, value) in parameters) {
