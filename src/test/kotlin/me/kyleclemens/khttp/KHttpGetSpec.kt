@@ -7,6 +7,8 @@ package me.kyleclemens.khttp
 
 import me.kyleclemens.khttp.structures.authorization.BasicAuthorization
 import me.kyleclemens.khttp.structures.parameters.Parameters
+import org.jetbrains.spek.api.shouldThrow
+import java.net.SocketTimeoutException
 import java.net.URLEncoder
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -70,6 +72,16 @@ class KHttpGetSpec : MavenSpek() {
                 val code = request.status
                 it("should be 302") {
                     assertEquals(302, code)
+                }
+            }
+        }
+        given("a get request that takes ten seconds to complete") {
+            val request = get("http://httpbin.org/delay/10", timeout = 1)
+            on("accessing anything") {
+                it("should throw a timeout exception") {
+                    shouldThrow(SocketTimeoutException::class.java) {
+                        request.raw
+                    }
                 }
             }
         }
