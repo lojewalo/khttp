@@ -81,14 +81,14 @@ abstract class KHttpGenericRequest(route: String, override val parameters: Param
     override val raw: InputStream
         get() = this.connection.inputStream
 
-    override val string: String
+    override val text: String
         get() = this.raw.reader().use { it.readText() }
 
     override val jsonObject: JSONObject
-        get() = JSONObject(this.string)
+        get() = JSONObject(this.text)
 
     override val jsonArray: JSONArray
-        get() = JSONArray(this.string)
+        get() = JSONArray(this.text)
 
     init {
         this.route = this.makeRoute(route)

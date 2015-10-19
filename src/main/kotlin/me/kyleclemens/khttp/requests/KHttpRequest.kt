@@ -55,7 +55,7 @@ interface KHttpRequest {
     /**
      * The response as a UTF-8-encoded String.
      */
-    val string: String
+    val text: String
     /**
      * The response as a UTF-8-encoded JSON object.
      */

@@ -13,7 +13,7 @@ class KHttpGetSpec : MavenSpek() {
         given("a get request") {
             val request = get("http://httpbin.org/range/26")
             on("accessing the string") {
-                val string = request.string
+                val string = request.text
                 it("should equal the alphabet in lowercase") {
                     assertEquals("abcdefghijklmnopqrstuvwxyz", string)
                 }
