@@ -8,7 +8,11 @@ package me.kyleclemens.khttp
 import me.kyleclemens.khttp.helpers.StringIterable
 import me.kyleclemens.khttp.structures.parameters.FormParameters
 import me.kyleclemens.khttp.structures.parameters.Parameters
+import org.jetbrains.spek.api.shouldThrow
+import org.json.JSONArray
+import org.json.JSONObject
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 class KHttpPostSpec : MavenSpek() {
     override fun test() {
@@ -100,6 +104,37 @@ class KHttpPostSpec : MavenSpek() {
                 }
                 it("should have an equal second element") {
                     assertEquals(jsonArray[1], returnedJSON.getString(1))
+                }
+            }
+        }
+        given("a request with json as a JSONObject") {
+            val jsonObject = JSONObject("""{"valid": true}""")
+            val request = post("https://httpbin.org/post", json = jsonObject)
+            on("accessing the json") {
+                val json = request.jsonObject
+                val returnedJSON = json.getJSONObject("json")
+                it("should have a true value for the key \"valid\"") {
+                    assertTrue(returnedJSON.getBoolean("valid"))
+                }
+            }
+        }
+        given("a request with json as a JSONArray") {
+            val jsonObject = JSONArray("[true]")
+            val request = post("https://httpbin.org/post", json = jsonObject)
+            on("accessing the json") {
+                val json = request.jsonObject
+                val returnedJSON = json.getJSONArray("json")
+                it("should have a true value for the first key") {
+                    assertTrue(returnedJSON.getBoolean(0))
+                }
+            }
+        }
+        given("a request with invalid json") {
+            on("construction") {
+                it("should throw an IllegalArgumentException") {
+                    shouldThrow(IllegalArgumentException::class.java) {
+                        post("https://httpbin.org/post", json = object {})
+                    }
                 }
             }
         }
