@@ -91,7 +91,7 @@ abstract class KHttpGenericRequest(
 
     // Request
     val url: String
-    val headers: Map<String, String>
+    val requestHeaders: Map<String, String>
     val data: Any?
 
     // Response
@@ -109,6 +109,9 @@ abstract class KHttpGenericRequest(
 
     override val status: Int
         get() = this.connection.responseCode
+
+    override val headers: Map<String, String>
+        get() = this.connection.headerFields.mapValues { it.value.last() }
 
     override val raw: InputStream
         get() = this.connection.inputStream
@@ -131,7 +134,7 @@ abstract class KHttpGenericRequest(
     // Initializers
     private val defaultStartInitializers: MutableList<(HttpURLConnection) -> Unit> = arrayListOf(
         { connection ->
-            for ((key, value) in this@KHttpGenericRequest.headers) {
+            for ((key, value) in this@KHttpGenericRequest.requestHeaders) {
                 connection.setRequestProperty(key, value)
             }
         },
@@ -195,7 +198,7 @@ abstract class KHttpGenericRequest(
             val header = auth.header
             headers[header.first] = header.second
         }
-        this.headers = headers
+        this.requestHeaders = headers
     }
 
     private fun coerceToJSON(any: Any): String {

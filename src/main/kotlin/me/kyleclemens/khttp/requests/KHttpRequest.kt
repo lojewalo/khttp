@@ -12,7 +12,14 @@ import java.io.InputStream
 interface KHttpRequest {
 
     // Response
+    /**
+     * The status code from the request.
+     */
     val status: Int
+    /**
+     * The headers from the request.
+     */
+    val headers: Map<String, String>
     /**
      * The raw response from the request.
      */
