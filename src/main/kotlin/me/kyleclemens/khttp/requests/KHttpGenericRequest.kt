@@ -26,7 +26,9 @@ abstract class KHttpGenericRequest(
     data: Any?,
     override val json: Any?,
     override val auth: Authorization?,
-    override val cookies: Map<String, Any>?
+    override val cookies: Map<String, Any>?,
+    override val timeout: Int,
+    override val allowRedirects: Boolean
 ) : KHttpRequest {
 
     companion object {
@@ -61,6 +63,13 @@ abstract class KHttpGenericRequest(
                 val cookieJar = if (cookies is CookieJar) cookies else CookieJar(cookies)
                 connection.setRequestProperty("Cookie", cookieJar.toString())
             }
+        },
+        { connection ->
+            connection.connectTimeout = this.timeout * 1000
+            connection.readTimeout = this.timeout * 1000
+        },
+        { connection ->
+            connection.instanceFollowRedirects = this.allowRedirects
         }
     )
     private val defaultEndInitializers: MutableList<(HttpURLConnection) -> Unit> = arrayListOf(
@@ -97,9 +106,14 @@ abstract class KHttpGenericRequest(
     override val data: Any?
     override val raw: InputStream
         get() = this.connection.inputStream
-
+    private var _text: String? = null
     override val text: String
-        get() = this.raw.reader().use { it.readText() }
+        get() {
+            if (this._text == null) {
+                this._text = this.raw.reader().use { it.readText() }
+            }
+            return this._text ?: throw IllegalStateException("Set to null by another thread")
+        }
 
     override val jsonObject: JSONObject
         get() = JSONObject(this.text)

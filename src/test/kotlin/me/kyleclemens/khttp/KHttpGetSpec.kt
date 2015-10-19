@@ -7,6 +7,7 @@ package me.kyleclemens.khttp
 
 import me.kyleclemens.khttp.structures.authorization.BasicAuthorization
 import me.kyleclemens.khttp.structures.parameters.Parameters
+import java.net.URLEncoder
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
@@ -51,6 +52,24 @@ class KHttpGetSpec : MavenSpek() {
                 it("should have the same cookies") {
                     val cookies = json.getJSONObject("cookies")
                     assertEquals("success", cookies.getString("test"))
+                }
+            }
+        }
+        given("a get request that redirects and allowing redirects") {
+            val request = get("http://httpbin.org/redirect-to?url=${URLEncoder.encode("http://httpbin.org/get", "utf-8")}")
+            on("accessing the json") {
+                val json = request.jsonObject
+                it("should have the redirected url") {
+                    assertEquals("http://httpbin.org/get", json.getString("url"))
+                }
+            }
+        }
+        given("a get request that redirects and disallowing redirects") {
+            val request = get("http://httpbin.org/redirect-to?url=${URLEncoder.encode("http://httpbin.org/get", "utf-8")}", allowRedirects = false)
+            on("accessing the status code") {
+                val code = request.status
+                it("should be 302") {
+                    assertEquals(302, code)
                 }
             }
         }

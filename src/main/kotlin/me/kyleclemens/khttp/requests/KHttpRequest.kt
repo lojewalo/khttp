@@ -56,6 +56,14 @@ interface KHttpRequest {
      *   - any other object throws an [IllegalArgumentException]
      */
     val json: Any?
+    /**
+     * The amount of time to wait, in seconds, for the server to send data.
+     */
+    val timeout: Int
+    /**
+     * If redirects should be followed.
+     */
+    val allowRedirects: Boolean
 
     // Response
     val status: Int
