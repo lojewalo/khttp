@@ -70,7 +70,7 @@ class KHttpGetSpec : MavenSpek() {
         given("a get request that redirects and disallowing redirects") {
             val response = get("http://httpbin.org/redirect-to?url=${URLEncoder.encode("http://httpbin.org/get", "utf-8")}", allowRedirects = false)
             on("accessing the status code") {
-                val code = response.status
+                val code = response.statusCode
                 it("should be 302") {
                     assertEquals(302, code)
                 }

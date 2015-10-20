@@ -20,7 +20,7 @@ interface KHttpResponse {
     /**
      * The status code from the request.
      */
-    val status: Int
+    val statusCode: Int
     /**
      * The headers from the request.
      */

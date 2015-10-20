@@ -12,7 +12,7 @@ class KHttpOptionsSpec : MavenSpek() {
         given("an options request") {
             val request = options("https://httpbin.org/get")
             on("accessing the status code") {
-                val status = request.status
+                val status = request.statusCode
                 it("should be 200") {
                     assertEquals(200, status)
                 }

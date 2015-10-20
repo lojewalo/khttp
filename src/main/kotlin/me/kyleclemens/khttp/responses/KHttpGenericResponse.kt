@@ -40,7 +40,7 @@ class KHttpGenericResponse(override val request: KHttpRequest) : KHttpResponse {
             return this._connection ?: throw IllegalStateException("Set to null by another thread")
         }
 
-    override val status: Int
+    override val statusCode: Int
         get() = this.connection.responseCode
 
     override val headers: Map<String, String>
