@@ -46,8 +46,24 @@ class KHttpGenericResponse(override val request: KHttpRequest) : KHttpResponse {
     override val headers: Map<String, String>
         get() = this.connection.headerFields.mapValues { it.value.last() }
 
+    private val HttpURLConnection.realInputStream: InputStream
+        get() {
+            for (clazz in (this.javaClass.getSuperclasses() + this.javaClass)) {
+                try {
+                    return clazz.getDeclaredField("inputStream").apply { this.isAccessible = true }.get(this) as InputStream
+                } catch (ex: NoSuchFieldException) {
+                    try {
+                        return (clazz.getDeclaredField("delegate").apply { this.isAccessible = true }.get(this) as HttpURLConnection).realInputStream
+                    } catch(ex: NoSuchFieldException) {
+                        // ignore
+                    }
+                }
+            }
+            throw IllegalStateException("No InputStream found")
+        }
+
     override val raw: InputStream
-        get() = this.connection.inputStream
+        get() = this.connection.realInputStream
 
     private var _text: String? = null
     override val text: String
