@@ -30,7 +30,7 @@ abstract class KHttpGenericRequest(
     /**
      * The headers to use for this request.
      */
-    headers: MutableMap<String, String>,
+    headers: Map<String, String>,
     /**
      * The data for the body of this request.
      */
@@ -99,29 +99,30 @@ abstract class KHttpGenericRequest(
             throw IllegalArgumentException("Invalid schema. Only http:// and https:// are supported.")
         }
         val json = this.json
+        val mutableHeaders = headers.toLinkedMap()
         if (json == null) {
             this.data = data
             if (data != null) {
-                headers += KHttpGenericRequest.DEFAULT_DATA_HEADERS
+                mutableHeaders += KHttpGenericRequest.DEFAULT_DATA_HEADERS
             }
         } else {
             this.data = this.coerceToJSON(json)
-            headers += KHttpGenericRequest.DEFAULT_JSON_HEADERS
+            mutableHeaders += KHttpGenericRequest.DEFAULT_JSON_HEADERS
         }
         for ((key, value) in KHttpGenericRequest.DEFAULT_HEADERS) {
-            if (key !in headers) {
-                headers[key] = value
+            if (key !in mutableHeaders) {
+                mutableHeaders[key] = value
             }
         }
         if (this.data is FormParameters) {
-            headers += KHttpGenericRequest.DEFAULT_FORM_HEADERS
+            mutableHeaders += KHttpGenericRequest.DEFAULT_FORM_HEADERS
         }
         val auth = this.auth
         if (auth != null) {
             val header = auth.header
-            headers[header.first] = header.second
+            mutableHeaders[header.first] = header.second
         }
-        this.headers = headers
+        this.headers = mutableHeaders
     }
 
     private fun coerceToJSON(any: Any): String {
