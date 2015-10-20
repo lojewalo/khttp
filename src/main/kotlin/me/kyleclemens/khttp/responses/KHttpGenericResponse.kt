@@ -74,8 +74,14 @@ class KHttpGenericResponse(override val request: KHttpRequest) : KHttpResponse {
             }
         }
 
+    private var _raw: InputStream? = null
     override val raw: InputStream
-        get() = this.connection.realInputStream
+        get() {
+            if (this._raw == null) {
+                this._raw = this.connection.realInputStream
+            }
+            return this._raw ?: throw IllegalStateException("Set to null by another thread")
+        }
 
     private var _text: String? = null
     override val text: String
