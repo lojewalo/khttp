@@ -3,7 +3,7 @@
 
 # You can set these variables from the command line.
 SPHINXOPTS    =
-SPHINXBUILD   = LC_ALL=C.UTF-8 LANG=C.UTF-8 sphinx-build
+SPHINXBUILD   = sphinx-build
 PAPER         =
 BUILDDIR      = build
 
