@@ -17,3 +17,8 @@ fun main(args: Array<out String>) {
     println(get("http://icanhazip.com").text)
 }
 ```
+
+## Dependency
+
+Use [JitPack](https://jitpack.io/#jkcclemens/khttp) to build khttp. The goal is to get khttp into Maven Central at
+some point, but it's not quite mature enough yet!
