@@ -17,18 +17,18 @@ import kotlin.test.assertTrue
 class KHttpGetSpec : MavenSpek() {
     override fun test() {
         given("a get request") {
-            val request = get("http://httpbin.org/range/26")
+            val response = get("http://httpbin.org/range/26")
             on("accessing the string") {
-                val string = request.text
+                val string = response.text
                 it("should equal the alphabet in lowercase") {
                     assertEquals("abcdefghijklmnopqrstuvwxyz", string)
                 }
             }
         }
         given("a json object get request with parameters") {
-            val request = get("http://httpbin.org/get", parameters = Parameters("a" to "b", "c" to "d"))
+            val response = get("http://httpbin.org/get", parameters = Parameters("a" to "b", "c" to "d"))
             on("accessing the json") {
-                val json = request.jsonObject
+                val json = response.jsonObject
                 it("should contain the parameters") {
                     val args = json.getJSONObject("args")
                     assertEquals("b", args.getString("a"))
@@ -37,9 +37,9 @@ class KHttpGetSpec : MavenSpek() {
             }
         }
         given("a get request with basic auth") {
-            val request = get("http://httpbin.org/basic-auth/khttp/isawesome", auth = BasicAuthorization("khttp", "isawesome"))
+            val response = get("http://httpbin.org/basic-auth/khttp/isawesome", auth = BasicAuthorization("khttp", "isawesome"))
             on("accessing the json") {
-                val json = request.jsonObject
+                val json = response.jsonObject
                 it("should be authenticated") {
                     assertTrue(json.getBoolean("authenticated"))
                 }
@@ -49,9 +49,9 @@ class KHttpGetSpec : MavenSpek() {
             }
         }
         given("a get request with cookies") {
-            val request = get("http://httpbin.org/cookies", cookies = mapOf("test" to "success"))
+            val response = get("http://httpbin.org/cookies", cookies = mapOf("test" to "success"))
             on("accessing the json") {
-                val json = request.jsonObject
+                val json = response.jsonObject
                 it("should have the same cookies") {
                     val cookies = json.getJSONObject("cookies")
                     assertEquals("success", cookies.getString("test"))
@@ -59,38 +59,38 @@ class KHttpGetSpec : MavenSpek() {
             }
         }
         given("a get request that redirects and allowing redirects") {
-            val request = get("http://httpbin.org/redirect-to?url=${URLEncoder.encode("http://httpbin.org/get", "utf-8")}")
+            val response = get("http://httpbin.org/redirect-to?url=${URLEncoder.encode("http://httpbin.org/get", "utf-8")}")
             on("accessing the json") {
-                val json = request.jsonObject
+                val json = response.jsonObject
                 it("should have the redirected url") {
                     assertEquals("http://httpbin.org/get", json.getString("url"))
                 }
             }
         }
         given("a get request that redirects and disallowing redirects") {
-            val request = get("http://httpbin.org/redirect-to?url=${URLEncoder.encode("http://httpbin.org/get", "utf-8")}", allowRedirects = false)
+            val response = get("http://httpbin.org/redirect-to?url=${URLEncoder.encode("http://httpbin.org/get", "utf-8")}", allowRedirects = false)
             on("accessing the status code") {
-                val code = request.status
+                val code = response.status
                 it("should be 302") {
                     assertEquals(302, code)
                 }
             }
         }
         given("a get request that redirects five times") {
-            val request = get("http://httpbin.org/redirect/5")
+            val response = get("http://httpbin.org/redirect/5")
             on("accessing the json") {
-                val json = request.jsonObject
+                val json = response.jsonObject
                 it("should have the get url") {
                     assertEquals("http://httpbin.org/get", json.getString("url"))
                 }
             }
         }
         given("a get request that takes ten seconds to complete") {
-            val request = get("http://httpbin.org/delay/10", timeout = 1)
+            val response = get("http://httpbin.org/delay/10", timeout = 1)
             on("accessing anything") {
                 it("should throw a timeout exception") {
                     shouldThrow(SocketTimeoutException::class.java) {
-                        request.raw
+                        response.raw
                     }
                 }
             }
@@ -98,9 +98,9 @@ class KHttpGetSpec : MavenSpek() {
         given("a get request that sets cookies without redirects") {
             val cookieName = "test"
             val cookieValue = "quite"
-            val request = get("http://httpbin.org/cookies/set?$cookieName=$cookieValue", allowRedirects = false)
+            val response = get("http://httpbin.org/cookies/set?$cookieName=$cookieValue", allowRedirects = false)
             on("connection") {
-                val cookies = request.cookies
+                val cookies = response.cookies
                 it("should set a cookie") {
                     assertEquals(1, cookies.size())
                 }
@@ -124,9 +124,9 @@ class KHttpGetSpec : MavenSpek() {
         given("a get request that sets cookies with redirects") {
             val cookieName = "test"
             val cookieValue = "quite"
-            val request = get("http://httpbin.org/cookies/set?$cookieName=$cookieValue")
+            val response = get("http://httpbin.org/cookies/set?$cookieName=$cookieValue")
             on("connection") {
-                val cookies = request.cookies
+                val cookies = response.cookies
                 it("should set a cookie") {
                     assertEquals(1, cookies.size())
                 }

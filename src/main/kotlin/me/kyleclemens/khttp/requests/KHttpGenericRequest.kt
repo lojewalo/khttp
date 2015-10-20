@@ -6,21 +6,19 @@
 package me.kyleclemens.khttp.requests
 
 import me.kyleclemens.khttp.structures.authorization.Authorization
-import me.kyleclemens.khttp.structures.cookie.Cookie
-import me.kyleclemens.khttp.structures.cookie.CookieJar
 import me.kyleclemens.khttp.structures.parameters.FormParameters
 import me.kyleclemens.khttp.structures.parameters.Parameters
 import org.json.JSONArray
 import org.json.JSONObject
 import org.json.JSONWriter
-import java.io.InputStream
 import java.io.StringWriter
-import java.net.HttpURLConnection
 import java.net.URI
-import java.net.URL
-import java.net.URLEncoder
 
 abstract class KHttpGenericRequest(
+    /**
+     * The HTTP method to use for this request.
+     */
+    override val method: String,
     /**
      * The URL to perform this request on.
      */
@@ -28,7 +26,7 @@ abstract class KHttpGenericRequest(
     /**
      * The URL parameters to use for this request.
      */
-    val params: Parameters,
+    override val params: Parameters,
     /**
      * The headers to use for this request.
      */
@@ -52,25 +50,25 @@ abstract class KHttpGenericRequest(
      *   - any other Iterables becomes JSONArrays using a custom method.
      *   - any other object throws an [IllegalArgumentException]
      */
-    val json: Any?,
+    override val json: Any?,
     /**
      * The HTTP basic auth username and password.
      */
-    val auth: Authorization?,
+    override val auth: Authorization?,
     /**
      * A Map of cookies to send with this request. Note that
      * [CookieJar][me.kyleclemens.khttp.structures.cookie.CookieJar] is a map. It also has a constructor that takes a
      * map, for easy conversion.
      */
-    val requestCookies: Map<String, String>?,
+    override val cookies: Map<String, String>?,
     /**
      * The amount of time to wait, in seconds, for the server to send data.
      */
-    val timeout: Int,
+    override val timeout: Int,
     /**
      * If redirects should be followed.
      */
-    val allowRedirects: Boolean
+    override val allowRedirects: Boolean
 ) : KHttpRequest {
 
     companion object {
@@ -90,112 +88,10 @@ abstract class KHttpGenericRequest(
         )
     }
 
-    private fun URL.openRedirectingConnection(receiver: HttpURLConnection.() -> Unit): HttpURLConnection {
-        val connection = (this.openConnection() as HttpURLConnection).apply {
-            this.instanceFollowRedirects = false
-            this.receiver()
-            this.connect()
-        }
-        if (this@KHttpGenericRequest.allowRedirects && connection.responseCode in 301..303) {
-            return this.toURI().resolve(connection.getHeaderField("Location")).toURL().openRedirectingConnection(receiver)
-        }
-        return connection
-    }
-
     // Request
-    val url: String
-    val requestHeaders: Map<String, String>
-    val data: Any?
-
-    // Response
-    private var _connection: HttpURLConnection? = null
-    private val connection: HttpURLConnection
-        get() {
-            if (this._connection == null) {
-                this._connection = URL(this.url).openRedirectingConnection {
-                    (this@KHttpGenericRequest.defaultStartInitializers + this@KHttpGenericRequest.initializers + this@KHttpGenericRequest.defaultEndInitializers).forEach { it(this) }
-                }
-            }
-            return this._connection ?: throw IllegalStateException("Set to null by another thread")
-        }
-
-    override val status: Int
-        get() = this.connection.responseCode
-
+    override val url: String
     override val headers: Map<String, String>
-        get() = this.connection.headerFields.mapValues { it.value.last() }
-
-    override val raw: InputStream
-        get() = this.connection.inputStream
-
-    private var _text: String? = null
-    override val text: String
-        get() {
-            if (this._text == null) {
-                this._text = this.raw.reader().use { it.readText() }
-            }
-            return this._text ?: throw IllegalStateException("Set to null by another thread")
-        }
-
-    override val jsonObject: JSONObject
-        get() = JSONObject(this.text)
-
-    override val jsonArray: JSONArray
-        get() = JSONArray(this.text)
-
-    private val _cookies = CookieJar()
-    override val cookies: CookieJar
-        get() {
-            this.connection // Ensure that we've connected
-            return this._cookies
-        }
-
-    // Initializers
-    private val defaultStartInitializers: MutableList<(HttpURLConnection) -> Unit> = arrayListOf(
-        { connection ->
-            for ((key, value) in this@KHttpGenericRequest.requestHeaders) {
-                connection.setRequestProperty(key, value)
-            }
-        },
-        { connection ->
-            val cookies = this.requestCookies
-            if (cookies != null) {
-                val cookieJar = if (cookies is CookieJar) cookies else CookieJar(cookies)
-                // Add the cookies from our current cookie jar to the other cookies to be sent
-                cookieJar.putAll(this._cookies)
-                connection.setRequestProperty("Cookie", cookieJar.toString())
-            }
-        },
-        { connection ->
-            connection.connectTimeout = this.timeout * 1000
-            connection.readTimeout = this.timeout * 1000
-        },
-        { connection ->
-            connection.instanceFollowRedirects = false
-        }
-    )
-    private val defaultEndInitializers: MutableList<(HttpURLConnection) -> Unit> = arrayListOf(
-        { connection ->
-            if (this@KHttpGenericRequest.data != null) {
-                connection.doOutput = true
-                connection.outputStream.writer().use {
-                    val bodyData = this@KHttpGenericRequest.data
-                    it.write(if (bodyData is Parameters) {
-                        this@KHttpGenericRequest.makeParams(bodyData).let { string -> if (string.isNotEmpty()) string.substring(1) else string }
-                    } else {
-                        bodyData.toString()
-                    })
-                }
-            }
-        },
-        { connection ->
-            // Add all the cookies from every response to our cookie jar
-            this._cookies.putAll(
-                CookieJar(*connection.headerFields.filter { it.key == "Set-Cookie" }.flatMap { it.value }.map { Cookie(it) }.toTypedArray())
-            )
-        }
-    )
-    val initializers: MutableList<(HttpURLConnection) -> Unit> = arrayListOf()
+    override val data: Any?
 
     init {
         this.url = this.makeRoute(url)
@@ -225,7 +121,7 @@ abstract class KHttpGenericRequest(
             val header = auth.header
             headers[header.first] = header.second
         }
-        this.requestHeaders = headers
+        this.headers = headers
     }
 
     private fun coerceToJSON(any: Any): String {
@@ -257,15 +153,6 @@ abstract class KHttpGenericRequest(
         return stringWriter.toString()
     }
 
-    private fun makeRoute(route: String) = route + this.makeParams()
-
-    protected fun makeParams(parameters: Parameters = this.params): String {
-        if (parameters.size() < 1) return ""
-        val builder = StringBuilder()
-        for ((key, value) in parameters) {
-            builder.append(if (builder.length() < 1) "?" else "&").append(key).append("=").append(URLEncoder.encode(value, "UTF-8"))
-        }
-        return builder.toString()
-    }
+    private fun makeRoute(route: String) = route + if (this.params.size() > 0) "?${this.params}" else ""
 
 }
