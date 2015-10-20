@@ -10,8 +10,8 @@ import me.kyleclemens.khttp.structures.parameters.Parameters
 import org.jetbrains.spek.api.shouldThrow
 import java.net.SocketTimeoutException
 import java.net.URLEncoder
-import java.util.zip.DeflaterInputStream
 import java.util.zip.GZIPInputStream
+import java.util.zip.InflaterInputStream
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
@@ -187,7 +187,7 @@ class KHttpGetSpec : MavenSpek() {
             on("accessing the stream") {
                 val stream = response.raw
                 it("should be a DeflaterInputStream") {
-                    assertTrue(stream is DeflaterInputStream)
+                    assertTrue(stream is InflaterInputStream)
                 }
             }
             println("response.text = ${response.text}")
