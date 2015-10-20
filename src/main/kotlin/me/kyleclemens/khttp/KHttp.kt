@@ -9,44 +9,43 @@ import me.kyleclemens.khttp.requests.KHttpGenericRequest
 import me.kyleclemens.khttp.responses.KHttpGenericResponse
 import me.kyleclemens.khttp.responses.KHttpResponse
 import me.kyleclemens.khttp.structures.authorization.Authorization
-import me.kyleclemens.khttp.structures.parameters.Parameters
 
 @JvmOverloads
-fun delete(route: String, headers: MutableMap<String, String> = hashMapOf(), parameters: Parameters = Parameters(), data: Any? = null, json: Any? = null, auth: Authorization? = null, cookies: Map<String, String>? = null, timeout: Int = 30, allowRedirects: Boolean = true): KHttpResponse {
+fun delete(route: String, headers: MutableMap<String, String> = hashMapOf(), parameters: Map<String, String> = mapOf(), data: Any? = null, json: Any? = null, auth: Authorization? = null, cookies: Map<String, String>? = null, timeout: Int = 30, allowRedirects: Boolean = true): KHttpResponse {
     return request("DELETE", route, headers, parameters, data, json, auth, cookies, timeout, allowRedirects)
 }
 
 @JvmOverloads
-fun get(route: String, headers: MutableMap<String, String> = hashMapOf(), parameters: Parameters = Parameters(), data: Any? = null, json: Any? = null, auth: Authorization? = null, cookies: Map<String, String>? = null, timeout: Int = 30, allowRedirects: Boolean = true): KHttpResponse {
+fun get(route: String, headers: MutableMap<String, String> = hashMapOf(), parameters: Map<String, String> = mapOf(), data: Any? = null, json: Any? = null, auth: Authorization? = null, cookies: Map<String, String>? = null, timeout: Int = 30, allowRedirects: Boolean = true): KHttpResponse {
     return request("GET", route, headers, parameters, data, json, auth, cookies, timeout, allowRedirects)
 }
 
 @JvmOverloads
-fun head(route: String, headers: MutableMap<String, String> = hashMapOf(), parameters: Parameters = Parameters(), data: Any? = null, json: Any? = null, auth: Authorization? = null, cookies: Map<String, String>? = null, timeout: Int = 30, allowRedirects: Boolean = true): KHttpResponse {
+fun head(route: String, headers: MutableMap<String, String> = hashMapOf(), parameters: Map<String, String> = mapOf(), data: Any? = null, json: Any? = null, auth: Authorization? = null, cookies: Map<String, String>? = null, timeout: Int = 30, allowRedirects: Boolean = true): KHttpResponse {
     return request("HEAD", route, headers, parameters, data, json, auth, cookies, timeout, allowRedirects)
 }
 
 @JvmOverloads
-fun options(route: String, headers: MutableMap<String, String> = hashMapOf(), parameters: Parameters = Parameters(), data: Any? = null, json: Any? = null, auth: Authorization? = null, cookies: Map<String, String>? = null, timeout: Int = 30, allowRedirects: Boolean = true): KHttpResponse {
+fun options(route: String, headers: MutableMap<String, String> = hashMapOf(), parameters: Map<String, String> = mapOf(), data: Any? = null, json: Any? = null, auth: Authorization? = null, cookies: Map<String, String>? = null, timeout: Int = 30, allowRedirects: Boolean = true): KHttpResponse {
     return request("OPTIONS", route, headers, parameters, data, json, auth, cookies, timeout, allowRedirects)
 }
 
 @JvmOverloads
-fun patch(route: String, headers: MutableMap<String, String> = hashMapOf(), parameters: Parameters = Parameters(), data: Any? = null, json: Any? = null, auth: Authorization? = null, cookies: Map<String, String>? = null, timeout: Int = 30, allowRedirects: Boolean = true): KHttpResponse {
+fun patch(route: String, headers: MutableMap<String, String> = hashMapOf(), parameters: Map<String, String> = mapOf(), data: Any? = null, json: Any? = null, auth: Authorization? = null, cookies: Map<String, String>? = null, timeout: Int = 30, allowRedirects: Boolean = true): KHttpResponse {
     return request("PATCH", route, headers, parameters, data, json, auth, cookies, timeout, allowRedirects)
 }
 
 @JvmOverloads
-fun post(route: String, headers: MutableMap<String, String> = hashMapOf(), parameters: Parameters = Parameters(), data: Any? = null, json: Any? = null, auth: Authorization? = null, cookies: Map<String, String>? = null, timeout: Int = 30, allowRedirects: Boolean = true): KHttpResponse {
+fun post(route: String, headers: MutableMap<String, String> = hashMapOf(), parameters: Map<String, String> = mapOf(), data: Any? = null, json: Any? = null, auth: Authorization? = null, cookies: Map<String, String>? = null, timeout: Int = 30, allowRedirects: Boolean = true): KHttpResponse {
     return request("POST", route, headers, parameters, data, json, auth, cookies, timeout, allowRedirects)
 }
 
 @JvmOverloads
-fun put(route: String, headers: MutableMap<String, String> = hashMapOf(), parameters: Parameters = Parameters(), data: Any? = null, json: Any? = null, auth: Authorization? = null, cookies: Map<String, String>? = null, timeout: Int = 30, allowRedirects: Boolean = true): KHttpResponse {
+fun put(route: String, headers: MutableMap<String, String> = hashMapOf(), parameters: Map<String, String> = mapOf(), data: Any? = null, json: Any? = null, auth: Authorization? = null, cookies: Map<String, String>? = null, timeout: Int = 30, allowRedirects: Boolean = true): KHttpResponse {
     return request("PUT", route, headers, parameters, data, json, auth, cookies, timeout, allowRedirects)
 }
 
 @JvmOverloads
-fun request(method: String, route: String, headers: MutableMap<String, String> = hashMapOf(), parameters: Parameters = Parameters(), data: Any? = null, json: Any? = null, auth: Authorization? = null, cookies: Map<String, String>? = null, timeout: Int = 30, allowRedirects: Boolean = true): KHttpResponse {
+fun request(method: String, route: String, headers: MutableMap<String, String> = hashMapOf(), parameters: Map<String, String> = mapOf(), data: Any? = null, json: Any? = null, auth: Authorization? = null, cookies: Map<String, String>? = null, timeout: Int = 30, allowRedirects: Boolean = true): KHttpResponse {
     return KHttpGenericResponse(object : KHttpGenericRequest(method, route, parameters, headers, data, json, auth, cookies, timeout, allowRedirects) {})
 }

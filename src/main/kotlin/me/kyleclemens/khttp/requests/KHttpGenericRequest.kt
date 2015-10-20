@@ -26,7 +26,7 @@ abstract class KHttpGenericRequest(
     /**
      * The URL parameters to use for this request.
      */
-    override val params: Parameters,
+    override val params: Map<String, String>,
     /**
      * The headers to use for this request.
      */
@@ -153,6 +153,6 @@ abstract class KHttpGenericRequest(
         return stringWriter.toString()
     }
 
-    private fun makeRoute(route: String) = route + if (this.params.size() > 0) "?${this.params}" else ""
+    private fun makeRoute(route: String) = route + if (this.params.size() > 0) "?${Parameters(this.params)}" else ""
 
 }

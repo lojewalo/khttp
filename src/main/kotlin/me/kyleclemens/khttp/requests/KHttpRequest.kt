@@ -6,7 +6,6 @@
 package me.kyleclemens.khttp.requests
 
 import me.kyleclemens.khttp.structures.authorization.Authorization
-import me.kyleclemens.khttp.structures.parameters.Parameters
 
 interface KHttpRequest {
 
@@ -21,7 +20,7 @@ interface KHttpRequest {
     /**
      * The URL parameters to use for this request.
      */
-    val params: Parameters
+    val params: Map<String, String>
     /**
      * The headers to use for this request.
      */

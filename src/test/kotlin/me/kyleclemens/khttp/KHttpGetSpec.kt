@@ -36,6 +36,17 @@ class KHttpGetSpec : MavenSpek() {
                 }
             }
         }
+        given("a json object get request with a map of parameters") {
+            val response = get("http://httpbin.org/get", parameters = mapOf("a" to "b", "c" to "d"))
+            on("accessing the json") {
+                val json = response.jsonObject
+                it("should contain the parameters") {
+                    val args = json.getJSONObject("args")
+                    assertEquals("b", args.getString("a"))
+                    assertEquals("d", args.getString("c"))
+                }
+            }
+        }
         given("a get request with basic auth") {
             val response = get("http://httpbin.org/basic-auth/khttp/isawesome", auth = BasicAuthorization("khttp", "isawesome"))
             on("accessing the json") {
