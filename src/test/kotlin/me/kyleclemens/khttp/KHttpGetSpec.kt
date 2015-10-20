@@ -33,7 +33,7 @@ class KHttpGetSpec : MavenSpek() {
             }
         }
         given("a json object get request with parameters") {
-            val response = get("http://httpbin.org/get", parameters = Parameters("a" to "b", "c" to "d"))
+            val response = get("http://httpbin.org/get", params = Parameters("a" to "b", "c" to "d"))
             on("accessing the json") {
                 val json = response.jsonObject
                 it("should contain the parameters") {
@@ -44,7 +44,7 @@ class KHttpGetSpec : MavenSpek() {
             }
         }
         given("a json object get request with a map of parameters") {
-            val response = get("http://httpbin.org/get", parameters = mapOf("a" to "b", "c" to "d"))
+            val response = get("http://httpbin.org/get", params = mapOf("a" to "b", "c" to "d"))
             on("accessing the json") {
                 val json = response.jsonObject
                 it("should contain the parameters") {
