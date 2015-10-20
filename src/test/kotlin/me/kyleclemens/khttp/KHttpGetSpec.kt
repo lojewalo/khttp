@@ -17,11 +17,18 @@ import kotlin.test.assertTrue
 class KHttpGetSpec : MavenSpek() {
     override fun test() {
         given("a get request") {
-            val response = get("http://httpbin.org/range/26")
+            val url = "http://httpbin.org/range/26"
+            val response = get(url)
             on("accessing the string") {
                 val string = response.text
                 it("should equal the alphabet in lowercase") {
                     assertEquals("abcdefghijklmnopqrstuvwxyz", string)
+                }
+            }
+            on("accessing the url") {
+                val resultantURL = response.url
+                it("should equal the starting url") {
+                    assertEquals(url, resultantURL)
                 }
             }
         }

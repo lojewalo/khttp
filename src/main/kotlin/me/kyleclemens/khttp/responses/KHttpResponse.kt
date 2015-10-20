@@ -45,5 +45,9 @@ interface KHttpResponse {
      * The cookies from the request.
      */
     val cookies: CookieJar
+    /**
+     * The URL that this request ended up going to.
+     */
+    val url: String
 
 }

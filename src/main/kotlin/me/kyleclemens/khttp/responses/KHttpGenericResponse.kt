@@ -87,6 +87,9 @@ class KHttpGenericResponse(override val request: KHttpRequest) : KHttpResponse {
             return this._cookies
         }
 
+    override val url: String
+        get() = this.connection.url.toString()
+
     // Initializers
     private val defaultStartInitializers: MutableList<(HttpURLConnection) -> Unit> = arrayListOf(
         { connection ->
