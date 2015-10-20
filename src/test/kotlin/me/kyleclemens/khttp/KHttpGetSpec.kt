@@ -10,6 +10,8 @@ import me.kyleclemens.khttp.structures.parameters.Parameters
 import org.jetbrains.spek.api.shouldThrow
 import java.net.SocketTimeoutException
 import java.net.URLEncoder
+import java.util.zip.DeflaterInputStream
+import java.util.zip.GZIPInputStream
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
@@ -162,6 +164,37 @@ class KHttpGetSpec : MavenSpek() {
                 it("should have the same text value") {
                     // Attributes ignored
                     assertEquals(cookieValue, text!!.toString().split(";")[0])
+                }
+            }
+        }
+        given("a gzip get request") {
+            val response = get("https://httpbin.org/gzip")
+            on("accessing the stream") {
+                val stream = response.raw
+                it("should be a GZIPInputStream") {
+                    assertTrue(stream is GZIPInputStream)
+                }
+            }
+            on("accessing the json") {
+                val json = response.jsonObject
+                it("should be gzipped") {
+                    assertTrue(json.getBoolean("gzipped"))
+                }
+            }
+        }
+        given("a deflate get request") {
+            val response = get("https://httpbin.org/deflate")
+            on("accessing the stream") {
+                val stream = response.raw
+                it("should be a DeflaterInputStream") {
+                    assertTrue(stream is DeflaterInputStream)
+                }
+            }
+            println("response.text = ${response.text}")
+            on("accessing the json") {
+                val json = response.jsonObject
+                it("should be deflated") {
+                    assertTrue(json.getBoolean("deflated"))
                 }
             }
         }
