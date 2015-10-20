@@ -10,10 +10,13 @@ import me.kyleclemens.khttp.structures.cookie.Cookie
 import me.kyleclemens.khttp.structures.cookie.CookieJar
 import org.json.JSONArray
 import org.json.JSONObject
+import java.io.IOException
 import java.io.InputStream
 import java.net.HttpURLConnection
 import java.net.ProtocolException
 import java.net.URL
+import java.util.zip.DeflaterInputStream
+import java.util.zip.GZIPInputStream
 
 class KHttpGenericResponse(override val request: KHttpRequest) : KHttpResponse {
 
@@ -48,18 +51,27 @@ class KHttpGenericResponse(override val request: KHttpRequest) : KHttpResponse {
 
     private val HttpURLConnection.realInputStream: InputStream
         get() {
-            for (clazz in (this.javaClass.getSuperclasses() + this.javaClass)) {
-                try {
-                    return clazz.getDeclaredField("inputStream").apply { this.isAccessible = true }.get(this) as InputStream
-                } catch (ex: NoSuchFieldException) {
+            val stream = try {
+                this.inputStream
+            } catch (ex: IOException) {
+                for (clazz in (this.javaClass.getSuperclasses() + this.javaClass)) {
                     try {
-                        return (clazz.getDeclaredField("delegate").apply { this.isAccessible = true }.get(this) as HttpURLConnection).realInputStream
-                    } catch(ex: NoSuchFieldException) {
-                        // ignore
+                        clazz.getDeclaredField("inputStream").apply { this.isAccessible = true }.get(this) as InputStream
+                    } catch (ex: NoSuchFieldException) {
+                        try {
+                            (clazz.getDeclaredField("delegate").apply { this.isAccessible = true }.get(this) as HttpURLConnection).realInputStream
+                        } catch(ex: NoSuchFieldException) {
+                            // ignore
+                        }
                     }
                 }
+                throw IllegalStateException("No InputStream found")
             }
-            throw IllegalStateException("No InputStream found")
+            return when (this@KHttpGenericResponse.headers["Content-Encoding"]?.toLowerCase()) {
+                "gzip" -> GZIPInputStream(stream)
+                "deflate" -> DeflaterInputStream(stream)
+                else -> stream
+            }
         }
 
     override val raw: InputStream
