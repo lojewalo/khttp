@@ -15,8 +15,8 @@ import java.io.InputStream
 import java.net.HttpURLConnection
 import java.net.ProtocolException
 import java.net.URL
-import java.util.zip.DeflaterInputStream
 import java.util.zip.GZIPInputStream
+import java.util.zip.InflaterInputStream
 
 class KHttpGenericResponse(override val request: KHttpRequest) : KHttpResponse {
 
@@ -69,7 +69,7 @@ class KHttpGenericResponse(override val request: KHttpRequest) : KHttpResponse {
             }
             return when (this@KHttpGenericResponse.headers["Content-Encoding"]?.toLowerCase()) {
                 "gzip" -> GZIPInputStream(stream)
-                "deflate" -> DeflaterInputStream(stream)
+                "deflate" -> InflaterInputStream(stream)
                 else -> stream
             }
         }
