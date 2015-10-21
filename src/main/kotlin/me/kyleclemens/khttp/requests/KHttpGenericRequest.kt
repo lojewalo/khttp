@@ -24,6 +24,7 @@ abstract class KHttpGenericRequest(
     override val auth: Authorization?,
     override val cookies: Map<String, String>?,
     override val timeout: Int,
+    override val allowRedirects: Boolean
 ) : KHttpRequest {
 
     companion object {
