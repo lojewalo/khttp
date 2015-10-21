@@ -166,6 +166,49 @@ class KHttpGetSpec : MavenSpek() {
                 }
             }
         }
+        given("a get request that sets multiple cookies with redirects") {
+            val cookieNameOne = "test"
+            val cookieValueOne = "quite"
+            val cookieNameTwo = "derp"
+            val cookieValueTwo = "herp"
+            val response = get("http://httpbin.org/cookies/set?$cookieNameOne=$cookieValueOne&$cookieNameTwo=$cookieValueTwo")
+            on("connection") {
+                val cookies = response.cookies
+                it("should set two cookies") {
+                    assertEquals(2, cookies.size())
+                }
+                val cookie = cookies.getCookie(cookieNameOne)
+                val text = cookies[cookieNameOne]
+                it("should have the specified cookie name") {
+                    assertNotNull(cookie)
+                }
+                it("should have the specified text") {
+                    assertNotNull(text)
+                }
+                it("should have the same value") {
+                    assertEquals(cookieValueOne, cookie!!.value)
+                }
+                it("should have the same text value") {
+                    // Attributes ignored
+                    assertEquals(cookieValueOne, text!!.toString().split(";")[0])
+                }
+                val cookieTwo = cookies.getCookie(cookieNameTwo)
+                val textTwo = cookies[cookieNameTwo]
+                it("should have the specified cookie name") {
+                    assertNotNull(cookieTwo)
+                }
+                it("should have the specified text") {
+                    assertNotNull(textTwo)
+                }
+                it("should have the same value") {
+                    assertEquals(cookieValueTwo, cookieTwo!!.value)
+                }
+                it("should have the same text value") {
+                    // Attributes ignored
+                    assertEquals(cookieValueTwo, textTwo!!.toString().split(";")[0])
+                }
+            }
+        }
         given("a gzip get request") {
             val response = get("https://httpbin.org/gzip")
             on("accessing the stream") {

@@ -50,7 +50,7 @@ class KHttpGenericResponse(override val request: KHttpRequest) : KHttpResponse {
         get() = this.connection.responseCode
 
     override val headers: Map<String, String>
-        get() = CaseInsensitiveMap(this.connection.headerFields.mapValues { it.value.last() }.filterKeys { it != null })
+        get() = CaseInsensitiveMap(this.connection.headerFields.mapValues { it.value.join(", ") }.filterKeys { it != null })
 
     private val HttpURLConnection.realInputStream: InputStream
         get() {
