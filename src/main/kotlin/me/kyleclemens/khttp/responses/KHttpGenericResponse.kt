@@ -55,18 +55,7 @@ class KHttpGenericResponse(override val request: KHttpRequest) : KHttpResponse {
             val stream = try {
                 this.inputStream
             } catch (ex: IOException) {
-                for (clazz in (this.javaClass.getSuperclasses() + this.javaClass)) {
-                    try {
-                        return clazz.getDeclaredField("inputStream").apply { this.isAccessible = true }.get(this) as InputStream
-                    } catch (ex: NoSuchFieldException) {
-                        try {
-                            return (clazz.getDeclaredField("delegate").apply { this.isAccessible = true }.get(this) as HttpURLConnection).realInputStream
-                        } catch(ex: NoSuchFieldException) {
-                            // ignore
-                        }
-                    }
-                }
-                throw IllegalStateException("No InputStream found")
+                this.errorStream
             }
             return when (this@KHttpGenericResponse.headers["Content-Encoding"]?.toLowerCase()) {
                 "gzip" -> GZIPInputStream(stream)
