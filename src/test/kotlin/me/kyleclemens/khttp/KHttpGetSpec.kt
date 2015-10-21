@@ -190,7 +190,6 @@ class KHttpGetSpec : MavenSpek() {
                     assertTrue(stream is InflaterInputStream)
                 }
             }
-            println("response.text = ${response.text}")
             on("accessing the json") {
                 val json = response.jsonObject
                 it("should be deflated") {
