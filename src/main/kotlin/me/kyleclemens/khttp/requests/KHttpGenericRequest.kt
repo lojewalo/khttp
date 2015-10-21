@@ -113,8 +113,9 @@ class KHttpGenericRequest(
 
     private fun URL.toIDN(): URL {
         val newHost = IDN.toASCII(this.host)
-        val newPath = IDN.toASCII(this.path)
-        return URL(this.protocol, newHost, this.port, newPath)
+        this.javaClass.getDeclaredField("host").apply { this.isAccessible = true }.set(this, newHost)
+        this.javaClass.getDeclaredField("authority").apply { this.isAccessible = true }.set(this, if (this.port == -1) this.host else "${this.host}:${this.port}")
+        return URL(this.toURI().toASCIIString())
     }
 
     private fun makeRoute(route: String) = URL(route + if (this.params.size() > 0) "?${Parameters(this.params)}" else "").toIDN().toString()
