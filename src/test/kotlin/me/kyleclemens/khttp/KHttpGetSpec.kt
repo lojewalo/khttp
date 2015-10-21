@@ -186,7 +186,7 @@ class KHttpGetSpec : MavenSpek() {
             val response = get("https://httpbin.org/deflate")
             on("accessing the stream") {
                 val stream = response.raw
-                it("should be a DeflaterInputStream") {
+                it("should be a InflaterInputStream") {
                     assertTrue(stream is InflaterInputStream)
                 }
             }
