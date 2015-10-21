@@ -6,8 +6,6 @@
 package me.kyleclemens.khttp
 
 import me.kyleclemens.khttp.helpers.StringIterable
-import me.kyleclemens.khttp.structures.parameters.FormParameters
-import me.kyleclemens.khttp.structures.parameters.Parameters
 import org.jetbrains.spek.api.shouldThrow
 import org.json.JSONArray
 import org.json.JSONObject
@@ -25,8 +23,8 @@ class KHttpPostSpec : MavenSpek() {
                 }
             }
         }
-        given("a post request with parameters") {
-            val request = post("http://httpbin.org/post", data = Parameters("a" to "b", "c" to "d"))
+        given("a post request with raw data") {
+            val request = post("http://httpbin.org/post", data = "a=b&c=d")
             on("accessing json") {
                 val json = request.jsonObject
                 it("should contain the data") {
@@ -35,7 +33,7 @@ class KHttpPostSpec : MavenSpek() {
             }
         }
         given("a post form request") {
-            val request = post("http://httpbin.org/post", data = FormParameters("a" to "b", "c" to "d"))
+            val request = post("http://httpbin.org/post", data = mapOf("a" to "b", "c" to "d"))
             on("accessing json") {
                 val json = request.jsonObject
                 it("should contain the form data") {

@@ -6,7 +6,6 @@
 package me.kyleclemens.khttp.requests
 
 import me.kyleclemens.khttp.structures.authorization.Authorization
-import me.kyleclemens.khttp.structures.parameters.FormParameters
 import me.kyleclemens.khttp.structures.parameters.Parameters
 import org.json.JSONArray
 import org.json.JSONObject
@@ -72,7 +71,7 @@ class KHttpGenericRequest(
                 mutableHeaders[key] = value
             }
         }
-        if (this.data is FormParameters) {
+        if (this.data is Map<*, *>) {
             mutableHeaders += KHttpGenericRequest.DEFAULT_FORM_HEADERS
         }
         val auth = this.auth

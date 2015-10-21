@@ -8,6 +8,7 @@ package me.kyleclemens.khttp.responses
 import me.kyleclemens.khttp.requests.KHttpRequest
 import me.kyleclemens.khttp.structures.cookie.Cookie
 import me.kyleclemens.khttp.structures.cookie.CookieJar
+import me.kyleclemens.khttp.structures.parameters.Parameters
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.IOException
@@ -149,11 +150,16 @@ class KHttpGenericResponse(override val request: KHttpRequest) : KHttpResponse {
     )
     private val defaultEndInitializers: MutableList<(HttpURLConnection) -> Unit> = arrayListOf(
         { connection ->
-            if (this@KHttpGenericResponse.request.data != null) {
+            val requestData = this@KHttpGenericResponse.request.data
+            if (requestData != null) {
+                val data: Any = if (requestData is Map<*, *> && requestData !is Parameters) {
+                    Parameters(requestData.mapKeys { it.key.toString() }.mapValues { it.value.toString() })
+                } else {
+                    requestData
+                }
                 connection.doOutput = true
                 connection.outputStream.writer().use {
-                    val bodyData = this@KHttpGenericResponse.request.data
-                    it.write(bodyData.toString())
+                    it.write(data.toString())
                 }
             }
         },

@@ -7,7 +7,7 @@ package me.kyleclemens.khttp.structures.parameters
 
 import java.net.URLEncoder
 
-open class Parameters(vararg val parameters: Pair<String, String>) : Map<String, String> by mapOf(*parameters) {
+internal class Parameters(vararg val parameters: Pair<String, String>) : Map<String, String> by mapOf(*parameters) {
 
     constructor(parameters: Map<String, String>) : this(*parameters.toList().toTypedArray())
 
