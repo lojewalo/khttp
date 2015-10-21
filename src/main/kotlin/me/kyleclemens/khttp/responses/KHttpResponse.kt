@@ -31,6 +31,10 @@ interface KHttpResponse {
      */
     val raw: InputStream
     /**
+     * The response as a ByteArray.
+     */
+    val contents: ByteArray
+    /**
      * The response as a UTF-8-encoded String.
      */
     val text: String

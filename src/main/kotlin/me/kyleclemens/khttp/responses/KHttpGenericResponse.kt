@@ -84,21 +84,17 @@ class KHttpGenericResponse(override val request: KHttpRequest) : KHttpResponse {
             return this._raw ?: throw IllegalStateException("Set to null by another thread")
         }
 
-    private var textLastEncoding: Charset? = null
-    private var _text: String? = null
-    override val text: String
+    private var _contents: ByteArray? = null
+    override val contents: ByteArray
         get() {
-            val encoding = this.encoding
-            val lastEncoding = this.textLastEncoding
-            if (this._text == null) {
-                this._text = this.raw.reader(encoding).use { it.readText() }
+            if (this._contents == null) {
+                this._contents = this.raw.use { it.readBytes() }
             }
-            if (lastEncoding != null) {
-                this._text = this._text?.toByteArray(lastEncoding)?.toString(encoding)
-            }
-            this.textLastEncoding = encoding
-            return this._text ?: throw IllegalStateException("Set to null by another thread")
+            return this._contents ?: throw IllegalStateException("Set to null by another thread")
         }
+
+    override val text: String
+        get() = this.contents.toString(this.encoding)
 
     override val jsonObject: JSONObject
         get() = JSONObject(this.text)
