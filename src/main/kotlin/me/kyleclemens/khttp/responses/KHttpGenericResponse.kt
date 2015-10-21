@@ -15,6 +15,7 @@ import java.io.InputStream
 import java.net.HttpURLConnection
 import java.net.ProtocolException
 import java.net.URL
+import java.nio.charset.Charset
 import java.util.zip.GZIPInputStream
 import java.util.zip.InflaterInputStream
 
@@ -87,7 +88,7 @@ class KHttpGenericResponse(override val request: KHttpRequest) : KHttpResponse {
     override val text: String
         get() {
             if (this._text == null) {
-                this._text = this.raw.reader().use { it.readText() }
+                this._text = this.raw.reader(this.encoding).use { it.readText() }
             }
             return this._text ?: throw IllegalStateException("Set to null by another thread")
         }
@@ -107,6 +108,25 @@ class KHttpGenericResponse(override val request: KHttpRequest) : KHttpResponse {
 
     override val url: String
         get() = this.connection.url.toString()
+
+    var _encoding: Charset? = null
+        set(value) {
+            field = value
+        }
+    override var encoding: Charset
+        get() {
+            if (this._encoding != null) {
+                return this._encoding ?: throw IllegalStateException("Set to null by another thread")
+            }
+            this.headers["Content-Type"]?.let {
+                val charset = it.split(";").map { it.split("=") }.filter { it[0].trim().toLowerCase() == "charset" }.filter { it.size() == 2 }.map { it[1] }.firstOrNull()
+                return Charset.forName(charset?.toUpperCase() ?: Charsets.UTF_8.name())
+            }
+            return Charsets.UTF_8
+        }
+        set(value) {
+            this._encoding = value
+        }
 
     // Initializers
     private val defaultStartInitializers: MutableList<(HttpURLConnection) -> Unit> = arrayListOf(

@@ -10,6 +10,7 @@ import me.kyleclemens.khttp.structures.cookie.CookieJar
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.InputStream
+import java.nio.charset.Charset
 
 interface KHttpResponse {
 
@@ -49,5 +50,10 @@ interface KHttpResponse {
      * The URL that this request ended up going to.
      */
     val url: String
+    /**
+     * The encoding in which to decode text. If not specified, uses the Content-Type header. If there is no such header,
+     * uses UTF-8.
+     */
+    var encoding: Charset
 
 }
