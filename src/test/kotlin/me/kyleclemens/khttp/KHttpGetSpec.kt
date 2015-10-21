@@ -105,7 +105,7 @@ class KHttpGetSpec : MavenSpek() {
             }
         }
         given("a get request that takes ten seconds to complete") {
-            val response = get("http://httpbin.org/delay/10", timeout = 1)
+            val response = get("http://httpbin.org/delay/10", timeout = 1.0)
             on("accessing anything") {
                 it("should throw a timeout exception") {
                     shouldThrow(SocketTimeoutException::class.java) {
