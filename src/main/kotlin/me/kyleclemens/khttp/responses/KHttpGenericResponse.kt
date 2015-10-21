@@ -85,7 +85,7 @@ class KHttpGenericResponse(override val request: KHttpRequest) : KHttpResponse {
         }
 
     private var _contents: ByteArray? = null
-    override val contents: ByteArray
+    override val content: ByteArray
         get() {
             if (this._contents == null) {
                 this._contents = this.raw.use { it.readBytes() }
@@ -94,7 +94,7 @@ class KHttpGenericResponse(override val request: KHttpRequest) : KHttpResponse {
         }
 
     override val text: String
-        get() = this.contents.toString(this.encoding)
+        get() = this.content.toString(this.encoding)
 
     override val jsonObject: JSONObject
         get() = JSONObject(this.text)

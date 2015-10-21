@@ -33,7 +33,7 @@ interface KHttpResponse {
     /**
      * The response as a ByteArray.
      */
-    val contents: ByteArray
+    val content: ByteArray
     /**
      * The response as a UTF-8-encoded String.
      */
