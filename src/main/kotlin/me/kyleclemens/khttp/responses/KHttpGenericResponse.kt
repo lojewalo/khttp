@@ -142,8 +142,9 @@ class KHttpGenericResponse(override val request: KHttpRequest) : KHttpResponse {
             }
         },
         { connection ->
-            connection.connectTimeout = this.request.timeout * 1000
-            connection.readTimeout = this.request.timeout * 1000
+            val timeout = (this.request.timeout * 1000.0).toInt()
+            connection.connectTimeout = timeout
+            connection.readTimeout = timeout
         },
         { connection ->
             connection.instanceFollowRedirects = false

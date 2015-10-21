@@ -24,7 +24,7 @@ class KHttpGenericRequest(
     override val json: Any?,
     override val auth: Authorization?,
     override val cookies: Map<String, String>?,
-    override val timeout: Int,
+    override val timeout: Double,
     override val allowRedirects: Boolean
 ) : KHttpRequest {
 

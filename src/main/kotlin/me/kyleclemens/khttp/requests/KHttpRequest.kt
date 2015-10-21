@@ -58,7 +58,7 @@ interface KHttpRequest {
     /**
      * The amount of time to wait, in seconds, for the server to send data.
      */
-    val timeout: Int
+    val timeout: Double
     /**
      * If redirects should be followed.
      */
