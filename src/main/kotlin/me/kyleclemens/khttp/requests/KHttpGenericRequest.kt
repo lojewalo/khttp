@@ -12,7 +12,9 @@ import org.json.JSONArray
 import org.json.JSONObject
 import org.json.JSONWriter
 import java.io.StringWriter
+import java.net.IDN
 import java.net.URI
+import java.net.URL
 
 abstract class KHttpGenericRequest(
     override val method: String,
@@ -110,6 +112,12 @@ abstract class KHttpGenericRequest(
         return stringWriter.toString()
     }
 
-    private fun makeRoute(route: String) = route + if (this.params.size() > 0) "?${Parameters(this.params)}" else ""
+    private fun URL.toIDN(): URL {
+        val newHost = IDN.toASCII(this.host)
+        val newPath = IDN.toASCII(this.path)
+        return URL(this.protocol, newHost, this.port, newPath)
+    }
+
+    private fun makeRoute(route: String) = URL(route + if (this.params.size() > 0) "?${Parameters(this.params)}" else "").toIDN().toString()
 
 }
