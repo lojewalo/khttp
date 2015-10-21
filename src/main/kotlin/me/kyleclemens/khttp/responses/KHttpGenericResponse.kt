@@ -8,6 +8,7 @@ package me.kyleclemens.khttp.responses
 import me.kyleclemens.khttp.requests.KHttpRequest
 import me.kyleclemens.khttp.structures.cookie.Cookie
 import me.kyleclemens.khttp.structures.cookie.CookieJar
+import me.kyleclemens.khttp.structures.maps.CaseInsensitiveMap
 import me.kyleclemens.khttp.structures.parameters.Parameters
 import org.json.JSONArray
 import org.json.JSONObject
@@ -49,7 +50,7 @@ class KHttpGenericResponse(override val request: KHttpRequest) : KHttpResponse {
         get() = this.connection.responseCode
 
     override val headers: Map<String, String>
-        get() = this.connection.headerFields.mapValues { it.value.last() }
+        get() = CaseInsensitiveMap(this.connection.headerFields.mapValues { it.value.last() }.filterKeys { it != null })
 
     private val HttpURLConnection.realInputStream: InputStream
         get() {
