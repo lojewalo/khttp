@@ -47,5 +47,5 @@ fun put(route: String, headers: Map<String, String> = mapOf(), params: Map<Strin
 
 @JvmOverloads
 fun request(method: String, route: String, headers: Map<String, String> = mapOf(), params: Map<String, String> = mapOf(), data: Any? = null, json: Any? = null, auth: Authorization? = null, cookies: Map<String, String>? = null, timeout: Int = 30, allowRedirects: Boolean = true): KHttpResponse {
-    return KHttpGenericResponse(object : KHttpGenericRequest(method, route, params, headers, data, json, auth, cookies, timeout, allowRedirects) {})
+    return KHttpGenericResponse(KHttpGenericRequest(method, route, params, headers, data, json, auth, cookies, timeout, allowRedirects))
 }
