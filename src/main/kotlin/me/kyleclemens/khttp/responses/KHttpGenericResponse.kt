@@ -57,10 +57,10 @@ class KHttpGenericResponse(override val request: KHttpRequest) : KHttpResponse {
             } catch (ex: IOException) {
                 for (clazz in (this.javaClass.getSuperclasses() + this.javaClass)) {
                     try {
-                        clazz.getDeclaredField("inputStream").apply { this.isAccessible = true }.get(this) as InputStream
+                        return clazz.getDeclaredField("inputStream").apply { this.isAccessible = true }.get(this) as InputStream
                     } catch (ex: NoSuchFieldException) {
                         try {
-                            (clazz.getDeclaredField("delegate").apply { this.isAccessible = true }.get(this) as HttpURLConnection).realInputStream
+                            return (clazz.getDeclaredField("delegate").apply { this.isAccessible = true }.get(this) as HttpURLConnection).realInputStream
                         } catch(ex: NoSuchFieldException) {
                             // ignore
                         }
