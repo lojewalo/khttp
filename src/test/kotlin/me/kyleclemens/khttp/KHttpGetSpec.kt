@@ -7,11 +7,13 @@ package me.kyleclemens.khttp
 
 import me.kyleclemens.khttp.structures.authorization.BasicAuthorization
 import org.jetbrains.spek.api.shouldThrow
+import java.net.MalformedURLException
 import java.net.SocketTimeoutException
 import java.net.URLEncoder
 import java.util.zip.GZIPInputStream
 import java.util.zip.InflaterInputStream
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
@@ -251,6 +253,72 @@ class KHttpGetSpec : MavenSpek() {
                 val text = response.text
                 it("should contain \"teapot\"") {
                     assertTrue(text.contains("teapot"))
+                }
+            }
+        }
+        given("a get request for a UTF-8 document") {
+            val response = get("https://httpbin.org/encoding/utf8")
+            on("checking the encoding") {
+                val encoding = response.encoding
+                it("should be UTF-8") {
+                    assertEquals(Charsets.UTF_8, encoding)
+                }
+            }
+            on("reading the text") {
+                val text = response.text
+                it("should contain ∮") {
+                    assertTrue(text.contains("∮"))
+                }
+            }
+            on("changing the encoding") {
+                response.encoding = Charsets.ISO_8859_1
+                val encoding = response.encoding
+                it("should be ISO-8859-1") {
+                    assertEquals(Charsets.ISO_8859_1, encoding)
+                }
+            }
+            on("reading the text") {
+                val text = response.text
+                it("should not contain ∮") {
+                    assertFalse(text.contains("∮"))
+                }
+            }
+        }
+        given("an unsupported khttp schema") {
+            on("construction") {
+                it("should throw an IllegalArgumentException") {
+                    shouldThrow(IllegalArgumentException::class.java) {
+                        get("ftp://google.com")
+                    }
+                }
+            }
+        }
+        given("an unsupported Java schema") {
+            on("construction") {
+                it("should throw a MalformedURLException") {
+                    shouldThrow(MalformedURLException::class.java) {
+                        get("gopher://google.com")
+                    }
+                }
+            }
+        }
+        given("a request with a user agent set") {
+            val userAgent = "khttp/test"
+            val request = get("https://httpbin.org/user-agent", headers = mapOf("User-Agent" to userAgent))
+            on("accessing the json") {
+                val json = request.jsonObject
+                val responseUserAgent = json.getString("user-agent")
+                it("should have the same user agent") {
+                    assertEquals(userAgent, responseUserAgent)
+                }
+            }
+        }
+        given("a request with a port") {
+            val request = get("https://httpbin.org:443/get")
+            on("accessing the json") {
+                val json = request.jsonObject
+                it("should not be null") {
+                    assertNotNull(json)
                 }
             }
         }
