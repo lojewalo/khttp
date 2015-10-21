@@ -101,7 +101,7 @@ class KHttpGenericResponse(override val request: KHttpRequest) : KHttpResponse {
     override val url: String
         get() = this.connection.url.toString()
 
-    var _encoding: Charset? = null
+    private var _encoding: Charset? = null
         set(value) {
             field = value
         }
