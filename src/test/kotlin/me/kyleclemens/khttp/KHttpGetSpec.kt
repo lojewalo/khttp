@@ -322,5 +322,14 @@ class KHttpGetSpec : MavenSpek() {
                 }
             }
         }
+        given("a get request for a JSON array") {
+            val request = get("http://jsonplaceholder.typicode.com/users")
+            on("accessing the json") {
+                val json = request.jsonArray
+                it("should have ten items") {
+                    assertEquals(10, json.length())
+                }
+            }
+        }
     }
 }
