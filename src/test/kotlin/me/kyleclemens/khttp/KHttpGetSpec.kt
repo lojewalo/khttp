@@ -197,5 +197,20 @@ class KHttpGetSpec : MavenSpek() {
                 }
             }
         }
+        given("a get request that returns 418") {
+            val response = get("https://httpbin.org/status/418")
+            on("accessing the status code") {
+                val status = response.statusCode
+                it("should be 418") {
+                    assertEquals(418, status)
+                }
+            }
+            on("accessing the text") {
+                val text = response.text
+                it("should contain \"teapot\"") {
+                    assertTrue(text.contains("teapot"))
+                }
+            }
+        }
     }
 }
