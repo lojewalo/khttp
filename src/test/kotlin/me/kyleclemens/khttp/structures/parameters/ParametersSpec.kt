@@ -25,7 +25,7 @@ class ParametersSpec : MavenSpek() {
             val map = mapOf("test" to "value", "jest" to "lalue")
             val params = Parameters(map)
             on("inspecting the object") {
-                val size = params.size()
+                val size = params.size
                 val test = params["test"]
                 val jest = params["jest"]
                 val toString = params.toString()

@@ -16,7 +16,7 @@ class CookieJarSpec : MavenSpek() {
             val cookies = listOf(Cookie("test1", "value1"), Cookie("test2", "value2", mapOf("attr1" to "attrv1")))
             val cookieJar = CookieJar(*cookies.toTypedArray())
             on("inspecting the cookie jar") {
-                val size = cookieJar.size()
+                val size = cookieJar.size
                 it("should have two cookies") {
                     assertEquals(2, size)
                 }
@@ -33,7 +33,7 @@ class CookieJarSpec : MavenSpek() {
                     assertEquals("value1", cookie!!.value)
                 }
                 it("should have the no attributes") {
-                    assertEquals(0, cookie!!.attributes.size())
+                    assertEquals(0, cookie!!.attributes.size)
                 }
             }
             on("accessing another cookie by name") {
@@ -60,7 +60,7 @@ class CookieJarSpec : MavenSpek() {
             on("adding a cookie to the cookie jar") {
                 val cookie = Cookie("delicious", "cookie", mapOf("edible" to "damn straight"))
                 cookieJar.setCookie(cookie)
-                val size = cookieJar.size()
+                val size = cookieJar.size
                 val added = cookieJar.getCookie("delicious")
                 it("should have three cookies") {
                     assertEquals(3, size)
@@ -74,7 +74,7 @@ class CookieJarSpec : MavenSpek() {
             val cookies = mapOf("test1" to "value1", "test2" to "value2; attr1=attrv1")
             val cookieJar = CookieJar(cookies)
             on("inspecting the cookie jar") {
-                val size = cookieJar.size()
+                val size = cookieJar.size
                 it("should have two cookies") {
                     assertEquals(2, size)
                 }
@@ -91,7 +91,7 @@ class CookieJarSpec : MavenSpek() {
                     assertEquals("value1", cookie!!.value)
                 }
                 it("should have the no attributes") {
-                    assertEquals(0, cookie!!.attributes.size())
+                    assertEquals(0, cookie!!.attributes.size)
                 }
             }
             on("accessing another cookie by name") {
@@ -118,7 +118,7 @@ class CookieJarSpec : MavenSpek() {
             on("adding a cookie to the cookie jar") {
                 val cookie = Cookie("delicious", "cookie", mapOf("edible" to "damn straight"))
                 cookieJar.setCookie(cookie)
-                val size = cookieJar.size()
+                val size = cookieJar.size
                 val added = cookieJar.getCookie("delicious")
                 it("should have three cookies") {
                     assertEquals(3, size)

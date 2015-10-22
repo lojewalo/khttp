@@ -118,6 +118,6 @@ class KHttpGenericRequest(
         return URL(this.toURI().toASCIIString())
     }
 
-    private fun makeRoute(route: String) = URL(route + if (this.params.size() > 0) "?${Parameters(this.params)}" else "").toIDN().toString()
+    private fun makeRoute(route: String) = URL(route + if (this.params.size > 0) "?${Parameters(this.params)}" else "").toIDN().toString()
 
 }

@@ -123,7 +123,7 @@ class KHttpGetSpec : MavenSpek() {
             on("connection") {
                 val cookies = response.cookies
                 it("should set a cookie") {
-                    assertEquals(1, cookies.size())
+                    assertEquals(1, cookies.size)
                 }
                 val cookie = cookies.getCookie(cookieName)
                 val text = cookies[cookieName]
@@ -149,7 +149,7 @@ class KHttpGetSpec : MavenSpek() {
             on("connection") {
                 val cookies = response.cookies
                 it("should set a cookie") {
-                    assertEquals(1, cookies.size())
+                    assertEquals(1, cookies.size)
                 }
                 val cookie = cookies.getCookie(cookieName)
                 val text = cookies[cookieName]
@@ -177,7 +177,7 @@ class KHttpGetSpec : MavenSpek() {
             on("connection") {
                 val cookies = response.cookies
                 it("should set two cookies") {
-                    assertEquals(2, cookies.size())
+                    assertEquals(2, cookies.size)
                 }
                 val cookie = cookies.getCookie(cookieNameOne)
                 val text = cookies[cookieNameOne]

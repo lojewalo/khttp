@@ -7,14 +7,12 @@ package me.kyleclemens.khttp.structures.maps
 
 class CaseInsensitiveMap<V>(private val map: Map<String, V>) : Map<String, V> by map {
 
-    override fun containsKey(key: Any?): Boolean {
-        if (key == null) return this.map.containsKey(null)
-        return this.map.keySet().any { it.equals(key.toString().toLowerCase(), ignoreCase = true) }
+    override fun containsKey(key: String): Boolean {
+        return this.map.keys.any { it.equals(key.toLowerCase(), ignoreCase = true) }
     }
 
-    override fun get(key: Any?): V? {
-        if (key == null) return this.map.get(key)
-        return this.map.filter { it.key.equals(key.toString().toLowerCase(), ignoreCase = true) }.map { it.value }.firstOrNull()
+    override fun get(key: String): V? {
+        return this.map.filter { it.key.equals(key.toLowerCase(), ignoreCase = true) }.map { it.value }.firstOrNull()
     }
 
     override fun toString(): String {

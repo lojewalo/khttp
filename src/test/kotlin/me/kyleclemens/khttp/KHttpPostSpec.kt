@@ -51,10 +51,10 @@ class KHttpPostSpec : MavenSpek() {
                 val returnedJSON = json.getJSONObject("json")
                 val returnedBooks = returnedJSON.getJSONArray("books")
                 it("should be the same length") {
-                    assertEquals(jsonMap.size(), returnedJSON.length())
+                    assertEquals(jsonMap.size, returnedJSON.length())
                 }
                 it("should have the same book length") {
-                    assertEquals(jsonMap.get("books")!!.size(), returnedBooks.length())
+                    assertEquals(jsonMap.get("books")!!.size, returnedBooks.length())
                 }
                 val firstBook = jsonMap.get("books")!!.get(0)
                 val firstReturnedBook = returnedBooks.getJSONObject(0)
@@ -73,7 +73,7 @@ class KHttpPostSpec : MavenSpek() {
                 val json = request.jsonObject
                 val returnedJSON = json.getJSONArray("json")
                 it("should be equal") {
-                    assertEquals(jsonArray.string, String(returnedJSON.mapIndexed { i, any -> returnedJSON.getString(i).charAt(0) }.toCharArray()))
+                    assertEquals(jsonArray.string, String(returnedJSON.mapIndexed { i, any -> returnedJSON.getString(i)[0] }.toCharArray()))
                 }
             }
         }

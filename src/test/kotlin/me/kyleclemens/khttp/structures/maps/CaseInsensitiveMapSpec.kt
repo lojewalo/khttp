@@ -42,20 +42,6 @@ class CaseInsensitiveMapSpec : MavenSpek() {
                     assertTrue(upper == lower)
                 }
             }
-            on("accessing a null mapping") {
-                val backed = backingMap[null]
-                val insensitive = caseInsensitiveMap[null]
-                it("should equal the backed value") {
-                    assertEquals(backed, insensitive)
-                }
-            }
-            on("checking for a null mapping") {
-                val backed = backingMap.containsKey(null)
-                val insensitive = caseInsensitiveMap.containsKey(null)
-                it("should equal the backed value") {
-                    assertEquals(backed, insensitive)
-                }
-            }
             on("toString") {
                 val backing = backingMap.toString()
                 val insensitive = caseInsensitiveMap.toString()

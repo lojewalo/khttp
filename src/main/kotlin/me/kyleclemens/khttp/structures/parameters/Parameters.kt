@@ -12,10 +12,10 @@ class Parameters(vararg val parameters: Pair<String, String>) : Map<String, Stri
     constructor(parameters: Map<String, String>) : this(*parameters.toList().toTypedArray())
 
     override fun toString(): String {
-        if (this.size() < 1) return ""
+        if (this.size < 1) return ""
         val builder = StringBuilder()
         for ((key, value) in this) {
-            if (builder.length() > 0) builder.append("&")
+            if (builder.length > 0) builder.append("&")
             builder.append(key).append("=").append(URLEncoder.encode(value, "UTF-8"))
         }
         return builder.toString()

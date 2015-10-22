@@ -141,12 +141,12 @@
         <dependency>
             <groupId>org.jetbrains.spek</groupId>
             <artifactId>spek</artifactId>
-            <version>0.1.178</version>
+            <version>0.1.180</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
     <properties>
-        <kotlin.version>0.14.451</kotlin.version>
+        <kotlin.version>1.0.0-beta-1038</kotlin.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 </project>

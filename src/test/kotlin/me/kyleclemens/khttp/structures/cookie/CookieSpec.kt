@@ -37,7 +37,7 @@ class CookieSpec : MavenSpek() {
             on("accessing the attributes") {
                 val attributes = cookie.attributes
                 it("should have one") {
-                    assertEquals(1, attributes.size())
+                    assertEquals(1, attributes.size)
                 }
                 it("should have a Path key") {
                     assertTrue("Path" in attributes)

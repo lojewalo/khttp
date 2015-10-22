@@ -10,12 +10,12 @@ data class Cookie(val key: String, val value: Any, val attributes: Map<String, A
     companion object {
         private fun String.toCookie(): Cookie {
             val split = this.split("=", limit = 2)
-            check(split.size() == 2, { -> "\"$this\" is not a cookie." })
+            check(split.size == 2) { "\"$this\" is not a cookie." }
             val key = split[0].trim()
             val valueSplit = split[1].split(";")
             val value = valueSplit[0].trim()
-            val attributes = if (valueSplit.size() < 2) mapOf() else {
-                valueSplit.subList(1, valueSplit.size()).toMap({ it.split("=")[0].trim() }, { it.split("=")[1].trim() })
+            val attributes = if (valueSplit.size < 2) mapOf() else {
+                valueSplit.subList(1, valueSplit.size).toMap({ it.split("=")[0].trim() }, { it.split("=")[1].trim() })
             }
             return Cookie(key, value, attributes)
         }
@@ -28,9 +28,9 @@ data class Cookie(val key: String, val value: Any, val attributes: Map<String, A
 
     val valueWithAttributes: String
         get() {
-            if (this.attributes.size() < 1) {
+            if (this.attributes.size < 1) {
                 return this.value.toString()
             }
-            return this.value.toString() + "; " + this.attributes.asSequence().joinToString { "${it.getKey()}=${it.getValue()}" }
+            return this.value.toString() + "; " + this.attributes.asSequence().joinToString { "${it.key}=${it.value}" }
         }
 }

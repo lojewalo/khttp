@@ -50,7 +50,7 @@ class KHttpGenericResponse(override val request: KHttpRequest) : KHttpResponse {
         get() = this.connection.responseCode
 
     override val headers: Map<String, String>
-        get() = CaseInsensitiveMap(this.connection.headerFields.mapValues { it.value.join(", ") }.filterKeys { it != null })
+        get() = CaseInsensitiveMap(this.connection.headerFields.mapValues { it.value.joinToString(", ") }.filterKeys { it != null })
 
     private val HttpURLConnection.realInputStream: InputStream
         get() {
@@ -113,7 +113,7 @@ class KHttpGenericResponse(override val request: KHttpRequest) : KHttpResponse {
                 return this._encoding ?: throw IllegalStateException("Set to null by another thread")
             }
             this.headers["Content-Type"]?.let {
-                val charset = it.split(";").map { it.split("=") }.filter { it[0].trim().toLowerCase() == "charset" }.filter { it.size() == 2 }.map { it[1] }.firstOrNull()
+                val charset = it.split(";").map { it.split("=") }.filter { it[0].trim().toLowerCase() == "charset" }.filter { it.size == 2 }.map { it[1] }.firstOrNull()
                 return Charset.forName(charset?.toUpperCase() ?: Charsets.UTF_8.name())
             }
             return Charsets.UTF_8
