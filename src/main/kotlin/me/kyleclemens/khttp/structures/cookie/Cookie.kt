@@ -24,7 +24,7 @@ data class Cookie(val key: String, val value: Any, val attributes: Map<String, A
     constructor(string: String) : this(string.toCookie())
 
     // TODO: This seems dumb. There must be a better way.
-    constructor(cookie: Cookie) : this(cookie.key, cookie.value, cookie.attributes)
+    internal constructor(cookie: Cookie) : this(cookie.key, cookie.value, cookie.attributes)
 
     val valueWithAttributes: String
         get() {
