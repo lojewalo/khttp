@@ -233,4 +233,8 @@ class KHttpGenericResponse internal constructor(override val request: KHttpReque
         return list
     }
 
+    override fun toString(): String {
+        return "<Response [${this.statusCode}]>"
+    }
+
 }
