@@ -5,7 +5,7 @@
  */
 package me.kyleclemens.khttp.structures.cookie
 
-data class Cookie(val key: String, val value: Any, val attributes: Map<String, Any> = mapOf()) {
+data class Cookie(val key: String, val value: Any, val attributes: Map<String, Any?> = mapOf()) {
 
     companion object {
         private fun String.toCookie(): Cookie {
@@ -15,7 +15,7 @@ data class Cookie(val key: String, val value: Any, val attributes: Map<String, A
             val valueSplit = split[1].split(";")
             val value = valueSplit[0].trim()
             val attributes = if (valueSplit.size < 2) mapOf() else {
-                valueSplit.subList(1, valueSplit.size).toMap({ it.split("=")[0].trim() }, { it.split("=")[1].trim() })
+                valueSplit.subList(1, valueSplit.size).toMap({ it.split("=")[0].trim() }, { it.split("=").getOrNull(1)?.trim() })
             }
             return Cookie(key, value, attributes)
         }
@@ -31,6 +31,6 @@ data class Cookie(val key: String, val value: Any, val attributes: Map<String, A
             if (this.attributes.size < 1) {
                 return this.value.toString()
             }
-            return this.value.toString() + "; " + this.attributes.asSequence().joinToString { "${it.key}=${it.value}" }
+            return this.value.toString() + "; " + this.attributes.asSequence().joinToString { if (it.value != null) "${it.key}=${it.value}" else "${it.key}" }
         }
 }
