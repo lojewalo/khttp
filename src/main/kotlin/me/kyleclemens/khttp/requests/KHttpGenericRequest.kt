@@ -15,7 +15,7 @@ import java.net.IDN
 import java.net.URI
 import java.net.URL
 
-class KHttpGenericRequest(
+class KHttpGenericRequest internal constructor(
     override val method: String,
     url: String,
     override val params: Map<String, String>,

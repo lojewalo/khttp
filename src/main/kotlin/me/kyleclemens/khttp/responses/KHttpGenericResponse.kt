@@ -21,7 +21,7 @@ import java.nio.charset.Charset
 import java.util.zip.GZIPInputStream
 import java.util.zip.InflaterInputStream
 
-class KHttpGenericResponse(override val request: KHttpRequest) : KHttpResponse {
+class KHttpGenericResponse internal constructor(override val request: KHttpRequest) : KHttpResponse {
 
     private fun URL.openRedirectingConnection(receiver: HttpURLConnection.() -> Unit): HttpURLConnection {
         val connection = (this.openConnection() as HttpURLConnection).apply {
