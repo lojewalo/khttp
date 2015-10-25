@@ -107,11 +107,10 @@ class KHttpGetSpec : MavenSpek() {
             }
         }
         given("a get request that takes ten seconds to complete") {
-            val response = get("http://httpbin.org/delay/10", timeout = 1.0)
-            on("accessing anything") {
+            on("request") {
                 it("should throw a timeout exception") {
                     shouldThrow(SocketTimeoutException::class.java) {
-                        response.raw
+                        get("http://httpbin.org/delay/10", timeout = 1.0)
                     }
                 }
             }
@@ -120,7 +119,7 @@ class KHttpGetSpec : MavenSpek() {
             val cookieName = "test"
             val cookieValue = "quite"
             val response = get("http://httpbin.org/cookies/set?$cookieName=$cookieValue", allowRedirects = false)
-            on("connection") {
+            on("inspecting the cookies") {
                 val cookies = response.cookies
                 it("should set a cookie") {
                     assertEquals(1, cookies.size)
@@ -146,7 +145,7 @@ class KHttpGetSpec : MavenSpek() {
             val cookieName = "test"
             val cookieValue = "quite"
             val response = get("http://httpbin.org/cookies/set?$cookieName=$cookieValue")
-            on("connection") {
+            on("inspecting the cookies") {
                 val cookies = response.cookies
                 it("should set a cookie") {
                     assertEquals(1, cookies.size)
@@ -174,7 +173,7 @@ class KHttpGetSpec : MavenSpek() {
             val cookieNameTwo = "derp"
             val cookieValueTwo = "herp"
             val response = get("http://httpbin.org/cookies/set?$cookieNameOne=$cookieValueOne&$cookieNameTwo=$cookieValueTwo")
-            on("connection") {
+            on("inspecting the cookies") {
                 val cookies = response.cookies
                 it("should set two cookies") {
                     assertEquals(2, cookies.size)

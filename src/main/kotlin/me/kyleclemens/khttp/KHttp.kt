@@ -13,41 +13,46 @@ import me.kyleclemens.khttp.responses.KHttpResponse
 import me.kyleclemens.khttp.structures.authorization.Authorization
 
 @JvmOverloads
-fun delete(route: String, headers: Map<String, String> = mapOf(), params: Map<String, String> = mapOf(), data: Any? = null, json: Any? = null, auth: Authorization? = null, cookies: Map<String, String>? = null, timeout: Double = 30.0, allowRedirects: Boolean = true): KHttpResponse {
-    return request("DELETE", route, headers, params, data, json, auth, cookies, timeout, allowRedirects)
+fun delete(url: String, headers: Map<String, String> = mapOf(), params: Map<String, String> = mapOf(), data: Any? = null, json: Any? = null, auth: Authorization? = null, cookies: Map<String, String>? = null, timeout: Double = 30.0, allowRedirects: Boolean = true): KHttpResponse {
+    return request("DELETE", url, headers, params, data, json, auth, cookies, timeout, allowRedirects)
 }
 
 @JvmOverloads
-fun get(route: String, headers: Map<String, String> = mapOf(), params: Map<String, String> = mapOf(), data: Any? = null, json: Any? = null, auth: Authorization? = null, cookies: Map<String, String>? = null, timeout: Double = 30.0, allowRedirects: Boolean = true): KHttpResponse {
-    return request("GET", route, headers, params, data, json, auth, cookies, timeout, allowRedirects)
+fun get(url: String, headers: Map<String, String> = mapOf(), params: Map<String, String> = mapOf(), data: Any? = null, json: Any? = null, auth: Authorization? = null, cookies: Map<String, String>? = null, timeout: Double = 30.0, allowRedirects: Boolean = true): KHttpResponse {
+    return request("GET", url, headers, params, data, json, auth, cookies, timeout, allowRedirects)
 }
 
 @JvmOverloads
-fun head(route: String, headers: Map<String, String> = mapOf(), params: Map<String, String> = mapOf(), data: Any? = null, json: Any? = null, auth: Authorization? = null, cookies: Map<String, String>? = null, timeout: Double = 30.0, allowRedirects: Boolean = true): KHttpResponse {
-    return request("HEAD", route, headers, params, data, json, auth, cookies, timeout, allowRedirects)
+fun head(url: String, headers: Map<String, String> = mapOf(), params: Map<String, String> = mapOf(), data: Any? = null, json: Any? = null, auth: Authorization? = null, cookies: Map<String, String>? = null, timeout: Double = 30.0, allowRedirects: Boolean = true): KHttpResponse {
+    return request("HEAD", url, headers, params, data, json, auth, cookies, timeout, allowRedirects)
 }
 
 @JvmOverloads
-fun options(route: String, headers: Map<String, String> = mapOf(), params: Map<String, String> = mapOf(), data: Any? = null, json: Any? = null, auth: Authorization? = null, cookies: Map<String, String>? = null, timeout: Double = 30.0, allowRedirects: Boolean = true): KHttpResponse {
-    return request("OPTIONS", route, headers, params, data, json, auth, cookies, timeout, allowRedirects)
+fun options(url: String, headers: Map<String, String> = mapOf(), params: Map<String, String> = mapOf(), data: Any? = null, json: Any? = null, auth: Authorization? = null, cookies: Map<String, String>? = null, timeout: Double = 30.0, allowRedirects: Boolean = true): KHttpResponse {
+    return request("OPTIONS", url, headers, params, data, json, auth, cookies, timeout, allowRedirects)
 }
 
 @JvmOverloads
-fun patch(route: String, headers: Map<String, String> = mapOf(), params: Map<String, String> = mapOf(), data: Any? = null, json: Any? = null, auth: Authorization? = null, cookies: Map<String, String>? = null, timeout: Double = 30.0, allowRedirects: Boolean = true): KHttpResponse {
-    return request("PATCH", route, headers, params, data, json, auth, cookies, timeout, allowRedirects)
+fun patch(url: String, headers: Map<String, String> = mapOf(), params: Map<String, String> = mapOf(), data: Any? = null, json: Any? = null, auth: Authorization? = null, cookies: Map<String, String>? = null, timeout: Double = 30.0, allowRedirects: Boolean = true): KHttpResponse {
+    return request("PATCH", url, headers, params, data, json, auth, cookies, timeout, allowRedirects)
 }
 
 @JvmOverloads
-fun post(route: String, headers: Map<String, String> = mapOf(), params: Map<String, String> = mapOf(), data: Any? = null, json: Any? = null, auth: Authorization? = null, cookies: Map<String, String>? = null, timeout: Double = 30.0, allowRedirects: Boolean = true): KHttpResponse {
-    return request("POST", route, headers, params, data, json, auth, cookies, timeout, allowRedirects)
+fun post(url: String, headers: Map<String, String> = mapOf(), params: Map<String, String> = mapOf(), data: Any? = null, json: Any? = null, auth: Authorization? = null, cookies: Map<String, String>? = null, timeout: Double = 30.0, allowRedirects: Boolean = true): KHttpResponse {
+    return request("POST", url, headers, params, data, json, auth, cookies, timeout, allowRedirects)
 }
 
 @JvmOverloads
-fun put(route: String, headers: Map<String, String> = mapOf(), params: Map<String, String> = mapOf(), data: Any? = null, json: Any? = null, auth: Authorization? = null, cookies: Map<String, String>? = null, timeout: Double = 30.0, allowRedirects: Boolean = true): KHttpResponse {
-    return request("PUT", route, headers, params, data, json, auth, cookies, timeout, allowRedirects)
+fun put(url: String, headers: Map<String, String> = mapOf(), params: Map<String, String> = mapOf(), data: Any? = null, json: Any? = null, auth: Authorization? = null, cookies: Map<String, String>? = null, timeout: Double = 30.0, allowRedirects: Boolean = true): KHttpResponse {
+    return request("PUT", url, headers, params, data, json, auth, cookies, timeout, allowRedirects)
 }
 
 @JvmOverloads
-fun request(method: String, route: String, headers: Map<String, String> = mapOf(), params: Map<String, String> = mapOf(), data: Any? = null, json: Any? = null, auth: Authorization? = null, cookies: Map<String, String>? = null, timeout: Double = 30.0, allowRedirects: Boolean = true): KHttpResponse {
-    return KHttpGenericResponse(KHttpGenericRequest(method, route, params, headers, data, json, auth, cookies, timeout, allowRedirects))
+fun request(method: String, url: String, headers: Map<String, String> = mapOf(), params: Map<String, String> = mapOf(), data: Any? = null, json: Any? = null, auth: Authorization? = null, cookies: Map<String, String>? = null, timeout: Double = 30.0, allowRedirects: Boolean = true): KHttpResponse {
+    return KHttpGenericResponse(KHttpGenericRequest(method, url, params, headers, data, json, auth, cookies, timeout, allowRedirects)).run {
+        this.connection // connect
+        this._history.last().apply {
+            this@run._history.remove(this)
+        }
+    }
 }

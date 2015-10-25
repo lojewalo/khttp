@@ -61,6 +61,11 @@ interface KHttpResponse {
      */
     var encoding: Charset
     /**
+     * A list of KHttpResponse objects from the history of the request. Any redirect responses will end up here. The
+     * list is sorted from the oldest to the most recent request.
+     */
+    val history: List<KHttpResponse>
+    /**
      * The connection used for the request.
      */
     val connection: HttpURLConnection
