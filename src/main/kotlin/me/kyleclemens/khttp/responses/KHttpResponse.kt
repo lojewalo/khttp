@@ -10,6 +10,7 @@ import me.kyleclemens.khttp.structures.cookie.CookieJar
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.InputStream
+import java.net.HttpURLConnection
 import java.nio.charset.Charset
 
 interface KHttpResponse {
@@ -59,5 +60,9 @@ interface KHttpResponse {
      * uses UTF-8.
      */
     var encoding: Charset
+    /**
+     * The connection used for the request.
+     */
+    val connection: HttpURLConnection
 
 }
