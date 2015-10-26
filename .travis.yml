@@ -4,7 +4,5 @@ jdk:
   - oraclejdk8
 notifications:
   email: false
-before_install:
-  - pip install --user codecov
 after_success:
-  - codecov
+  - bash <(curl -s https://codecov.io/bash) -d
