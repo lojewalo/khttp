@@ -10,7 +10,7 @@ data class Cookie(val key: String, val value: Any, val attributes: Map<String, A
     companion object {
         private fun String.toCookie(): Cookie {
             val split = this.split("=", limit = 2)
-            check(split.size == 2) { "\"$this\" is not a cookie." }
+            require(split.size == 2) { "\"$this\" is not a cookie." }
             val key = split[0].trim()
             val valueSplit = split[1].split(";")
             val value = valueSplit[0].trim()
