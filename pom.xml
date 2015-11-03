@@ -146,7 +146,7 @@
         </dependency>
     </dependencies>
     <properties>
-        <kotlin.version>1.0.0-beta-1038</kotlin.version>
+        <kotlin.version>1.0.0-beta-1103</kotlin.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 </project>
