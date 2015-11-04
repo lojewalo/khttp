@@ -49,7 +49,7 @@ class GenericRequest internal constructor(
     override val url: String
     override val headers: Map<String, String>
     override val data: Any?
-    override val allowRedirects = allowRedirects ?: this.method != "HEAD"
+    override val allowRedirects = allowRedirects ?: (this.method != "HEAD")
 
     init {
         this.url = this.makeRoute(url)
