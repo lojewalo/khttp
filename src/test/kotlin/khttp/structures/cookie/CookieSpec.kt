@@ -50,7 +50,7 @@ class CookieSpec : MavenSpek() {
         given("an invalid cookie as a string") {
             on("construction") {
                 it("should throw an IllegalStateException") {
-                    shouldThrow(IllegalStateException::class.java) {
+                    shouldThrow(IllegalArgumentException::class.java) {
                         Cookie("wow")
                     }
                 }
