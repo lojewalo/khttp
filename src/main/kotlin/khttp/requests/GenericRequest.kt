@@ -25,7 +25,7 @@ class GenericRequest internal constructor(
     override val auth: Authorization?,
     override val cookies: Map<String, String>?,
     override val timeout: Double,
-    override val allowRedirects: Boolean
+    allowRedirects: Boolean?
 ) : Request {
 
     companion object {
@@ -49,6 +49,7 @@ class GenericRequest internal constructor(
     override val url: String
     override val headers: Map<String, String>
     override val data: Any?
+    override val allowRedirects = allowRedirects ?: this.method != "HEAD"
 
     init {
         this.url = this.makeRoute(url)

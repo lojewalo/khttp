@@ -10,9 +10,27 @@ import kotlin.test.assertEquals
 class KHttpHeadSpec : MavenSpek() {
     override fun test() {
         given("a head request") {
-            val request = head("https://httpbin.org/get")
+            val response = head("https://httpbin.org/get")
             on("accessing the status code") {
-                val status = request.statusCode
+                val status = response.statusCode
+                it("should be 200") {
+                    assertEquals(200, status)
+                }
+            }
+        }
+        given("a head request to a redirecting URL") {
+            val response = head("https://httpbin.org/redirect/2")
+            on("accessing the status code") {
+                val status = response.statusCode
+                it("should be 302") {
+                    assertEquals(302, status)
+                }
+            }
+        }
+        given("a head request to a redirecting URL, specifically allowing redirects") {
+            val response = head("https://httpbin.org/redirect/2", allowRedirects = true)
+            on("accessing the status code") {
+                val status = response.statusCode
                 it("should be 200") {
                     assertEquals(200, status)
                 }
