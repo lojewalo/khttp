@@ -15,7 +15,7 @@ import java.net.IDN
 import java.net.URI
 import java.net.URL
 
-class KHttpGenericRequest internal constructor(
+class GenericRequest internal constructor(
     override val method: String,
     url: String,
     override val params: Map<String, String>,
@@ -26,7 +26,7 @@ class KHttpGenericRequest internal constructor(
     override val cookies: Map<String, String>?,
     override val timeout: Double,
     override val allowRedirects: Boolean
-) : KHttpRequest {
+) : Request {
 
     companion object {
         val DEFAULT_HEADERS = mapOf(
@@ -60,19 +60,19 @@ class KHttpGenericRequest internal constructor(
         if (json == null) {
             this.data = data
             if (data != null) {
-                mutableHeaders += KHttpGenericRequest.DEFAULT_DATA_HEADERS
+                mutableHeaders += GenericRequest.DEFAULT_DATA_HEADERS
             }
         } else {
             this.data = this.coerceToJSON(json)
-            mutableHeaders += KHttpGenericRequest.DEFAULT_JSON_HEADERS
+            mutableHeaders += GenericRequest.DEFAULT_JSON_HEADERS
         }
-        for ((key, value) in KHttpGenericRequest.DEFAULT_HEADERS) {
+        for ((key, value) in GenericRequest.DEFAULT_HEADERS) {
             if (key !in mutableHeaders) {
                 mutableHeaders[key] = value
             }
         }
         if (this.data is Map<*, *>) {
-            mutableHeaders += KHttpGenericRequest.DEFAULT_FORM_HEADERS
+            mutableHeaders += GenericRequest.DEFAULT_FORM_HEADERS
         }
         val auth = this.auth
         if (auth != null) {

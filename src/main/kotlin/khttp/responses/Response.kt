@@ -5,7 +5,7 @@
  */
 package khttp.responses
 
-import khttp.requests.KHttpRequest
+import khttp.requests.Request
 import khttp.structures.cookie.CookieJar
 import org.json.JSONArray
 import org.json.JSONObject
@@ -13,12 +13,12 @@ import java.io.InputStream
 import java.net.HttpURLConnection
 import java.nio.charset.Charset
 
-interface KHttpResponse {
+interface Response {
 
     /**
      * The request that generated this response.
      */
-    val request: KHttpRequest
+    val request: Request
     /**
      * The status code from the request.
      */
@@ -64,7 +64,7 @@ interface KHttpResponse {
      * A list of KHttpResponse objects from the history of the request. Any redirect responses will end up here. The
      * list is sorted from the oldest to the most recent request.
      */
-    val history: List<KHttpResponse>
+    val history: List<Response>
     /**
      * The connection used for the request.
      */

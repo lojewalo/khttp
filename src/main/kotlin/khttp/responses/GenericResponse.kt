@@ -5,8 +5,8 @@
  */
 package khttp.responses
 
-import khttp.requests.KHttpGenericRequest
-import khttp.requests.KHttpRequest
+import khttp.requests.GenericRequest
+import khttp.requests.Request
 import khttp.structures.cookie.Cookie
 import khttp.structures.cookie.CookieJar
 import khttp.structures.maps.CaseInsensitiveMap
@@ -23,12 +23,12 @@ import java.util.Collections
 import java.util.zip.GZIPInputStream
 import java.util.zip.InflaterInputStream
 
-class KHttpGenericResponse internal constructor(override val request: KHttpRequest) : KHttpResponse {
+class GenericResponse internal constructor(override val request: Request) : Response {
 
     private val HttpURLConnection.cookieJar: CookieJar
         get() = CookieJar(*this.headerFields.filter { it.key == "Set-Cookie" }.flatMap { it.value }.map { Cookie(it) }.toTypedArray())
 
-    private fun URL.openRedirectingConnection(first: KHttpResponse, receiver: HttpURLConnection.() -> Unit): HttpURLConnection {
+    private fun URL.openRedirectingConnection(first: Response, receiver: HttpURLConnection.() -> Unit): HttpURLConnection {
         val connection = (this.openConnection() as HttpURLConnection).apply {
             this.instanceFollowRedirects = false
             this.receiver()
@@ -37,8 +37,8 @@ class KHttpGenericResponse internal constructor(override val request: KHttpReque
         if (first.request.allowRedirects && connection.responseCode in 301..303) {
             val cookies = connection.cookieJar
             val req = with(first.request) {
-                KHttpGenericResponse(
-                    KHttpGenericRequest(
+                GenericResponse(
+                    GenericRequest(
                         method = this.method,
                         url = this@openRedirectingConnection.toURI().resolve(connection.getHeaderField("Location")).toASCIIString(),
                         headers = this.headers,
@@ -54,7 +54,7 @@ class KHttpGenericResponse internal constructor(override val request: KHttpReque
             }
             req._cookies.putAll(cookies)
             req._history.addAll(first.history)
-            (first as KHttpGenericResponse)._history.add(req)
+            (first as GenericResponse)._history.add(req)
             if (req._connection == null) {
                 req.connection // Ensure connection
             }
@@ -62,8 +62,8 @@ class KHttpGenericResponse internal constructor(override val request: KHttpReque
         return connection
     }
 
-    internal var _history: MutableList<KHttpResponse> = arrayListOf()
-    override val history: List<KHttpResponse>
+    internal var _history: MutableList<Response> = arrayListOf()
+    override val history: List<Response>
         get() = Collections.unmodifiableList(this._history)
 
     private var _connection: HttpURLConnection? = null
@@ -71,7 +71,7 @@ class KHttpGenericResponse internal constructor(override val request: KHttpReque
         get() {
             if (this._connection == null) {
                 this._connection = URL(this.request.url).openRedirectingConnection(this._history.firstOrNull() ?: this.apply { this._history.add(this) }) {
-                    (this@KHttpGenericResponse.defaultStartInitializers + this@KHttpGenericResponse.initializers + this@KHttpGenericResponse.defaultEndInitializers).forEach { it(this) }
+                    (this@GenericResponse.defaultStartInitializers + this@GenericResponse.initializers + this@GenericResponse.defaultEndInitializers).forEach { it(this) }
                 }
             }
             return this._connection ?: throw IllegalStateException("Set to null by another thread")
@@ -90,7 +90,7 @@ class KHttpGenericResponse internal constructor(override val request: KHttpReque
             } catch (ex: IOException) {
                 this.errorStream
             }
-            return when (this@KHttpGenericResponse.headers["Content-Encoding"]?.toLowerCase()) {
+            return when (this@GenericResponse.headers["Content-Encoding"]?.toLowerCase()) {
                 "gzip" -> GZIPInputStream(stream)
                 "deflate" -> InflaterInputStream(stream)
                 else -> stream
@@ -159,7 +159,7 @@ class KHttpGenericResponse internal constructor(override val request: KHttpReque
             connection.forceMethod(this.request.method)
         },
         { connection ->
-            for ((key, value) in this@KHttpGenericResponse.request.headers) {
+            for ((key, value) in this@GenericResponse.request.headers) {
                 connection.setRequestProperty(key, value)
             }
         },
@@ -183,7 +183,7 @@ class KHttpGenericResponse internal constructor(override val request: KHttpReque
     )
     private val defaultEndInitializers: MutableList<(HttpURLConnection) -> Unit> = arrayListOf(
         { connection ->
-            val requestData = this@KHttpGenericResponse.request.data
+            val requestData = this@GenericResponse.request.data
             if (requestData != null) {
                 @Suppress("IMPLICIT_CAST_TO_UNIT_OR_ANY") // Shouldn't warn, since I'm explicitly casting
                 val data: Any = if (requestData is Map<*, *> && requestData !is Parameters) {

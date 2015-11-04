@@ -7,7 +7,7 @@ package khttp.requests
 
 import khttp.structures.authorization.Authorization
 
-interface KHttpRequest {
+interface Request {
 
     /**
      * The HTTP method for this request.
