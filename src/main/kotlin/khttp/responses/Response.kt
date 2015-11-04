@@ -36,15 +36,19 @@ interface Response {
      */
     val content: ByteArray
     /**
-     * The response as a UTF-8-encoded String.
+     * The response as a String.
      */
     val text: String
     /**
-     * The response as a UTF-8-encoded JSON object.
+     * The response as a JSON object.
+     *
+     * @throws[org.json.JSONException] If the response is not a valid JSON object
      */
     val jsonObject: JSONObject
     /**
-     * The response as a UTF-8-encode JSON array.
+     * The response as a JSON array.
+     *
+     * @throws[org.json.JSONException] If the response is not a valid JSON array
      */
     val jsonArray: JSONArray
     /**
