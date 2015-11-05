@@ -7,6 +7,7 @@ package khttp
 
 import khttp.structures.authorization.BasicAuthorization
 import org.jetbrains.spek.api.shouldThrow
+import org.json.JSONObject
 import java.net.MalformedURLException
 import java.net.SocketTimeoutException
 import java.net.URLEncoder
@@ -345,6 +346,35 @@ class KHttpGetSpec : MavenSpek() {
                 val available = response.raw.available()
                 it("should be greater than 0") {
                     assertTrue(available > 0)
+                }
+            }
+        }
+        given("a streaming get request with a streaming line response") {
+            val response = get("http://httpbin.org/stream/4", stream = true)
+            on("iterating over the lines") {
+                val iterator = response.lineIterator()
+                var counter = 0
+                for (line in iterator) {
+                    val json = JSONObject(line.toString(response.encoding))
+                    assertEquals(counter++, json.getInt("id"))
+                }
+                it("should have iterated 4 times") {
+                    assertEquals(4, counter)
+                }
+            }
+        }
+        given("a streaming get request with a streaming byte response") {
+            val response = get("http://httpbin.org/stream-bytes/4?seed=1", stream = true)
+            on("iterating over the bytes") {
+                val iterator = response.contentIterator()
+                var counter = 0
+                val expected = byteArrayOf(0x22, 0xD8.toByte(), 0xC3.toByte(), 0x41)
+                for (byte in iterator) {
+                    assertEquals(1, byte.size)
+                    assertEquals(expected[counter++], byte[0])
+                }
+                it("should have iterated 4 times") {
+                    assertEquals(4, counter)
                 }
             }
         }
