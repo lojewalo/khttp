@@ -239,9 +239,19 @@ class GenericResponse internal constructor(override val request: Request) : Resp
         return object : Iterator<ByteArray> {
             val stream = if (this@GenericResponse.request.stream) this@GenericResponse.raw else this@GenericResponse.content.inputStream()
 
-            override fun next() = ByteArray(chunkSize).apply { stream.read(this) }
+            override fun next() = ByteArray(Math.min(chunkSize, stream.available())).apply { stream.read(this) }
 
-            override fun hasNext() = (this@GenericResponse.raw.available() > 0).apply { if (!this) stream.close() }
+            override fun hasNext(): Boolean {
+                return try {
+                    (this@GenericResponse.raw.available() > 0).apply {
+                        if (!this) {
+                            stream.close()
+                        }
+                    }
+                } catch(ex: IOException) {
+                    false
+                }
+            }
         }
     }
 
@@ -270,7 +280,7 @@ class GenericResponse internal constructor(override val request: Request) : Resp
                 return leftOver!!
             }
 
-            override fun hasNext() = byteArrays.hasNext()
+            override fun hasNext() = overflow.isNotEmpty() || byteArrays.hasNext()
 
         }
     }
