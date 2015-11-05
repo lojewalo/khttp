@@ -241,7 +241,7 @@ class GenericResponse internal constructor(override val request: Request) : Resp
 
             override fun next() = ByteArray(chunkSize).apply { stream.read(this) }
 
-            override fun hasNext() = this@GenericResponse.raw.available() > 0
+            override fun hasNext() = (this@GenericResponse.raw.available() > 0).apply { if (!this) stream.close() }
         }
     }
 
