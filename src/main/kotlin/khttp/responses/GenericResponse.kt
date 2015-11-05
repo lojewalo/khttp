@@ -25,10 +25,89 @@ import java.util.zip.InflaterInputStream
 
 class GenericResponse internal constructor(override val request: Request) : Response {
 
-    private val HttpURLConnection.cookieJar: CookieJar
-        get() = CookieJar(*this.headerFields.filter { it.key == "Set-Cookie" }.flatMap { it.value }.map { Cookie(it) }.toTypedArray())
+    internal companion object {
 
-    private fun URL.openRedirectingConnection(first: Response, receiver: HttpURLConnection.() -> Unit): HttpURLConnection {
+        internal val HttpURLConnection.cookieJar: CookieJar
+            get() = CookieJar(*this.headerFields.filter { it.key == "Set-Cookie" }.flatMap { it.value }.map { Cookie(it) }.toTypedArray())
+
+        internal fun <T> Class<T>.getSuperclasses(): List<Class<in T>> {
+            val list = arrayListOf<Class<in T>>()
+            var superclass = this.superclass
+            while (superclass != null) {
+                list.add(superclass)
+                superclass = superclass.superclass
+            }
+            return list
+        }
+
+        internal fun HttpURLConnection.forceMethod(method: String) {
+            try {
+                this.requestMethod = method
+            } catch (ex: ProtocolException) {
+                try {
+                    (this.javaClass.getDeclaredField("delegate").apply { this.isAccessible = true }.get(this) as HttpURLConnection?)?.forceMethod(method)
+                } catch (ex: NoSuchFieldException) {
+                    // ignore
+                }
+                (this.javaClass.getSuperclasses() + this.javaClass).forEach {
+                    try {
+                        it.getDeclaredField("method").apply { this.isAccessible = true }.set(this, method)
+                    } catch (ex: NoSuchFieldException) {
+                        // ignore
+                    }
+                }
+            }
+        }
+
+        internal val defaultStartInitializers: MutableList<(GenericResponse, HttpURLConnection) -> Unit> = arrayListOf(
+            { response, connection ->
+                connection.forceMethod(response.request.method)
+            },
+            { response, connection ->
+                for ((key, value) in response.request.headers) {
+                    connection.setRequestProperty(key, value)
+                }
+            },
+            { response, connection ->
+                val cookies = response.request.cookies ?: return@arrayListOf
+                // Get the cookies specified in the request and add the cookies from the response
+                val cookieJar = CookieJar(cookies + response._cookies)
+                // Set the merged cookies in the request
+                connection.setRequestProperty("Cookie", cookieJar.toString())
+            },
+            { response, connection ->
+                val timeout = (response.request.timeout * 1000.0).toInt()
+                connection.connectTimeout = timeout
+                connection.readTimeout = timeout
+            },
+            { response, connection ->
+                connection.instanceFollowRedirects = false
+            }
+        )
+        internal val defaultEndInitializers: MutableList<(GenericResponse, HttpURLConnection) -> Unit> = arrayListOf(
+            { response, connection ->
+                val requestData = response.request.data
+                if (requestData != null) {
+                    @Suppress("IMPLICIT_CAST_TO_UNIT_OR_ANY") // Shouldn't warn, since I'm explicitly casting
+                    val data: Any = if (requestData is Map<*, *> && requestData !is Parameters) {
+                        Parameters(requestData.mapKeys { it.key.toString() }.mapValues { it.value.toString() })
+                    } else {
+                        requestData
+                    }
+                    connection.doOutput = true
+                    connection.outputStream.writer().use {
+                        it.write(data.toString())
+                    }
+                }
+            },
+            { response, connection ->
+                // Add all the cookies from every response to our cookie jar
+                response._cookies.putAll(connection.cookieJar)
+            }
+        )
+    }
+
+    internal fun URL.openRedirectingConnection(first: Response, receiver: HttpURLConnection.() -> Unit): HttpURLConnection {
         val connection = (this.openConnection() as HttpURLConnection).apply {
             this.instanceFollowRedirects = false
             this.receiver()
@@ -71,7 +150,7 @@ class GenericResponse internal constructor(override val request: Request) : Resp
         get() {
             if (this._connection == null) {
                 this._connection = URL(this.request.url).openRedirectingConnection(this._history.firstOrNull() ?: this.apply { this._history.add(this) }) {
-                    (this@GenericResponse.defaultStartInitializers + this@GenericResponse.initializers + this@GenericResponse.defaultEndInitializers).forEach { it(this) }
+                    (GenericResponse.defaultStartInitializers + this@GenericResponse.initializers + GenericResponse.defaultEndInitializers).forEach { it(this@GenericResponse, this) }
                 }
             }
             return this._connection ?: throw IllegalStateException("Set to null by another thread")
@@ -154,83 +233,13 @@ class GenericResponse internal constructor(override val request: Request) : Resp
         }
 
     // Initializers
-    private val defaultStartInitializers: MutableList<(HttpURLConnection) -> Unit> = arrayListOf(
-        { connection ->
-            connection.forceMethod(this.request.method)
-        },
-        { connection ->
-            for ((key, value) in this@GenericResponse.request.headers) {
-                connection.setRequestProperty(key, value)
-            }
-        },
-        { connection ->
-            val cookies = this.request.cookies
-            if (cookies != null) {
-                // Get the cookies specified in the request and add the cookies from the response
-                val cookieJar = CookieJar(cookies + this._cookies)
-                // Set the merged cookies in the request
-                connection.setRequestProperty("Cookie", cookieJar.toString())
-            }
-        },
-        { connection ->
-            val timeout = (this.request.timeout * 1000.0).toInt()
-            connection.connectTimeout = timeout
-            connection.readTimeout = timeout
-        },
-        { connection ->
-            connection.instanceFollowRedirects = false
+    val initializers: MutableList<(GenericResponse, HttpURLConnection) -> Unit> = arrayListOf()
         }
-    )
-    private val defaultEndInitializers: MutableList<(HttpURLConnection) -> Unit> = arrayListOf(
-        { connection ->
-            val requestData = this@GenericResponse.request.data
-            if (requestData != null) {
-                @Suppress("IMPLICIT_CAST_TO_UNIT_OR_ANY") // Shouldn't warn, since I'm explicitly casting
-                val data: Any = if (requestData is Map<*, *> && requestData !is Parameters) {
-                    Parameters(requestData.mapKeys { it.key.toString() }.mapValues { it.value.toString() })
-                } else {
-                    requestData
-                }
-                connection.doOutput = true
-                connection.outputStream.writer().use {
-                    it.write(data.toString())
-                }
-            }
-        },
-        { connection ->
-            // Add all the cookies from every response to our cookie jar
-            this._cookies.putAll(connection.cookieJar)
-        }
-    )
-    val initializers: MutableList<(HttpURLConnection) -> Unit> = arrayListOf()
 
-    private fun HttpURLConnection.forceMethod(method: String) {
-        try {
-            this.requestMethod = method
-        } catch (ex: ProtocolException) {
-            try {
-                (this.javaClass.getDeclaredField("delegate").apply { this.isAccessible = true }.get(this) as HttpURLConnection?)?.forceMethod(method)
-            } catch (ex: NoSuchFieldException) {
-                // ignore
-            }
-            (this.javaClass.getSuperclasses() + this.javaClass).forEach {
-                try {
-                    it.getDeclaredField("method").apply { this.isAccessible = true }.set(this, method)
-                } catch (ex: NoSuchFieldException) {
-                    // ignore
                 }
             }
-        }
-    }
 
-    private fun <T> Class<T>.getSuperclasses(): List<Class<in T>> {
-        val list = arrayListOf<Class<in T>>()
-        var superclass = this.superclass
-        while (superclass != null) {
-            list.add(superclass)
-            superclass = superclass.superclass
         }
-        return list
     }
 
     override fun toString(): String {
