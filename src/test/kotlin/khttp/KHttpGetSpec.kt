@@ -330,5 +330,23 @@ class KHttpGetSpec : MavenSpek() {
                 }
             }
         }
+        given("a non-streaming get request") {
+            val response = get("https://httpbin.org/get")
+            on("checking the bytes available to be read") {
+                val available = response.raw.available()
+                it("should be 0") {
+                    assertEquals(0, available)
+                }
+            }
+        }
+        given("a streaming get request") {
+            val response = get("https://httpbin.org/get", stream = true)
+            on("checking the bytes available to be read") {
+                val available = response.raw.available()
+                it("should be greater than 0") {
+                    assertTrue(available > 0)
+                }
+            }
+        }
     }
 }

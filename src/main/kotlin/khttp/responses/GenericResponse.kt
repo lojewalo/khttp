@@ -22,6 +22,7 @@ import java.nio.charset.Charset
 import java.util.Collections
 import java.util.zip.GZIPInputStream
 import java.util.zip.InflaterInputStream
+import kotlin.text.Regex
 
 class GenericResponse internal constructor(override val request: Request) : Response {
 
@@ -127,16 +128,15 @@ class GenericResponse internal constructor(override val request: Request) : Resp
                         auth = this.auth,
                         cookies = cookies + (this.cookies ?: mapOf()),
                         timeout = this.timeout,
-                        allowRedirects = false
+                        allowRedirects = false,
+                        stream = this.stream
                     )
                 )
             }
             req._cookies.putAll(cookies)
             req._history.addAll(first.history)
             (first as GenericResponse)._history.add(req)
-            if (req._connection == null) {
-                req.connection // Ensure connection
-            }
+            req.init()
         }
         return connection
     }
@@ -234,16 +234,60 @@ class GenericResponse internal constructor(override val request: Request) : Resp
 
     // Initializers
     val initializers: MutableList<(GenericResponse, HttpURLConnection) -> Unit> = arrayListOf()
-        }
 
+    override fun contentIterator(chunkSize: Int): Iterator<ByteArray> {
+        return object : Iterator<ByteArray> {
+            val stream = if (this@GenericResponse.request.stream) this@GenericResponse.raw else this@GenericResponse.content.inputStream()
+
+            override fun next() = ByteArray(chunkSize).apply { stream.read(this) }
+
+            override fun hasNext() = this@GenericResponse.raw.available() > 0
+        }
+    }
+
+    override fun lineIterator(chunkSize: Int, delimiter: Regex): Iterator<ByteArray> {
+        return object : Iterator<ByteArray> {
+            val byteArrays = this@GenericResponse.contentIterator(chunkSize)
+            var leftOver: ByteArray? = null
+            val overflow = arrayListOf<ByteArray>()
+
+            override fun next(): ByteArray {
+                if (overflow.isNotEmpty()) return overflow.removeAt(0)
+                while (byteArrays.hasNext()) {
+                    do {
+                        val left = leftOver
+                        val array = byteArrays.next()
+                        val content = if (left != null) left + array else array
+                        leftOver = content
+                        val split = content.toString(this@GenericResponse.encoding).split(delimiter)
+                        if (split.size >= 2) {
+                            leftOver = split.last().toByteArray(this@GenericResponse.encoding)
+                            overflow.addAll(split.subList(1, split.size - 1).map { it.toByteArray(this@GenericResponse.encoding) })
+                            return split[0].toByteArray(this@GenericResponse.encoding)
+                        }
+                    } while (split.size < 2)
                 }
+                return leftOver!!
             }
+
+            override fun hasNext() = byteArrays.hasNext()
 
         }
     }
 
     override fun toString(): String {
         return "<Response [${this.statusCode}]>"
+    }
+
+    /**
+     * Used to ensure that the proper connection has been made.
+     */
+    internal fun init() {
+        if (this.request.stream) {
+            this.connection // Establish connection if streaming
+        } else {
+            this.content // Download content if not
+        }
     }
 
 }

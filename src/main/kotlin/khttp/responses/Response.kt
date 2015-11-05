@@ -12,6 +12,7 @@ import org.json.JSONObject
 import java.io.InputStream
 import java.net.HttpURLConnection
 import java.nio.charset.Charset
+import kotlin.text.Regex
 
 interface Response {
 
@@ -73,5 +74,25 @@ interface Response {
      * The connection used for the request.
      */
     val connection: HttpURLConnection
+
+    /**
+     * Gets an [Iterator] that provides [ByteArray]s of [chunkSize] for the content.
+     *
+     * If used in streaming mode, this will stream content from the server.
+     *
+     * If used outside of streaming mode, this will iterate over the downloaded content.
+     */
+    fun contentIterator(chunkSize: Int = 1): Iterator<ByteArray>
+
+    /**
+     * Gets an [Iterator] that provides [ByteArray]s of lines separated by [delimiter].
+     *
+     * If [delimiter] is not specified, the delimiter will be `\r?\n`.
+     *
+     * [chunkSize] sets the size of chunks used by [contentIterator] internally when scanning for lines.
+     *
+     * This method converts lines into Strings and back to ByteArrays using [encoding].
+     */
+    fun lineIterator(chunkSize: Int = 512, delimiter: Regex = Regex("\r?\n")): Iterator<ByteArray>
 
 }

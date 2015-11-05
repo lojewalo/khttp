@@ -63,5 +63,9 @@ interface Request {
      * If redirects should be followed.
      */
     val allowRedirects: Boolean
+    /**
+     * If the response content should be immediately downloaded (`false`) or streamed (`true`).
+     */
+    val stream: Boolean
 
 }

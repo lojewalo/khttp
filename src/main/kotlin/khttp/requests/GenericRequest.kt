@@ -25,7 +25,8 @@ class GenericRequest internal constructor(
     override val auth: Authorization?,
     override val cookies: Map<String, String>?,
     override val timeout: Double,
-    allowRedirects: Boolean?
+    allowRedirects: Boolean?,
+    override val stream: Boolean
 ) : Request {
 
     companion object {
