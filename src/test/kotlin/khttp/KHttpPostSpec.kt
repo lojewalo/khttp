@@ -5,11 +5,15 @@
  */
 package khttp
 
+import khttp.extensions.fileLike
 import khttp.helpers.StringIterable
 import org.jetbrains.spek.api.shouldThrow
 import org.json.JSONArray
 import org.json.JSONObject
+import java.io.File
+import java.util.Base64
 import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
 class KHttpPostSpec : MavenSpek() {
@@ -133,6 +137,68 @@ class KHttpPostSpec : MavenSpek() {
                     shouldThrow(IllegalArgumentException::class.java) {
                         post("https://httpbin.org/post", json = object {})
                     }
+                }
+            }
+        }
+        given("a file upload without form parameters") {
+            val file = "hello".fileLike("derp")
+            val response = post("https://httpbin.org/post", files = listOf(file))
+            on("accessing the json") {
+                val json = response.jsonObject
+                val files = json.getJSONObject("files")
+                it("should have one file") {
+                    assertEquals(1, files.length())
+                }
+                it("should have the same name") {
+                    assertNotNull(files.optString(file.name, null))
+                }
+                it("should have the same contents") {
+                    assertEquals(file.contents.toString(Charsets.UTF_8), files.optString(file.name))
+                }
+            }
+        }
+        given("a file upload with form parameters") {
+            val file = "hello".fileLike("derp")
+            val params = mapOf("top" to "kek")
+            val response = post("https://httpbin.org/post", files = listOf(file), data = params)
+            on("accessing the json") {
+                val json = response.jsonObject
+                val files = json.getJSONObject("files")
+                val form = json.getJSONObject("form")
+                it("should have one file") {
+                    assertEquals(1, files.length())
+                }
+                it("should have the same name") {
+                    assertNotNull(files.optString(file.name, null))
+                }
+                it("should have the same contents") {
+                    assertEquals(file.contents.toString(Charsets.UTF_8), files.optString(file.name))
+                }
+                it("should have one parameter") {
+                    assertEquals(1, form.length())
+                }
+                it("should have the same name") {
+                    assertNotNull(form.optString("top", null))
+                }
+                it("should have the same contents") {
+                    assertEquals("kek", form.optString("top"))
+                }
+            }
+        }
+        given("a streaming file upload") {
+            // Get our file to stream (a beautiful rare pepe)
+            val file = File("src/test/resources/rarest_of_pepes.png")
+            val response = post("https://httpbin.org/post", data = file)
+            on("accessing the data") {
+                val json = response.jsonObject
+                val data = json.getString("data")
+                it("should start with a base64 header") {
+                    assertTrue(data.startsWith("data:application/octet-stream;base64,"))
+                }
+                val base64 = data.split("data:application/octet-stream;base64,")[1]
+                val rawData = Base64.getDecoder().decode(base64)
+                it("should be the same decoded content") {
+                    assertEquals(file.readBytes().asList(), rawData.asList())
                 }
             }
         }

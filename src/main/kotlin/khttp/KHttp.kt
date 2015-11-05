@@ -11,45 +11,46 @@ import khttp.requests.GenericRequest
 import khttp.responses.GenericResponse
 import khttp.responses.Response
 import khttp.structures.authorization.Authorization
+import khttp.structures.files.FileLike
 
 @JvmOverloads
-fun delete(url: String, headers: Map<String, String> = mapOf(), params: Map<String, String> = mapOf(), data: Any? = null, json: Any? = null, auth: Authorization? = null, cookies: Map<String, String>? = null, timeout: Double = 30.0, allowRedirects: Boolean? = null, stream: Boolean = false): Response {
-    return request("DELETE", url, headers, params, data, json, auth, cookies, timeout, allowRedirects, stream)
+fun delete(url: String, headers: Map<String, String> = mapOf(), params: Map<String, String> = mapOf(), data: Any? = null, json: Any? = null, auth: Authorization? = null, cookies: Map<String, String>? = null, timeout: Double = 30.0, allowRedirects: Boolean? = null, stream: Boolean = false, files: List<FileLike> = listOf()): Response {
+    return request("DELETE", url, headers, params, data, json, auth, cookies, timeout, allowRedirects, stream, files)
 }
 
 @JvmOverloads
-fun get(url: String, headers: Map<String, String> = mapOf(), params: Map<String, String> = mapOf(), data: Any? = null, json: Any? = null, auth: Authorization? = null, cookies: Map<String, String>? = null, timeout: Double = 30.0, allowRedirects: Boolean? = null, stream: Boolean = false): Response {
-    return request("GET", url, headers, params, data, json, auth, cookies, timeout, allowRedirects, stream)
+fun get(url: String, headers: Map<String, String> = mapOf(), params: Map<String, String> = mapOf(), data: Any? = null, json: Any? = null, auth: Authorization? = null, cookies: Map<String, String>? = null, timeout: Double = 30.0, allowRedirects: Boolean? = null, stream: Boolean = false, files: List<FileLike> = listOf()): Response {
+    return request("GET", url, headers, params, data, json, auth, cookies, timeout, allowRedirects, stream, files)
 }
 
 @JvmOverloads
-fun head(url: String, headers: Map<String, String> = mapOf(), params: Map<String, String> = mapOf(), data: Any? = null, json: Any? = null, auth: Authorization? = null, cookies: Map<String, String>? = null, timeout: Double = 30.0, allowRedirects: Boolean? = null, stream: Boolean = false): Response {
-    return request("HEAD", url, headers, params, data, json, auth, cookies, timeout, allowRedirects, stream)
+fun head(url: String, headers: Map<String, String> = mapOf(), params: Map<String, String> = mapOf(), data: Any? = null, json: Any? = null, auth: Authorization? = null, cookies: Map<String, String>? = null, timeout: Double = 30.0, allowRedirects: Boolean? = null, stream: Boolean = false, files: List<FileLike> = listOf()): Response {
+    return request("HEAD", url, headers, params, data, json, auth, cookies, timeout, allowRedirects, stream, files)
 }
 
 @JvmOverloads
-fun options(url: String, headers: Map<String, String> = mapOf(), params: Map<String, String> = mapOf(), data: Any? = null, json: Any? = null, auth: Authorization? = null, cookies: Map<String, String>? = null, timeout: Double = 30.0, allowRedirects: Boolean? = null, stream: Boolean = false): Response {
-    return request("OPTIONS", url, headers, params, data, json, auth, cookies, timeout, allowRedirects, stream)
+fun options(url: String, headers: Map<String, String> = mapOf(), params: Map<String, String> = mapOf(), data: Any? = null, json: Any? = null, auth: Authorization? = null, cookies: Map<String, String>? = null, timeout: Double = 30.0, allowRedirects: Boolean? = null, stream: Boolean = false, files: List<FileLike> = listOf()): Response {
+    return request("OPTIONS", url, headers, params, data, json, auth, cookies, timeout, allowRedirects, stream, files)
 }
 
 @JvmOverloads
-fun patch(url: String, headers: Map<String, String> = mapOf(), params: Map<String, String> = mapOf(), data: Any? = null, json: Any? = null, auth: Authorization? = null, cookies: Map<String, String>? = null, timeout: Double = 30.0, allowRedirects: Boolean? = null, stream: Boolean = false): Response {
-    return request("PATCH", url, headers, params, data, json, auth, cookies, timeout, allowRedirects, stream)
+fun patch(url: String, headers: Map<String, String> = mapOf(), params: Map<String, String> = mapOf(), data: Any? = null, json: Any? = null, auth: Authorization? = null, cookies: Map<String, String>? = null, timeout: Double = 30.0, allowRedirects: Boolean? = null, stream: Boolean = false, files: List<FileLike> = listOf()): Response {
+    return request("PATCH", url, headers, params, data, json, auth, cookies, timeout, allowRedirects, stream, files)
 }
 
 @JvmOverloads
-fun post(url: String, headers: Map<String, String> = mapOf(), params: Map<String, String> = mapOf(), data: Any? = null, json: Any? = null, auth: Authorization? = null, cookies: Map<String, String>? = null, timeout: Double = 30.0, allowRedirects: Boolean? = null, stream: Boolean = false): Response {
-    return request("POST", url, headers, params, data, json, auth, cookies, timeout, allowRedirects, stream)
+fun post(url: String, headers: Map<String, String> = mapOf(), params: Map<String, String> = mapOf(), data: Any? = null, json: Any? = null, auth: Authorization? = null, cookies: Map<String, String>? = null, timeout: Double = 30.0, allowRedirects: Boolean? = null, stream: Boolean = false, files: List<FileLike> = listOf()): Response {
+    return request("POST", url, headers, params, data, json, auth, cookies, timeout, allowRedirects, stream, files)
 }
 
 @JvmOverloads
-fun put(url: String, headers: Map<String, String> = mapOf(), params: Map<String, String> = mapOf(), data: Any? = null, json: Any? = null, auth: Authorization? = null, cookies: Map<String, String>? = null, timeout: Double = 30.0, allowRedirects: Boolean? = null, stream: Boolean = false): Response {
-    return request("PUT", url, headers, params, data, json, auth, cookies, timeout, allowRedirects, stream)
+fun put(url: String, headers: Map<String, String> = mapOf(), params: Map<String, String> = mapOf(), data: Any? = null, json: Any? = null, auth: Authorization? = null, cookies: Map<String, String>? = null, timeout: Double = 30.0, allowRedirects: Boolean? = null, stream: Boolean = false, files: List<FileLike> = listOf()): Response {
+    return request("PUT", url, headers, params, data, json, auth, cookies, timeout, allowRedirects, stream, files)
 }
 
 @JvmOverloads
-fun request(method: String, url: String, headers: Map<String, String> = mapOf(), params: Map<String, String> = mapOf(), data: Any? = null, json: Any? = null, auth: Authorization? = null, cookies: Map<String, String>? = null, timeout: Double = 30.0, allowRedirects: Boolean? = null, stream: Boolean = false): Response {
-    return GenericResponse(GenericRequest(method, url, params, headers, data, json, auth, cookies, timeout, allowRedirects, stream)).run {
+fun request(method: String, url: String, headers: Map<String, String> = mapOf(), params: Map<String, String> = mapOf(), data: Any? = null, json: Any? = null, auth: Authorization? = null, cookies: Map<String, String>? = null, timeout: Double = 30.0, allowRedirects: Boolean? = null, stream: Boolean = false, files: List<FileLike> = listOf()): Response {
+    return GenericResponse(GenericRequest(method, url, params, headers, data, json, auth, cookies, timeout, allowRedirects, stream, files)).run {
         this.init()
         this._history.last().apply {
             this@run._history.remove(this)

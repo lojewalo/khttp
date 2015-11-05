@@ -6,6 +6,7 @@
 package khttp.requests
 
 import khttp.structures.authorization.Authorization
+import khttp.structures.files.FileLike
 
 interface Request {
 
@@ -67,5 +68,9 @@ interface Request {
      * If the response content should be immediately downloaded (`false`) or streamed (`true`).
      */
     val stream: Boolean
+    /**
+     * List of [FileLike] objects to include in the request.
+     */
+    val files: List<FileLike>
 
 }

@@ -6,6 +6,7 @@
 package khttp.requests
 
 import khttp.structures.authorization.Authorization
+import khttp.structures.files.FileLike
 import khttp.structures.parameters.Parameters
 import org.json.JSONArray
 import org.json.JSONObject
@@ -14,6 +15,7 @@ import java.io.StringWriter
 import java.net.IDN
 import java.net.URI
 import java.net.URL
+import java.util.UUID
 
 class GenericRequest internal constructor(
     override val method: String,
@@ -26,7 +28,8 @@ class GenericRequest internal constructor(
     override val cookies: Map<String, String>?,
     override val timeout: Double,
     allowRedirects: Boolean?,
-    override val stream: Boolean
+    override val stream: Boolean,
+    override val files: List<FileLike>
 ) : Request {
 
     companion object {
@@ -40,6 +43,9 @@ class GenericRequest internal constructor(
         )
         val DEFAULT_FORM_HEADERS = mapOf(
             "Content-Type" to "application/x-www-form-urlencoded"
+        )
+        val DEFAULT_UPLOAD_HEADERS = mapOf(
+            "Content-Type" to "multipart/form-data; boundary=%s"
         )
         val DEFAULT_JSON_HEADERS = mapOf(
             "Content-Type" to "application/json"
@@ -73,7 +79,10 @@ class GenericRequest internal constructor(
                 mutableHeaders[key] = value
             }
         }
-        if (this.data is Map<*, *>) {
+        if (this.files.isNotEmpty()) {
+            mutableHeaders += GenericRequest.DEFAULT_UPLOAD_HEADERS
+            mutableHeaders["Content-Type"] = mutableHeaders["Content-Type"]!!.format(UUID.randomUUID().toString().replace("-", ""))
+        } else if (this.data is Map<*, *>) {
             mutableHeaders += GenericRequest.DEFAULT_FORM_HEADERS
         }
         val auth = this.auth
