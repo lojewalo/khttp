@@ -35,6 +35,18 @@ class KHttpGetSpec : MavenSpek() {
                     assertEquals(url, resultantURL)
                 }
             }
+            on("accessing the status code") {
+                val statusCode = response.statusCode
+                it("should be 200") {
+                    assertEquals(200, statusCode)
+                }
+            }
+            on("converting it to a string") {
+                val string = response.toString()
+                it("should be correct") {
+                    assertEquals("<Response [200]>", string)
+                }
+            }
         }
         given("a json object get request with parameters") {
             val response = get("http://httpbin.org/get", params = mapOf("a" to "b", "c" to "d"))
