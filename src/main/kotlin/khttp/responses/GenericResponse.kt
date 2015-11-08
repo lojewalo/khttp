@@ -110,11 +110,11 @@ class GenericResponse internal constructor(override val request: Request) : Resp
                 // Write out the file in 4KiB chunks
                 input.use { input ->
                     connection.outputStream.use { output ->
-                        do {
+                        while (input.available() > 0) {
                             output.write(
                                 ByteArray(Math.min(4096, input.available())).apply { input.read(this) }
                             )
-                        } while (input.available() > 0)
+                        }
                     }
                 }
             },
