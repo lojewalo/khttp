@@ -13,12 +13,12 @@ class Parameters(vararg val parameters: Pair<String, String>) : Map<String, Stri
 
     override fun toString(): String {
         if (this.size < 1) return ""
-        val builder = StringBuilder()
-        for ((key, value) in this) {
-            if (builder.length > 0) builder.append("&")
-            builder.append(key).append("=").append(URLEncoder.encode(value, "UTF-8"))
+        return buildString {
+            for ((key, value) in this@Parameters) {
+                if (this.length > 0) this.append("&")
+                this.append(key, "=", URLEncoder.encode(value, "UTF-8"))
+            }
         }
-        return builder.toString()
     }
 
 }
