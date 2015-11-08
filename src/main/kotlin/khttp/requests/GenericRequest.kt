@@ -14,6 +14,7 @@ import org.json.JSONObject
 import org.json.JSONWriter
 import java.io.ByteArrayOutputStream
 import java.io.File
+import java.io.InputStream
 import java.io.StringWriter
 import java.net.IDN
 import java.net.URI
@@ -116,7 +117,7 @@ class GenericRequest internal constructor(
                     }
                     writer.writeAndFlush("--$boundary--\r\n")
                     writer.close()
-                } else if (data !is File) {
+                } else if (data !is File && data !is InputStream) {
                     // Append the bytes of the data as a String if not a File and not meant for streaming
                     bytes.write(data.toString().toByteArray())
                 }

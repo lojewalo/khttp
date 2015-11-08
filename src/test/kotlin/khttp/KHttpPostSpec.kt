@@ -202,6 +202,24 @@ class KHttpPostSpec : MavenSpek() {
                 }
             }
         }
+        given("a streaming InputStream upload") {
+            // Get our file to stream (a beautiful rare pepe)
+            val file = File("src/test/resources/rarest_of_pepes.png")
+            val inputStream = file.inputStream()
+            val response = post("https://httpbin.org/post", data = inputStream)
+            on("accessing the data") {
+                val json = response.jsonObject
+                val data = json.getString("data")
+                it("should start with a base64 header") {
+                    assertTrue(data.startsWith("data:application/octet-stream;base64,"))
+                }
+                val base64 = data.split("data:application/octet-stream;base64,")[1]
+                val rawData = Base64.getDecoder().decode(base64)
+                it("should be the same decoded content") {
+                    assertEquals(file.readBytes().asList(), rawData.asList())
+                }
+            }
+        }
         given("a JSON request") {
             val expected = """{"test":true}"""
             val response = post("https://httpbin.org/post", json = mapOf("test" to true))
