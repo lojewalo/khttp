@@ -5,12 +5,15 @@
  */
 package khttp.requests
 
+import khttp.extensions.writeAndFlush
 import khttp.structures.authorization.Authorization
 import khttp.structures.files.FileLike
 import khttp.structures.parameters.Parameters
 import org.json.JSONArray
 import org.json.JSONObject
 import org.json.JSONWriter
+import java.io.ByteArrayOutputStream
+import java.io.File
 import java.io.StringWriter
 import java.net.IDN
 import java.net.URI
@@ -57,6 +60,63 @@ class GenericRequest internal constructor(
     override val headers: Map<String, String>
     override val data: Any?
     override val allowRedirects = allowRedirects ?: (this.method != "HEAD")
+    override val body: ByteArray
+        get() {
+            val requestData = this.data
+            val files = this.files
+            // If we have no requestData and no files, there is no body
+            if (requestData == null && files.isEmpty()) return ByteArray(0)
+            // Ignore this warning, since there IS an explicit cast
+            @Suppress("IMPLICIT_CAST_TO_UNIT_OR_ANY")
+            val data: Any? = if (requestData != null) {
+                if (requestData is Map<*, *> && requestData !is Parameters) {
+                    // If it's a map, but not a Parameters instance, make it a Parameters instance (for toString)
+                    Parameters(requestData.mapKeys { it.key.toString() }.mapValues { it.value.toString() })
+                } else {
+                    // Otherwise, leave it be
+                    requestData
+                }
+            } else {
+                null
+            }
+            // If we have data AND files
+            if (data != null && files.isNotEmpty()) {
+                // Require that the data is a map
+                require(data is Map<*, *>) { "data must be a Map" }
+            }
+            // Create the byte OutputStream containing the body of the request
+            val bytes = ByteArrayOutputStream()
+            // If we're dealing with a non-streaming file upload
+            if (files.isNotEmpty()) {
+                // Get the boundary from the header set in GenericRequest
+                val boundary = this.headers["Content-Type"]!!.split("boundary=")[1]
+                // Make a writer for convenience
+                val writer = bytes.writer()
+                // Add the form data
+                if (data != null) {
+                    for ((key, value) in data as Map<*, *>) {
+                        writer.writeAndFlush("--$boundary\r\n")
+                        val keyString = key.toString()
+                        writer.writeAndFlush("Content-Disposition: form-data; name=\"$keyString\"\r\n\r\n")
+                        writer.writeAndFlush(value.toString())
+                        writer.writeAndFlush("\r\n")
+                    }
+                }
+                // Add the files
+                files.forEach {
+                    writer.writeAndFlush("--$boundary\r\n")
+                    writer.writeAndFlush("Content-Disposition: form-data; name=\"${it.name}\"; filename=\"${it.name}\"\r\n\r\n")
+                    bytes.write(it.contents)
+                    writer.writeAndFlush("\r\n")
+                }
+                writer.writeAndFlush("--$boundary--\r\n")
+                writer.close()
+            } else if (data !is File) {
+                // Append the bytes of the data as a String if not a File and not meant for streaming
+                bytes.write(data.toString().toByteArray())
+            }
+            return bytes.toByteArray()
+        }
 
     init {
         this.url = this.makeRoute(url)

@@ -202,5 +202,15 @@ class KHttpPostSpec : MavenSpek() {
                 }
             }
         }
+        given("a JSON request") {
+            val expected = """{"test":true}"""
+            val response = post("https://httpbin.org/post", json = mapOf("test" to true))
+            on("accessing the request body") {
+                val body = response.request.body
+                it("should be the expected valid json") {
+                    assertEquals(expected, body.toString(Charsets.UTF_8))
+                }
+            }
+        }
     }
 }

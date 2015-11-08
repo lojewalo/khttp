@@ -5,16 +5,13 @@
  */
 package khttp.responses
 
-import khttp.extensions.writeAndFlush
 import khttp.requests.GenericRequest
 import khttp.requests.Request
 import khttp.structures.cookie.Cookie
 import khttp.structures.cookie.CookieJar
 import khttp.structures.maps.CaseInsensitiveMap
-import khttp.structures.parameters.Parameters
 import org.json.JSONArray
 import org.json.JSONObject
-import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.IOException
 import java.io.InputStream
@@ -61,6 +58,7 @@ class GenericResponse internal constructor(override val request: Request) : Resp
                     }
                 }
             }
+            check(this.requestMethod == method)
         }
 
         internal val defaultStartInitializers: MutableList<(GenericResponse, HttpURLConnection) -> Unit> = arrayListOf(
@@ -90,77 +88,36 @@ class GenericResponse internal constructor(override val request: Request) : Resp
         )
         internal val defaultEndInitializers: MutableList<(GenericResponse, HttpURLConnection) -> Unit> = arrayListOf(
             { response, connection ->
-                val requestData = response.request.data
-                val files = response.request.files
-                // If we have no requestData and no files, keep going
-                if (requestData == null && files.isEmpty()) return@arrayListOf
+                val body = response.request.body
+                // If the body is empty, there is nothing to write
+                if (body.isEmpty()) return@arrayListOf
                 // Otherwise, we'll be writing output
                 connection.doOutput = true
-                // Ignore this warning, since there IS an explicit cast
-                @Suppress("IMPLICIT_CAST_TO_UNIT_OR_ANY")
-                val data: Any? = if (requestData != null) {
-                    if (requestData is Map<*, *> && requestData !is Parameters) {
-                        // If it's a map, but not a Parameters instance, make it a Parameters instance (for toString)
-                        Parameters(requestData.mapKeys { it.key.toString() }.mapValues { it.value.toString() })
-                    } else {
-                        // Otherwise, leave it be
-                        requestData
-                    }
-                } else {
-                    null
-                }
-                // If we have data AND files
-                if (data != null && files.isNotEmpty()) {
-                    // Require that the data is a map
-                    require(data is Map<*, *>) { "data must be a Map" }
-                }
-                // Create the byte OutputStream containing the body of the request
-                val bytes = ByteArrayOutputStream()
-                // If we're dealing with a non-streaming file upload
-                if (files.isNotEmpty()) {
-                    // Get the boundary from the header set in GenericRequest
-                    val boundary = response.request.headers["Content-Type"]!!.split("boundary=")[1]
-                    // Make a writer for convenience
-                    val writer = bytes.writer()
-                    // Add the form data
-                    if (data != null) {
-                        for ((key, value) in data as Map<*, *>) {
-                            writer.writeAndFlush("--$boundary\r\n")
-                            val keyString = key.toString()
-                            writer.writeAndFlush("Content-Disposition: form-data; name=\"$keyString\"\r\n\r\n")
-                            writer.writeAndFlush(value.toString())
-                            writer.writeAndFlush("\r\n")
-                        }
-                    }
-                    // Add the files
-                    files.forEach {
-                        writer.writeAndFlush("--$boundary\r\n")
-                        writer.writeAndFlush("Content-Disposition: form-data; name=\"${it.name}\"; filename=\"${it.name}\"\r\n\r\n")
-                        bytes.write(it.contents)
-                        writer.writeAndFlush("\r\n")
-                    }
-                    writer.writeAndFlush("--$boundary--\r\n")
-                    writer.close()
-                } else {
-                    // Stream the contents if data is a File
-                    if (data is File) {
-                        val input = data.inputStream()
-                        input.use { input ->
-                            connection.outputStream.use { output ->
-                                do {
-                                    output.write(
-                                        ByteArray(Math.min(4096, input.available())).apply { input.read(this) }
-                                    )
-                                } while (input.available() > 0)
-                            }
-                        }
-                        return@arrayListOf
-                    }
-                    // Append the bytes of the data as a String if not a File
-                    bytes.write(data.toString().toByteArray())
-                }
                 // Write out all the bytes
-                connection.outputStream.use { it.write(bytes.use { bytes -> bytes.toByteArray() }) }
+                connection.outputStream.use { it.write(body) }
+            },
+            { response, connection ->
+                val files = response.request.files
+                val data = response.request.data
+                // If we're dealing with a non-streaming request, ignore
+                if (files.isNotEmpty()) return@arrayListOf
+                // Stream the contents if data is a File, otherwise ignore
+                if (data !is File) return@arrayListOf
+                // We'll be writing output
+                if (!connection.doOutput) {
+                    connection.doOutput = true
+                }
+                val input = data.inputStream()
+                // Write out the file in 4KiB chunks
+                input.use { input ->
+                    connection.outputStream.use { output ->
+                        do {
+                            output.write(
+                                ByteArray(Math.min(4096, input.available())).apply { input.read(this) }
+                            )
+                        } while (input.available() > 0)
+                    }
+                }
             },
             { response, connection ->
                 // Add all the cookies from every response to our cookie jar

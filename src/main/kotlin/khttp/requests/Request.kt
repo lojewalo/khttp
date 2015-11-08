@@ -72,5 +72,9 @@ interface Request {
      * List of [FileLike] objects to include in the request.
      */
     val files: List<FileLike>
+    /**
+     * The body of the request to be sent.
+     */
+    val body: ByteArray
 
 }
