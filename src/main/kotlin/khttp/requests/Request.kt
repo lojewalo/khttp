@@ -36,7 +36,8 @@ interface Request {
      * If this is not `null`,
      * - whatever is specified in [data] will be overwritten
      * - the `Content-Type` header becomes `application/json`
-     * - the object specified is coerced into either a [JSONArray] or a [JSONObject]
+     * - the object specified is coerced into either a [JSONArray][org.json.JSONArray] or a
+     *   [JSONObject][org.json.JSONObject]
      *   - JSONObjects and JSONArrays are treated as such and will not undergo coercion
      *   - Maps become JSONObjects by using the appropriate constructor. Keys are converted to Strings, with `null`
      *     becoming `"null"`
