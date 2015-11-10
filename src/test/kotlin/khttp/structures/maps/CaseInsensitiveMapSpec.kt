@@ -7,6 +7,7 @@ package khttp.structures.maps
 
 import khttp.MavenSpek
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class CaseInsensitiveMapSpec : MavenSpek() {
@@ -47,6 +48,42 @@ class CaseInsensitiveMapSpec : MavenSpek() {
                 val insensitive = caseInsensitiveMap.toString()
                 it("should be the same string returned by the backing map") {
                     assertEquals(backing, insensitive)
+                }
+            }
+            on("checking for invalid mappings") {
+                it("should be null") {
+                    assertFalse(caseInsensitiveMap.containsKeyRaw(null))
+                }
+                it("should be null") {
+                    assertFalse(caseInsensitiveMap.containsKeyRaw(object {}))
+                }
+                it("should be null") {
+                    assertEquals(Unit, caseInsensitiveMap.getRaw(null))
+                    // KT-9963
+                    // assertNull(caseInsensitiveMap.getRaw(null))
+                }
+                it("should be null") {
+                    assertEquals(Unit, caseInsensitiveMap.getRaw(object {}))
+                    // KT-9963
+                    // assertNull(caseInsensitiveMap.getRaw(object {}))
+                }
+                it("should be false") {
+                    assertFalse(caseInsensitiveMap.containsKey("b"))
+                }
+                it("should be false") {
+                    assertFalse(caseInsensitiveMap.containsKey("B"))
+                }
+            }
+        }
+        given("a case-insensitive map initialized with an empty backing map") {
+            val backingMap = mapOf<String, String>()
+            val caseInsensitiveMap = CaseInsensitiveMap(backingMap)
+            on("checking for invalid mappings") {
+                it("should be null") {
+                    assertFalse(caseInsensitiveMap.containsKeyRaw(null))
+                }
+                it("should be null") {
+                    assertFalse(caseInsensitiveMap.containsKeyRaw(object {}))
                 }
             }
         }
