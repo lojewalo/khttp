@@ -102,7 +102,7 @@ class GenericResponse internal constructor(override val request: Request) : Resp
                 // If we're dealing with a non-streaming request, ignore
                 if (files.isNotEmpty()) return@arrayListOf
                 // Stream the contents if data is a File or InputStream, otherwise ignore
-                val input = (if (data is File) data.inputStream() else if (data is InputStream) data else null) ?: return@arrayListOf
+                val input = if (data is File) data.inputStream() else if (data is InputStream) data else return@arrayListOf
                 // We'll be writing output
                 if (!connection.doOutput) {
                     connection.doOutput = true
