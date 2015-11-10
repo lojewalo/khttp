@@ -31,6 +31,6 @@ data class Cookie(val key: String, val value: Any, val attributes: Map<String, A
             if (this.attributes.size < 1) {
                 return this.value.toString()
             }
-            return this.value.toString() + "; " + this.attributes.asSequence().joinToString { if (it.value != null) "${it.key}=${it.value}" else "${it.key}" }
+            return this.value.toString() + "; " + this.attributes.asSequence().joinToString("; ") { if (it.value != null) "${it.key}=${it.value}" else "${it.key}" }
         }
 }

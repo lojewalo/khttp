@@ -8,6 +8,7 @@ package khttp.structures.cookie
 import khttp.MavenSpek
 import org.jetbrains.spek.api.shouldThrow
 import kotlin.test.assertEquals
+import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 class CookieSpec : MavenSpek() {
@@ -44,6 +45,35 @@ class CookieSpec : MavenSpek() {
                 }
                 it("should have a / value for the Path key") {
                     assertEquals("/", attributes["Path"])
+                }
+            }
+        }
+        given("a cookie as a string with an attribute without a value") {
+            val key = "password"
+            val value = "hunter2"
+            val cookieString = "$key=$value; Path=/; Awesome"
+            val cookie = Cookie(cookieString)
+            on("accessing the value with attributes") {
+                it("should be the same as in the string") {
+                    assertEquals("$value; Path=/; Awesome", cookie.valueWithAttributes)
+                }
+            }
+            on("accessing the attributes") {
+                val attributes = cookie.attributes
+                it("should have two") {
+                    assertEquals(2, attributes.size)
+                }
+                it("should have a Path key") {
+                    assertTrue("Path" in attributes)
+                }
+                it("should have a / value for the Path key") {
+                    assertEquals("/", attributes["Path"])
+                }
+                it("should have an Awesome key") {
+                    assertTrue("Awesome" in attributes)
+                }
+                it("should have a null value for the Awesome key") {
+                    assertNull(attributes["Awesome"])
                 }
             }
         }
