@@ -38,7 +38,7 @@ internal fun Writer.writeAndFlush(string: String) {
     this.flush()
 }
 
-internal fun ByteArray.splitLines(): List<ByteArray> {
+fun ByteArray.splitLines(): List<ByteArray> {
     val lines = arrayListOf<ByteArray>()
     var lastSplit = 0
     var skip = 0
@@ -63,7 +63,7 @@ internal fun ByteArray.splitLines(): List<ByteArray> {
     return lines
 }
 
-internal fun ByteArray.split(delimiter: ByteArray): List<ByteArray> {
+fun ByteArray.split(delimiter: ByteArray): List<ByteArray> {
     val lines = arrayListOf<ByteArray>()
     var lastSplit = 0
     var skip = 0
