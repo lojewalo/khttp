@@ -390,5 +390,17 @@ class KHttpGetSpec : MavenSpek() {
                 }
             }
         }
+        given("a streaming get request without even lines") {
+            val url = "https://httpbin.org/bytes/1690?seed=1"
+            val response = get(url, stream = true)
+            on("iterating the lines") {
+                val iterator = response.lineIterator()
+                val bytes = iterator.asSequence().toList().flatMap { it.toList() }
+                val contentWithoutBytes = get(url).content.toList().filter { it != '\r'.toByte() && it != '\n'.toByte() }
+                it("should be the same as the content without line breaks") {
+                    assertEquals(contentWithoutBytes, bytes)
+                }
+            }
+        }
     }
 }

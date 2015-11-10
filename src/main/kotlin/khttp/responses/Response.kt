@@ -12,7 +12,6 @@ import org.json.JSONObject
 import java.io.InputStream
 import java.net.HttpURLConnection
 import java.nio.charset.Charset
-import kotlin.text.Regex
 
 interface Response {
 
@@ -93,6 +92,6 @@ interface Response {
      *
      * This method converts lines into Strings and back to ByteArrays using [encoding].
      */
-    fun lineIterator(chunkSize: Int = 512, delimiter: Regex = Regex("\r?\n")): Iterator<ByteArray>
+    fun lineIterator(chunkSize: Int = 512, delimiter: ByteArray? = null): Iterator<ByteArray>
 
 }

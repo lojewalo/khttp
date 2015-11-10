@@ -5,6 +5,8 @@
  */
 package khttp.responses
 
+import khttp.extensions.split
+import khttp.extensions.splitLines
 import khttp.requests.GenericRequest
 import khttp.requests.Request
 import khttp.structures.cookie.Cookie
@@ -22,7 +24,6 @@ import java.nio.charset.Charset
 import java.util.Collections
 import java.util.zip.GZIPInputStream
 import java.util.zip.InflaterInputStream
-import kotlin.text.Regex
 
 class GenericResponse internal constructor(override val request: Request) : Response {
 
@@ -273,7 +274,7 @@ class GenericResponse internal constructor(override val request: Request) : Resp
         }
     }
 
-    override fun lineIterator(chunkSize: Int, delimiter: Regex): Iterator<ByteArray> {
+    override fun lineIterator(chunkSize: Int, delimiter: ByteArray?): Iterator<ByteArray> {
         return object : Iterator<ByteArray> {
             val byteArrays = this@GenericResponse.contentIterator(chunkSize)
             var leftOver: ByteArray? = null
@@ -285,13 +286,14 @@ class GenericResponse internal constructor(override val request: Request) : Resp
                     do {
                         val left = leftOver
                         val array = byteArrays.next()
+                        if (array.isEmpty()) break
                         val content = if (left != null) left + array else array
                         leftOver = content
-                        val split = content.toString(this@GenericResponse.encoding).split(delimiter)
+                        val split = if (delimiter == null) content.splitLines() else content.split(delimiter)
                         if (split.size >= 2) {
-                            leftOver = split.last().toByteArray(this@GenericResponse.encoding)
-                            overflow.addAll(split.subList(1, split.size - 1).map { it.toByteArray(this@GenericResponse.encoding) })
-                            return split[0].toByteArray(this@GenericResponse.encoding)
+                            leftOver = split.last()
+                            overflow.addAll(split.subList(1, split.size - 1))
+                            return split[0]
                         }
                     } while (split.size < 2)
                 }

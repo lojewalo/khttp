@@ -37,3 +37,47 @@ internal fun Writer.writeAndFlush(string: String) {
     this.write(string)
     this.flush()
 }
+
+internal fun ByteArray.splitLines(): List<ByteArray> {
+    val lines = arrayListOf<ByteArray>()
+    var lastSplit = 0
+    var skip = 0
+    for ((i, byte) in this.withIndex()) {
+        if (skip > 0) {
+            skip--
+            continue
+        }
+        if (byte == '\n'.toByte()) {
+            lines.add(this.sliceArray(lastSplit..i - 1))
+            lastSplit = i + 1
+        } else if (byte == '\r'.toByte() && i + 1 < this.size && this[i + 1] == '\n'.toByte()) {
+            skip = 1
+            lines.add(this.sliceArray(lastSplit..i - 1))
+            lastSplit = i + 2
+        } else if (byte == '\r'.toByte()) {
+            lines.add(this.sliceArray(lastSplit..i - 1))
+            lastSplit = i + 1
+        }
+    }
+    lines += this.sliceArray(lastSplit..this.size - 1)
+    return lines
+}
+
+internal fun ByteArray.split(delimiter: ByteArray): List<ByteArray> {
+    val lines = arrayListOf<ByteArray>()
+    var lastSplit = 0
+    var skip = 0
+    for (i in 0..this.size - 1) {
+        if (skip > 0) {
+            skip--
+            continue
+        }
+        if (this.sliceArray(i..i + delimiter.size - 1).toList() == delimiter.toList()) {
+            skip = delimiter.size
+            lines += this.sliceArray(lastSplit..i - 1)
+            lastSplit = i + delimiter.size
+        }
+    }
+    lines += this.sliceArray(lastSplit..this.size - 1)
+    return lines
+}
