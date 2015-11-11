@@ -175,11 +175,24 @@ class GenericResponse internal constructor(override val request: Request) : Resp
             return this._connection ?: throw IllegalStateException("Set to null by another thread")
         }
 
+    private var _statusCode: Int? = null
     override val statusCode: Int
-        get() = this.connection.responseCode
+        get() {
+            if (this._statusCode == null) {
+                this._statusCode = this.connection.responseCode
+            }
+            return this._statusCode ?: throw IllegalStateException("Set to null by another thread")
+        }
 
+    private var _headers: Map<String, String>? = null
     override val headers: Map<String, String>
-        get() = CaseInsensitiveMap(this.connection.headerFields.mapValues { it.value.joinToString(", ") }.filterKeys { it != null })
+        get() {
+            if (this._headers == null) {
+                this._headers = this.connection.headerFields.mapValues { it.value.joinToString(", ") }.filterKeys { it != null }
+            }
+            val headers = this._headers ?: throw IllegalStateException("Set to null by another thread")
+            return CaseInsensitiveMap(headers)
+        }
 
     private val HttpURLConnection.realInputStream: InputStream
         get() {
