@@ -225,7 +225,7 @@ class GenericResponse internal constructor(override val request: Request) : Resp
     private val _cookies = CookieJar()
     override val cookies: CookieJar
         get() {
-            this.connection // Ensure that we've connected
+            this.init() // Ensure that we've connected
             return this._cookies
         }
 
