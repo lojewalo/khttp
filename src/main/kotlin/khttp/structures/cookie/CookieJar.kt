@@ -15,7 +15,13 @@ class CookieJar(vararg val cookies: Cookie = arrayOf()) : MutableMap<String, Str
                 val valueList = it.value.toString().split(";").map { it.trim() }
                 val value = valueList[0]
                 val attributes = if (valueList.size < 2) mapOf() else {
-                    valueList.subList(1, valueList.size).toMap({ it.split("=")[0].trim() }, { it.split("=")[1].trim() })
+                    valueList.subList(1, valueList.size).toMap(
+                        { it.split("=")[0].trim() },
+                        {
+                            val split = it.split("=")
+                            (if (split.size > 1) split[1] else null)?.trim()
+                        }
+                    )
                 }
                 Cookie(it.key, value, attributes)
             }.toTypedArray()
