@@ -204,13 +204,13 @@ class GenericResponse internal constructor(override val request: Request) : Resp
             return this._raw ?: throw IllegalStateException("Set to null by another thread")
         }
 
-    private var _contents: ByteArray? = null
+    private var _content: ByteArray? = null
     override val content: ByteArray
         get() {
-            if (this._contents == null) {
-                this._contents = this.raw.use { it.readBytes() }
+            if (this._content == null) {
+                this._content = this.raw.use { it.readBytes() }
             }
-            return this._contents ?: throw IllegalStateException("Set to null by another thread")
+            return this._content ?: throw IllegalStateException("Set to null by another thread")
         }
 
     override val text: String
