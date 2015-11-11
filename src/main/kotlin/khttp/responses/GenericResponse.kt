@@ -5,6 +5,7 @@
  */
 package khttp.responses
 
+import khttp.extensions.getSuperclasses
 import khttp.extensions.split
 import khttp.extensions.splitLines
 import khttp.requests.GenericRequest
@@ -20,6 +21,7 @@ import java.io.InputStream
 import java.net.HttpURLConnection
 import java.net.ProtocolException
 import java.net.URL
+import java.net.URLConnection
 import java.nio.charset.Charset
 import java.util.Collections
 import java.util.zip.GZIPInputStream
@@ -31,16 +33,6 @@ class GenericResponse internal constructor(override val request: Request) : Resp
 
         internal val HttpURLConnection.cookieJar: CookieJar
             get() = CookieJar(*this.headerFields.filter { it.key == "Set-Cookie" }.flatMap { it.value }.map { Cookie(it) }.toTypedArray())
-
-        internal fun <T> Class<T>.getSuperclasses(): List<Class<in T>> {
-            val list = arrayListOf<Class<in T>>()
-            var superclass = this.superclass
-            while (superclass != null) {
-                list.add(superclass)
-                superclass = superclass.superclass
-            }
-            return list
-        }
 
         internal fun HttpURLConnection.forceMethod(method: String) {
             try {
@@ -322,6 +314,32 @@ class GenericResponse internal constructor(override val request: Request) : Resp
         return "<Response [${this.statusCode}]>"
     }
 
+    private fun <T : URLConnection> Class<T>.getField(name: String, instance: T): Any? {
+        (this.getSuperclasses() + this).forEach { clazz ->
+            try {
+                return clazz.getDeclaredField(name).apply { this.isAccessible = true }.get(instance).apply { if (this == null) throw Exception() }
+            } catch(ex: Exception) {
+                try {
+                    val delegate = clazz.getDeclaredField("delegate").apply { this.isAccessible = true }.get(instance)
+                    if (delegate is URLConnection) {
+                        return delegate.javaClass.getField(name, delegate)
+                    }
+                } catch(ex: NoSuchFieldException) {
+                    // ignore
+                }
+            }
+        }
+        return null
+    }
+
+    private fun updateRequestHeaders() {
+        val headers = (this.request.headers as MutableMap<String, String>)
+        val requests = this.connection.javaClass.getField("requests", this.connection) ?: return
+        @Suppress("UNCHECKED_CAST")
+        val requestsHeaders = requests.javaClass.getDeclaredMethod("getHeaders").apply { this.isAccessible = true }.invoke(requests) as Map<String, List<String>>
+        headers += requestsHeaders.filterValues { it.filterNotNull().isNotEmpty() }.mapValues { it.value.joinToString(", ") }
+    }
+
     /**
      * Used to ensure that the proper connection has been made.
      */
@@ -331,6 +349,7 @@ class GenericResponse internal constructor(override val request: Request) : Resp
         } else {
             this.content // Download content if not
         }
+        this.updateRequestHeaders()
     }
 
 }

@@ -82,3 +82,13 @@ fun ByteArray.split(delimiter: ByteArray): List<ByteArray> {
     lines += this.sliceArray(lastSplit..this.size - 1)
     return lines
 }
+
+internal fun <T> Class<T>.getSuperclasses(): List<Class<in T>> {
+    val list = arrayListOf<Class<in T>>()
+    var superclass = this.superclass
+    while (superclass != null) {
+        list.add(superclass)
+        superclass = superclass.superclass
+    }
+    return list
+}
