@@ -141,7 +141,7 @@
         <dependency>
             <groupId>org.jetbrains.spek</groupId>
             <artifactId>spek</artifactId>
-            <version>0.1.180</version>
+            <version>0.1.182</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
