@@ -58,12 +58,12 @@ class CaseInsensitiveMapSpec : MavenSpek() {
                     assertFalse(caseInsensitiveMap.containsKeyRaw(object {}))
                 }
                 it("should be null") {
-                    assertEquals(Unit, caseInsensitiveMap.getRaw(null))
+                    assertEquals<Any?>(Unit, caseInsensitiveMap.getRaw(null))
                     // KT-9963
                     // assertNull(caseInsensitiveMap.getRaw(null))
                 }
                 it("should be null") {
-                    assertEquals(Unit, caseInsensitiveMap.getRaw(object {}))
+                    assertEquals<Any?>(Unit, caseInsensitiveMap.getRaw(object {}))
                     // KT-9963
                     // assertNull(caseInsensitiveMap.getRaw(object {}))
                 }
