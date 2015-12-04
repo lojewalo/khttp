@@ -84,9 +84,7 @@ class CookieJarSpec : MavenSpek() {
                     assertNull(cookie)
                 }
                 it("should be null") {
-                    assertEquals(Unit, cookieRaw)
-                    // KT-9963
-                    // assertNull(cookieRaw)
+                    assertNull(cookieRaw)
                 }
             }
             on("accessing a cookie with Map methods") {
@@ -206,9 +204,7 @@ class CookieJarSpec : MavenSpek() {
                     assertTrue(originalSize == size)
                 }
                 it("should not have removed anything") {
-                    assertEquals(Unit, removed)
-                    // KT-9963
-                    // assertNull(removed)
+                    assertNull(removed)
                 }
             }
         }

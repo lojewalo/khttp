@@ -9,6 +9,7 @@ import khttp.MavenSpek
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
+import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 class ParametersSpec : MavenSpek() {
@@ -68,9 +69,7 @@ class ParametersSpec : MavenSpek() {
             on("getting null") {
                 val result: Any? = params.getRaw(null)
                 it("should be null") {
-                    assertEquals(Unit, result)
-                    // KT-9963
-                    // assertNull(result)
+                    assertNull(result)
                 }
             }
             on("checking for key null") {

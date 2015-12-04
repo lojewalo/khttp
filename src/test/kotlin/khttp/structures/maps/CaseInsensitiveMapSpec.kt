@@ -8,6 +8,7 @@ package khttp.structures.maps
 import khttp.MavenSpek
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
+import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 class CaseInsensitiveMapSpec : MavenSpek() {
@@ -58,14 +59,10 @@ class CaseInsensitiveMapSpec : MavenSpek() {
                     assertFalse(caseInsensitiveMap.containsKeyRaw(object {}))
                 }
                 it("should be null") {
-                    assertEquals<Any?>(Unit, caseInsensitiveMap.getRaw(null))
-                    // KT-9963
-                    // assertNull(caseInsensitiveMap.getRaw(null))
+                    assertNull(caseInsensitiveMap.getRaw(null))
                 }
                 it("should be null") {
-                    assertEquals<Any?>(Unit, caseInsensitiveMap.getRaw(object {}))
-                    // KT-9963
-                    // assertNull(caseInsensitiveMap.getRaw(object {}))
+                    assertNull(caseInsensitiveMap.getRaw(object {}))
                 }
                 it("should be false") {
                     assertFalse(caseInsensitiveMap.containsKey("b"))
