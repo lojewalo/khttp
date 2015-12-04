@@ -139,6 +139,12 @@
             <version>20150729</version>
         </dependency>
         <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-reflect</artifactId>
+            <version>${kotlin.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>org.jetbrains.spek</groupId>
             <artifactId>spek</artifactId>
             <version>0.1.182</version>
