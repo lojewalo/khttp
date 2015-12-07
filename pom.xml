@@ -152,7 +152,7 @@
         </dependency>
     </dependencies>
     <properties>
-        <kotlin.version>1.0.0-beta-3593</kotlin.version>
+        <kotlin.version>1.0.0-beta-3595</kotlin.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 </project>
