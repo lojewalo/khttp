@@ -5,19 +5,18 @@
  */
 package khttp
 
+import org.jetbrains.spek.api.Spek
 import kotlin.test.assertEquals
 
-class KHttpDeleteSpec : MavenSpek() {
-    override fun test() {
-        given("a delete request") {
-            val url = "https://httpbin.org/delete"
-            val request = delete(url)
-            on("accessing the json") {
-                val json = request.jsonObject
-                it("should have the same url") {
-                    assertEquals(url, json.getString("url"))
-                }
+class KHttpDeleteSpec : Spek({
+    given("a delete request") {
+        val url = "https://httpbin.org/delete"
+        val request = delete(url)
+        on("accessing the json") {
+            val json = request.jsonObject
+            it("should have the same url") {
+                assertEquals(url, json.getString("url"))
             }
         }
     }
-}
+})

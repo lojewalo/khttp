@@ -5,18 +5,17 @@
  */
 package khttp
 
+import org.jetbrains.spek.api.Spek
 import kotlin.test.assertEquals
 
-class KHttpOptionsSpec : MavenSpek() {
-    override fun test() {
-        given("an options request") {
-            val request = options("https://httpbin.org/get")
-            on("accessing the status code") {
-                val status = request.statusCode
-                it("should be 200") {
-                    assertEquals(200, status)
-                }
+class KHttpOptionsSpec : Spek({
+    given("an options request") {
+        val request = options("https://httpbin.org/get")
+        on("accessing the status code") {
+            val status = request.statusCode
+            it("should be 200") {
+                assertEquals(200, status)
             }
         }
     }
-}
+})

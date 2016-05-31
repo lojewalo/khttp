@@ -14,8 +14,8 @@ data class Cookie(val key: String, val value: Any, val attributes: Map<String, A
             val key = split[0].trim()
             val valueSplit = split[1].split(";")
             val value = valueSplit[0].trim()
-            val attributes = if (valueSplit.size < 2) mapOf() else {
-                valueSplit.subList(1, valueSplit.size).toMap({ it.split("=")[0].trim() }, { it.split("=").getOrNull(1)?.trim() })
+            val attributes = if (valueSplit.size < 2) mapOf<String, Any?>() else {
+                valueSplit.subList(1, valueSplit.size).associate { it.split("=")[0].trim() to it.split("=").getOrNull(1)?.trim() }
             }
             return Cookie(key, value, attributes)
         }

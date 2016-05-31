@@ -5,19 +5,18 @@
  */
 package khttp
 
+import org.jetbrains.spek.api.Spek
 import kotlin.test.assertEquals
 
-class KHttpPutSpec : MavenSpek() {
-    override fun test() {
-        given("a put request") {
-            val url = "https://httpbin.org/put"
-            val request = put(url)
-            on("accessing the json") {
-                val json = request.jsonObject
-                it("should have the same url") {
-                    assertEquals(url, json.getString("url"))
-                }
+class KHttpPutSpec : Spek({
+    given("a put request") {
+        val url = "https://httpbin.org/put"
+        val request = put(url)
+        on("accessing the json") {
+            val json = request.jsonObject
+            it("should have the same url") {
+                assertEquals(url, json.getString("url"))
             }
         }
     }
-}
+})

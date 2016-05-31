@@ -5,84 +5,82 @@
  */
 package khttp.structures.maps
 
-import khttp.MavenSpek
+import org.jetbrains.spek.api.Spek
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
-class CaseInsensitiveMapSpec : MavenSpek() {
-    override fun test() {
-        given("a case-insensitive map initialized with a backing map") {
-            val backingMap = mapOf("a" to "b", "c" to "d")
-            val caseInsensitiveMap = CaseInsensitiveMap(backingMap)
-            on("accessing a mapping") {
-                val backed = backingMap["a"]
-                val lower = caseInsensitiveMap["a"]
-                val upper = caseInsensitiveMap["A"]
-                it("should be the same value as in the backing map") {
-                    assertEquals(backed, lower)
-                }
-                it("should be the same value as in the backing map") {
-                    assertEquals(backed, upper)
-                }
-                it("should have an equal upper and lower value") {
-                    assertTrue(upper == lower)
-                }
+class CaseInsensitiveMapSpec : Spek({
+    given("a case-insensitive map initialized with a backing map") {
+        val backingMap = hashMapOf("a" to "b", "c" to "d")
+        val caseInsensitiveMap = CaseInsensitiveMap(backingMap)
+        on("accessing a mapping") {
+            val backed = backingMap["a"]
+            val lower = caseInsensitiveMap["a"]
+            val upper = caseInsensitiveMap["A"]
+            it("should be the same value as in the backing map") {
+                assertEquals(backed, lower)
             }
-            on("checking if a mapping is present") {
-                val backed = backingMap.containsKey("c")
-                val lower = caseInsensitiveMap.containsKey("c")
-                val upper = caseInsensitiveMap.containsKey("C")
-                it("should be the same value as the result for the backing map") {
-                    assertEquals(backed, lower)
-                }
-                it("should be the same value as the result for the backing map") {
-                    assertEquals(backed, upper)
-                }
-                it("should have an equal upper and lower value") {
-                    assertTrue(upper == lower)
-                }
+            it("should be the same value as in the backing map") {
+                assertEquals(backed, upper)
             }
-            on("toString") {
-                val backing = backingMap.toString()
-                val insensitive = caseInsensitiveMap.toString()
-                it("should be the same string returned by the backing map") {
-                    assertEquals(backing, insensitive)
-                }
-            }
-            on("checking for invalid mappings") {
-                it("should be null") {
-                    assertFalse(caseInsensitiveMap.containsKeyRaw(null))
-                }
-                it("should be null") {
-                    assertFalse(caseInsensitiveMap.containsKeyRaw(object {}))
-                }
-                it("should be null") {
-                    assertNull(caseInsensitiveMap.getRaw(null))
-                }
-                it("should be null") {
-                    assertNull(caseInsensitiveMap.getRaw(object {}))
-                }
-                it("should be false") {
-                    assertFalse(caseInsensitiveMap.containsKey("b"))
-                }
-                it("should be false") {
-                    assertFalse(caseInsensitiveMap.containsKey("B"))
-                }
+            it("should have an equal upper and lower value") {
+                assertTrue(upper == lower)
             }
         }
-        given("a case-insensitive map initialized with an empty backing map") {
-            val backingMap = mapOf<String, String>()
-            val caseInsensitiveMap = CaseInsensitiveMap(backingMap)
-            on("checking for invalid mappings") {
-                it("should be null") {
-                    assertFalse(caseInsensitiveMap.containsKeyRaw(null))
-                }
-                it("should be null") {
-                    assertFalse(caseInsensitiveMap.containsKeyRaw(object {}))
-                }
+        on("checking if a mapping is present") {
+            val backed = backingMap.containsKey("c")
+            val lower = caseInsensitiveMap.containsKey("c")
+            val upper = caseInsensitiveMap.containsKey("C")
+            it("should be the same value as the result for the backing map") {
+                assertEquals(backed, lower)
+            }
+            it("should be the same value as the result for the backing map") {
+                assertEquals(backed, upper)
+            }
+            it("should have an equal upper and lower value") {
+                assertTrue(upper == lower)
+            }
+        }
+        on("toString") {
+            val backing = backingMap.toString()
+            val insensitive = caseInsensitiveMap.toString()
+            it("should be the same string returned by the backing map") {
+                assertEquals(backing, insensitive)
+            }
+        }
+        on("checking for invalid mappings") {
+            it("should be null") {
+                assertFalse(caseInsensitiveMap.containsKey(null as String?))
+            }
+            it("should be null") {
+                assertFalse(caseInsensitiveMap.containsKey(object {} as Any))
+            }
+            it("should be null") {
+                assertNull(caseInsensitiveMap.get(null as String?))
+            }
+            it("should be null") {
+                assertNull(caseInsensitiveMap.get(object {} as Any))
+            }
+            it("should be false") {
+                assertFalse(caseInsensitiveMap.containsKey("b"))
+            }
+            it("should be false") {
+                assertFalse(caseInsensitiveMap.containsKey("B"))
             }
         }
     }
-}
+    given("a case-insensitive map initialized with an empty backing map") {
+        val backingMap = hashMapOf<String, String>()
+        val caseInsensitiveMap = CaseInsensitiveMap(backingMap)
+        on("checking for invalid mappings") {
+            it("should be null") {
+                assertFalse(caseInsensitiveMap.containsKey(null as String?))
+            }
+            it("should be null") {
+                assertFalse(caseInsensitiveMap.containsKey(object {} as Any))
+            }
+        }
+    }
+})

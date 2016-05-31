@@ -132,7 +132,7 @@ class GenericRequest internal constructor(
             throw IllegalArgumentException("Invalid schema. Only http:// and https:// are supported.")
         }
         val json = this.json
-        val mutableHeaders = headers.toLinkedMap()
+        val mutableHeaders = headers.toSortedMap()
         if (json == null) {
             this.data = data
             if (data != null) {
