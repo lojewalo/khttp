@@ -72,8 +72,6 @@ class GenericRequest internal constructor(
                     this._body = ByteArray(0)
                     return this._body ?: throw IllegalStateException("Set to null by another thread")
                 }
-                // Ignore this warning, since there IS an explicit cast
-                @Suppress("IMPLICIT_CAST_TO_UNIT_OR_ANY")
                 val data: Any? = if (requestData != null) {
                     if (requestData is Map<*, *> && requestData !is Parameters) {
                         // If it's a map, but not a Parameters instance, make it a Parameters instance (for toString)
