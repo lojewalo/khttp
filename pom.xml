@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>khttp</groupId>
     <artifactId>khttp</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>0.1.0</version>
     <name>khttp</name>
     <description>A HTTP request library for Kotlin.</description>
     <url>https://github.com/jkcclemens/khttp</url>
@@ -23,10 +23,18 @@
         <connection>scm:git:git@github.com:jkcclemens/khttp.git</connection>
         <developerConnection>scm:git:git@github.com:jkcclemens/khttp.git</developerConnection>
         <url>git@github.com:jkcclemens/khttp.git</url>
+        <tag>0.1.0</tag>
     </scm>
     <profiles>
         <profile>
-            <id>khttp</id>
+            <id>khttp-deploy</id>
+            <distributionManagement>
+                <repository>
+                    <id>khttp-jcenter</id>
+                    <name>jkcclemens-maven</name>
+                    <url>https://api.bintray.com/maven/jkcclemens/maven/khttp/;publish=1</url>
+                </repository>
+            </distributionManagement>
             <build>
                 <plugins>
                     <plugin>
@@ -42,6 +50,7 @@
                                 </goals>
                                 <configuration>
                                     <keyname>${gpg.keyname}</keyname>
+                                    <passphraseServerId>${gpg.keyname}</passphraseServerId>
                                 </configuration>
                             </execution>
                         </executions>
@@ -98,7 +107,7 @@
                     <execution>
                         <id>attach-sources</id>
                         <goals>
-                            <goal>jar-no-fork</goal>
+                            <goal>jar</goal>
                         </goals>
                     </execution>
                 </executions>
