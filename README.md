@@ -21,5 +21,24 @@ fun main(args: Array<out String>) {
 
 ## Dependency
 
-Use [JitPack](https://jitpack.io/#jkcclemens/khttp) to build khttp. The goal is to get khttp into Maven Central at
-some point, but it's not quite mature enough yet!
+### Stable
+
+Stable releases are hosted on [JCenter](https://bintray.com/bintray/jcenter).
+
+```xml
+<repository>
+  <id>jcenter</id>
+  <url>http://jcenter.bintray.com/</url>
+</repository>
+<!-- ... -->
+<dependency>
+  <groupId>khttp</groupId>
+  <artifactId>khttp</artifactId>
+  <version>0.1.0</version>
+</dependency>
+```
+
+### Development
+
+Development builds are currently available through [JitPack](https://jitpack.io/#jkcclemens/khttp). Snapshot builds may
+eventually be hosted on [OJO](https://oss.jfrog.org/), but are not currently available there.
