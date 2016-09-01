@@ -150,12 +150,6 @@
             </plugin>
         </plugins>
     </build>
-    <repositories>
-        <repository>
-            <id>jebrains-all</id>
-            <url>http://repository.jetbrains.com/all</url>
-        </repository>
-    </repositories>
     <pluginRepositories>
         <pluginRepository>
             <id>jcenter</id>
