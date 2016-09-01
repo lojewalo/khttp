@@ -7,6 +7,9 @@ package khttp.structures.files
 
 import khttp.extensions.fileLike
 import org.jetbrains.spek.api.Spek
+import org.jetbrains.spek.api.dsl.given
+import org.jetbrains.spek.api.dsl.it
+import org.jetbrains.spek.api.dsl.on
 import java.io.File
 import java.nio.file.Paths
 import kotlin.test.assertEquals

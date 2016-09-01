@@ -121,6 +121,13 @@
                         <include>**/*Spec.class</include>
                     </includes>
                 </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.junit.platform</groupId>
+                        <artifactId>junit-platform-surefire-provider</artifactId>
+                        <version>1.0.0-M2</version>
+                    </dependency>
+                </dependencies>
             </plugin>
             <plugin>
                 <groupId>org.jacoco</groupId>
@@ -143,12 +150,6 @@
             </plugin>
         </plugins>
     </build>
-    <repositories>
-        <repository>
-            <id>jebrains-all</id>
-            <url>http://repository.jetbrains.com/all</url>
-        </repository>
-    </repositories>
     <pluginRepositories>
         <pluginRepository>
             <id>jcenter</id>
@@ -169,19 +170,32 @@
         </dependency>
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-test</artifactId>
+            <version>${kotlin.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-reflect</artifactId>
             <version>${kotlin.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.jetbrains.spek</groupId>
-            <artifactId>spek</artifactId>
-            <version>1.0.9</version>
+            <artifactId>spek-api</artifactId>
+            <version>${spek.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains.spek</groupId>
+            <artifactId>spek-junit-platform-engine</artifactId>
+            <version>${spek.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
     <properties>
-        <kotlin.version>1.0.2</kotlin.version>
+        <kotlin.version>1.0.3</kotlin.version>
+        <spek.version>1.0.89</spek.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 </project>
