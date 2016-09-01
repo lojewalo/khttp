@@ -7,6 +7,9 @@ package khttp
 
 import khttp.structures.authorization.BasicAuthorization
 import org.jetbrains.spek.api.Spek
+import org.jetbrains.spek.api.dsl.given
+import org.jetbrains.spek.api.dsl.it
+import org.jetbrains.spek.api.dsl.on
 import org.json.JSONObject
 import java.net.MalformedURLException
 import java.net.SocketTimeoutException

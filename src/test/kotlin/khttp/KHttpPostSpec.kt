@@ -8,6 +8,9 @@ package khttp
 import khttp.extensions.fileLike
 import khttp.helpers.StringIterable
 import org.jetbrains.spek.api.Spek
+import org.jetbrains.spek.api.dsl.given
+import org.jetbrains.spek.api.dsl.it
+import org.jetbrains.spek.api.dsl.on
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.File
