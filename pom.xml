@@ -195,7 +195,7 @@
     </dependencies>
     <properties>
         <kotlin.version>1.0.3</kotlin.version>
-        <spek.version>1.0.77</spek.version>
+        <spek.version>1.0.89</spek.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 </project>
