@@ -32,7 +32,7 @@ class GenericResponse internal constructor(override val request: Request) : Resp
     internal companion object {
 
         internal val HttpURLConnection.cookieJar: CookieJar
-            get() = CookieJar(*this.headerFields.filter { it.key == "Set-Cookie" }.flatMap { it.value }.map { Cookie(it) }.toTypedArray())
+            get() = CookieJar(*this.headerFields.filter { it.key == "Set-Cookie" }.flatMap { it.value }.filter {it.isNotEmpty()}.map { Cookie(it) }.toTypedArray())
 
         internal fun HttpURLConnection.forceMethod(method: String) {
             try {
