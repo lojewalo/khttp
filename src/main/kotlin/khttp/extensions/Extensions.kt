@@ -92,3 +92,15 @@ internal fun <T> Class<T>.getSuperclasses(): List<Class<in T>> {
     }
     return list
 }
+
+fun <K, V> MutableMap<K, V>.putIfAbsent(key: K, value: V) {
+    if (key !in this) {
+        this[key] = value
+    }
+}
+
+fun <K, V> MutableMap<K, V>.putAllIfAbsent(other: Map<K, V>) {
+    for ((key, value) in other) {
+        this.putIfAbsent(key, value)
+    }
+}

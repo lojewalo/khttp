@@ -5,7 +5,7 @@
  */
 package khttp.structures.maps
 
-class CaseInsensitiveMap<V>(private val map: Map<String, V>) : Map<String, V> by map {
+class CaseInsensitiveMap<out V>(private val map: Map<String, V>) : Map<String, V> by map {
 
     override fun containsKey(key: String): Boolean {
         return this.map.keys.any { it.equals(key.toLowerCase(), ignoreCase = true) }

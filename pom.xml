@@ -125,7 +125,7 @@
                     <dependency>
                         <groupId>org.junit.platform</groupId>
                         <artifactId>junit-platform-surefire-provider</artifactId>
-                        <version>1.0.0-M2</version>
+                        <version>1.0.0-M3</version>
                     </dependency>
                 </dependencies>
             </plugin>
@@ -184,18 +184,18 @@
             <groupId>org.jetbrains.spek</groupId>
             <artifactId>spek-api</artifactId>
             <version>${spek.version}</version>
-            <scope>test</scope>
+            <scope>test-compile</scope>
         </dependency>
         <dependency>
             <groupId>org.jetbrains.spek</groupId>
             <artifactId>spek-junit-platform-engine</artifactId>
             <version>${spek.version}</version>
-            <scope>test</scope>
+            <scope>test-runtime</scope>
         </dependency>
     </dependencies>
     <properties>
         <kotlin.version>1.0.3</kotlin.version>
-        <spek.version>1.0.89</spek.version>
+        <spek.version>1.1.0-beta2</spek.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 </project>

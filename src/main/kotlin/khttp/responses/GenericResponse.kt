@@ -32,7 +32,7 @@ class GenericResponse internal constructor(override val request: Request) : Resp
     internal companion object {
 
         internal val HttpURLConnection.cookieJar: CookieJar
-            get() = CookieJar(*this.headerFields.filter { it.key == "Set-Cookie" }.flatMap { it.value }.filter {it.isNotEmpty()}.map { Cookie(it) }.toTypedArray())
+            get() = CookieJar(*this.headerFields.filter { it.key == "Set-Cookie" }.flatMap { it.value }.filter { it.isNotEmpty() }.map(::Cookie).toTypedArray())
 
         internal fun HttpURLConnection.forceMethod(method: String) {
             try {
@@ -95,7 +95,7 @@ class GenericResponse internal constructor(override val request: Request) : Resp
                 // If we're dealing with a non-streaming request, ignore
                 if (files.isNotEmpty()) return@arrayListOf
                 // Stream the contents if data is a File or InputStream, otherwise ignore
-                val input = if (data is File) data.inputStream() else if (data is InputStream) data else return@arrayListOf
+                val input = (data as? File)?.inputStream() ?: data as? InputStream ?: return@arrayListOf
                 // We'll be writing output
                 if (!connection.doOutput) {
                     connection.doOutput = true
@@ -265,8 +265,18 @@ class GenericResponse internal constructor(override val request: Request) : Resp
             val stream = if (this@GenericResponse.request.stream) this@GenericResponse.raw else this@GenericResponse.content.inputStream()
 
             override fun next(): ByteArray {
-                val array = ByteArray(Math.min(chunkSize, stream.available())).apply { stream.read(this) }
                 val bytes = readBytes
+                val readSize = Math.min(chunkSize, bytes.size + stream.available())
+                val left = if (bytes.size > readSize) {
+                    return bytes.asList().subList(0, readSize).toByteArray().apply {
+                        readBytes = bytes.asList().subList(readSize, bytes.size).toByteArray()
+                    }
+                } else if (bytes.isNotEmpty()) {
+                    readSize - bytes.size
+                } else {
+                    readSize
+                }
+                val array = ByteArray(left).apply { stream.read(this) }
                 readBytes = ByteArray(0)
                 return bytes + array
             }
@@ -278,15 +288,14 @@ class GenericResponse internal constructor(override val request: Request) : Resp
                         this@GenericResponse.raw.mark(1)
                     }
                     val read = this@GenericResponse.raw.read()
-                    if (!mark) {
-                        readBytes = ByteArray(1).apply { this[0] = read.toByte() }
-                    }
                     if (read == -1) {
                         stream.close()
                         false
                     } else {
                         if (mark) {
                             this@GenericResponse.raw.reset()
+                        } else {
+                            readBytes += ByteArray(1).apply { this[0] = read.toByte() }
                         }
                         true
                     }

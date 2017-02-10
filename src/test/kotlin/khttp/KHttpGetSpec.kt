@@ -381,7 +381,7 @@ class KHttpGetSpec : Spek({
     given("a streaming get request with a streaming byte response") {
         val response = get("http://httpbin.org/stream-bytes/4?seed=1", stream = true)
         on("iterating over the bytes") {
-            val iterator = response.contentIterator()
+            val iterator = response.contentIterator(chunkSize = 1)
             var counter = 0
             val expected = byteArrayOf(0x22, 0xD8.toByte(), 0xC3.toByte(), 0x41)
             for (byte in iterator) {

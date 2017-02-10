@@ -5,9 +5,11 @@
  */
 package khttp.requests
 
+import khttp.extensions.putAllIfAbsent
 import khttp.extensions.writeAndFlush
 import khttp.structures.authorization.Authorization
 import khttp.structures.files.FileLike
+import khttp.structures.maps.CaseInsensitiveMutableMap
 import khttp.structures.parameters.Parameters
 import org.json.JSONArray
 import org.json.JSONObject
@@ -130,26 +132,24 @@ class GenericRequest internal constructor(
             throw IllegalArgumentException("Invalid schema. Only http:// and https:// are supported.")
         }
         val json = this.json
-        val mutableHeaders = headers.toSortedMap()
+        val mutableHeaders = CaseInsensitiveMutableMap(headers.toSortedMap())
         if (json == null) {
             this.data = data
-            if (data != null) {
-                mutableHeaders += GenericRequest.DEFAULT_DATA_HEADERS
+            if (data != null && this.files.isEmpty()) {
+                if (data is Map<*, *>) {
+                    mutableHeaders.putAllIfAbsent(GenericRequest.DEFAULT_FORM_HEADERS)
+                } else {
+                    mutableHeaders.putAllIfAbsent(GenericRequest.DEFAULT_DATA_HEADERS)
+                }
             }
         } else {
             this.data = this.coerceToJSON(json)
-            mutableHeaders += GenericRequest.DEFAULT_JSON_HEADERS
+            mutableHeaders.putAllIfAbsent(GenericRequest.DEFAULT_JSON_HEADERS)
         }
-        for ((key, value) in GenericRequest.DEFAULT_HEADERS) {
-            if (key !in mutableHeaders) {
-                mutableHeaders[key] = value
-            }
-        }
+        mutableHeaders.putAllIfAbsent(GenericRequest.DEFAULT_HEADERS)
         if (this.files.isNotEmpty()) {
-            mutableHeaders += GenericRequest.DEFAULT_UPLOAD_HEADERS
+            mutableHeaders.putAllIfAbsent(GenericRequest.DEFAULT_UPLOAD_HEADERS)
             mutableHeaders["Content-Type"] = mutableHeaders["Content-Type"]!!.format(UUID.randomUUID().toString().replace("-", ""))
-        } else if (this.data is Map<*, *>) {
-            mutableHeaders += GenericRequest.DEFAULT_FORM_HEADERS
         }
         val auth = this.auth
         if (auth != null) {
@@ -195,6 +195,6 @@ class GenericRequest internal constructor(
         return URL(this.toURI().toASCIIString())
     }
 
-    private fun makeRoute(route: String) = URL(route + if (this.params.size > 0) "?${Parameters(this.params)}" else "").toIDN().toString()
+    private fun makeRoute(route: String) = URL(route + if (this.params.isNotEmpty()) "?${Parameters(this.params)}" else "").toIDN().toString()
 
 }
