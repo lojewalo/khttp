@@ -261,16 +261,34 @@ class GenericResponse internal constructor(override val request: Request) : Resp
 
     override fun contentIterator(chunkSize: Int): Iterator<ByteArray> {
         return object : Iterator<ByteArray> {
+            var readBytes: ByteArray = ByteArray(0)
             val stream = if (this@GenericResponse.request.stream) this@GenericResponse.raw else this@GenericResponse.content.inputStream()
 
-            override fun next() = ByteArray(Math.min(chunkSize, stream.available())).apply { stream.read(this) }
+            override fun next(): ByteArray {
+                val array = ByteArray(Math.min(chunkSize, stream.available())).apply { stream.read(this) }
+                val bytes = readBytes
+                readBytes = ByteArray(0)
+                return bytes + array
+            }
 
             override fun hasNext(): Boolean {
                 return try {
-                    (this@GenericResponse.raw.available() > 0).apply {
-                        if (!this) {
-                            stream.close()
+                    val mark = this@GenericResponse.raw.markSupported()
+                    if (mark) {
+                        this@GenericResponse.raw.mark(1)
+                    }
+                    val read = this@GenericResponse.raw.read()
+                    if (!mark) {
+                        readBytes = ByteArray(1).apply { this[0] = read.toByte() }
+                    }
+                    if (read == -1) {
+                        stream.close()
+                        false
+                    } else {
+                        if (mark) {
+                            this@GenericResponse.raw.reset()
                         }
+                        true
                     }
                 } catch(ex: IOException) {
                     false
