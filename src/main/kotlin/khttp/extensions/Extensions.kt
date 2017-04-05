@@ -39,7 +39,7 @@ internal fun Writer.writeAndFlush(string: String) {
 }
 
 fun ByteArray.splitLines(): List<ByteArray> {
-    if (this.size == 0) return listOf()
+    if (this.isEmpty()) return listOf()
     val lines = arrayListOf<ByteArray>()
     var lastSplit = 0
     var skip = 0

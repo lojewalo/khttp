@@ -167,7 +167,7 @@ class GenericRequest internal constructor(
         } else if (any is Collection<*>) {
             return JSONArray(any).toString()
         } else if (any is Iterable<*>) {
-            return any.withJSONWriter { jsonWriter, iterable ->
+            return any.withJSONWriter { jsonWriter, _ ->
                 jsonWriter.array()
                 for (thing in any) {
                     jsonWriter.value(thing)

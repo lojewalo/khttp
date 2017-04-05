@@ -12,7 +12,7 @@ class CookieJar(vararg val cookies: Cookie = arrayOf()) : MutableMap<String, Str
     companion object {
         private fun Map<String, Any>.toCookieArray(): Array<Cookie> {
             return this.map {
-                val valueList = it.value.toString().split(";").map { it.trim() }
+                val valueList = it.value.toString().split(";").map(String::trim)
                 val value = valueList[0]
                 val attributes = if (valueList.size < 2) mapOf<String, String>() else {
                     valueList.subList(1, valueList.size).associate {
