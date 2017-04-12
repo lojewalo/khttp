@@ -19,7 +19,7 @@ stream and upload, simply provide a ``File`` object for your body:
 Request and response objects
 ----------------------------
 
-Whenever a call is made to khttp.get() and friends you are doing two major things. First, you are constructing a
+Whenever a call is made to ``khttp.get()`` and friends you are doing two major things. First, you are constructing a
 ``Request`` object which will be sent off to a server to request or query some resource. Second, a ``Response`` object
 is generated once ``khttp`` gets a response back from the server. The Response object contains all of the information
 returned by the server and also contains the ``Request`` object you created originally. Here is a simple request to get
@@ -37,3 +37,34 @@ headers::
 
     r.request.headers
     // {Accept=*/*, Accept-Encoding=gzip, deflate, User-Agent=khttp/1.0.0-SNAPSHOT}
+
+Asynchronous Requests
+---------------------
+
+An asynchronous request can be performed by prefixing the desired HTTP method with the keyword ``async``. The response information is passed through the ``onResponse`` callback parameter which provides a reference to a ``Response`` object. On the other hand, error information is passed through the ``onError`` callback parameter which provides a reference to a ``Throwable`` object. The default ``onResponse`` callback simply consumes the ``Response`` object while the default ``onError`` callback throws the ``Throwable`` object. Usage without specifying an ``onError`` callback is as follows::
+
+    khttp.async.get("https://www.google.com/", onResponse = {
+        println("Status Code: $statusCode")
+        println("Response Text: $text")
+    })
+    // OR ...
+    khttp.async.get("https://www.google.com/") {
+        println("Status Code: $statusCode")
+        println("Response Text: $text")
+    }
+
+The ``onError`` callback can be included as follows::
+
+    khttp.async.get("https://www.google.com/", onError = {
+        println("Error message: $message")
+    }, onResponse = {
+        println("Status Code: $statusCode")
+        println("Response Text: $text")
+    })
+    // OR ...
+    khttp.async.get("https://www.google.com/", onError = {
+        println("Error message: $message")
+    }) {
+        println("Status Code: $statusCode")
+        println("Response Text: $text")
+    }
