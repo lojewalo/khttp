@@ -179,10 +179,10 @@ class KHttpAsyncPostSpec : Spek({
                 assertEquals(1, files.length())
             }
             it("should have the same name") {
-                assertNotNull(files.optString(file.name, null))
+                assertNotNull(files.optString(file.fieldName, null))
             }
             it("should have the same contents") {
-                assertEquals(file.contents.toString(Charsets.UTF_8), files.optString(file.name))
+                assertEquals(file.contents.toString(Charsets.UTF_8), files.optString(file.fieldName))
             }
         }
     }
@@ -201,10 +201,10 @@ class KHttpAsyncPostSpec : Spek({
                 assertEquals(1, files.length())
             }
             it("should have the same name") {
-                assertNotNull(files.optString(file.name, null))
+                assertNotNull(files.optString(file.fieldName, null))
             }
             it("should have the same contents") {
-                assertEquals(file.contents.toString(Charsets.UTF_8), files.optString(file.name))
+                assertEquals(file.contents.toString(Charsets.UTF_8), files.optString(file.fieldName))
             }
             it("should have one parameter") {
                 assertEquals(1, form.length())
