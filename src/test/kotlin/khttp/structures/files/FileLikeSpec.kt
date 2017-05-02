@@ -20,7 +20,7 @@ class FileLikeSpec : Spek({
         on("creating a FileLike without a custom name") {
             val fileLike = file.fileLike()
             it("should have the same name") {
-                assertEquals(NAME, fileLike.name)
+                assertEquals(NAME, fileLike.fieldName)
             }
             it("should have the same contents") {
                 assertEquals(file.readBytes().asList(), fileLike.contents.asList())
@@ -30,7 +30,7 @@ class FileLikeSpec : Spek({
             val name = "not_rare_pepe.png"
             val fileLike = file.fileLike(name = name)
             it("should have the custom name") {
-                assertEquals(name, fileLike.name)
+                assertEquals(name, fileLike.fieldName)
             }
             it("should have the same contents") {
                 assertEquals(file.readBytes().asList(), fileLike.contents.asList())
@@ -42,7 +42,7 @@ class FileLikeSpec : Spek({
         on("creating a FileLike without a custom name") {
             val fileLike = path.fileLike()
             it("should have the same name") {
-                assertEquals(NAME, fileLike.name)
+                assertEquals(NAME, fileLike.fieldName)
             }
             it("should have the same contents") {
                 assertEquals(path.toFile().readBytes().asList(), fileLike.contents.asList())
@@ -52,7 +52,7 @@ class FileLikeSpec : Spek({
             val name = "not_rare_pepe.png"
             val fileLike = path.fileLike(name = name)
             it("should have the custom name") {
-                assertEquals(name, fileLike.name)
+                assertEquals(name, fileLike.fieldName)
             }
             it("should have the same contents") {
                 assertEquals(path.toFile().readBytes().asList(), fileLike.contents.asList())
@@ -65,7 +65,7 @@ class FileLikeSpec : Spek({
             val name = "not_rare_pepe.png"
             val fileLike = string.fileLike(name = name)
             it("should have the custom name") {
-                assertEquals(name, fileLike.name)
+                assertEquals(name, fileLike.fieldName)
             }
             it("should have the same contents") {
                 assertEquals(string.toByteArray().asList(), fileLike.contents.asList())
