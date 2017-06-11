@@ -21,6 +21,7 @@ import java.io.StringWriter
 import java.net.IDN
 import java.net.URI
 import java.net.URL
+import java.net.URLDecoder
 import java.util.UUID
 
 class GenericRequest internal constructor(
@@ -98,6 +99,7 @@ class GenericRequest internal constructor(
                     val boundary = this.headers["Content-Type"]!!.split("boundary=")[1]
                     // Make a writer for convenience
                     val writer = bytes.writer()
+                    // FIXME: Check if using base64 and only add header to data if so
                     // Add the form data
                     if (data != null) {
                         for ((key, value) in data as Map<*, *>) {
@@ -195,7 +197,12 @@ class GenericRequest internal constructor(
         val newHost = IDN.toASCII(this.host)
         this.javaClass.getDeclaredField("host").apply { this.isAccessible = true }.set(this, newHost)
         this.javaClass.getDeclaredField("authority").apply { this.isAccessible = true }.set(this, if (this.port == -1) this.host else "${this.host}:${this.port}")
-        return URL(this.toURI().toASCIIString())
+        val query = if (this.query == null) {
+            null
+        } else {
+            URLDecoder.decode(this.query, "UTF-8")
+        }
+        return URL(URI(this.protocol, this.userInfo, this.host, this.port, this.path, query, this.ref).toASCIIString())
     }
 
     private fun makeRoute(route: String) = URL(route + if (this.params.isNotEmpty()) "?${Parameters(this.params)}" else "").toIDN().toString()
