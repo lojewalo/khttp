@@ -6,6 +6,11 @@
 package khttp
 
 import khttp.extensions.fileLike
+import khttp.helpers.AsyncUtil
+import khttp.helpers.AsyncUtil.Companion.error
+import khttp.helpers.AsyncUtil.Companion.errorCallback
+import khttp.helpers.AsyncUtil.Companion.response
+import khttp.helpers.AsyncUtil.Companion.responseCallback
 import khttp.helpers.StringIterable
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.given
@@ -20,29 +25,26 @@ import kotlin.test.assertFailsWith
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
-class KHttpPostSpec : Spek({
-    given("a post request with raw data") {
-        val request = post("http://httpbin.org/post", data = "Hello, world!")
+class KHttpAsyncPostSpec : Spek({
+    given("an async post request with raw data") {
+        beforeGroup {
+            AsyncUtil.execute { async.post("http://httpbin.org/post", data = "Hello, world!", onError = errorCallback, onResponse = responseCallback) }
+        }
         on("accessing json") {
-            val json = request.jsonObject
+            if (error != null) throw error!!
+            val json = response!!.jsonObject
             it("should contain the data") {
                 assertEquals("Hello, world!", json.getString("data"))
             }
         }
     }
-    given("a post request with raw data") {
-        val request = post("http://httpbin.org/post", data = "a=b&c=d")
-        on("accessing json") {
-            val json = request.jsonObject
-            it("should contain the data") {
-                assertEquals("a=b&c=d", json.getString("data"))
-            }
+    given("an async post form request") {
+        beforeGroup {
+            AsyncUtil.execute { async.post("http://httpbin.org/post", data = mapOf("a" to "b", "c" to "d"), onError = errorCallback, onResponse = responseCallback) }
         }
-    }
-    given("a post form request") {
-        val request = post("http://httpbin.org/post", data = mapOf("a" to "b", "c" to "d"))
         on("accessing json") {
-            val json = request.jsonObject
+            if (error != null) throw error!!
+            val json = response!!.jsonObject
             it("should contain the form data") {
                 val form = json.getJSONObject("form")
                 assertEquals("b", form.getString("a"))
@@ -50,11 +52,14 @@ class KHttpPostSpec : Spek({
             }
         }
     }
-    given("a request with json as a Map") {
+    given("an async request with json as a Map") {
         val jsonMap = mapOf("books" to listOf(mapOf("title" to "Pride and Prejudice", "author" to "Jane Austen")))
-        val request = post("http://httpbin.org/post", json = jsonMap)
+        beforeGroup {
+            AsyncUtil.execute { async.post("http://httpbin.org/post", json = jsonMap, onError = errorCallback, onResponse = responseCallback) }
+        }
         on("accessing the json") {
-            val json = request.jsonObject
+            if (error != null) throw error!!
+            val json = response!!.jsonObject
             val returnedJSON = json.getJSONObject("json")
             val returnedBooks = returnedJSON.getJSONArray("books")
             it("should be the same length") {
@@ -73,22 +78,28 @@ class KHttpPostSpec : Spek({
             }
         }
     }
-    given("a request with json as an Iterable") {
+    given("an async request with json as an Iterable") {
         val jsonArray = StringIterable("a word")
-        val request = post("http://httpbin.org/post", json = jsonArray)
+        beforeGroup {
+            AsyncUtil.execute { async.post("http://httpbin.org/post", json = jsonArray, onError = errorCallback, onResponse = responseCallback) }
+        }
         on("accessing the json") {
-            val json = request.jsonObject
+            if (error != null) throw error!!
+            val json = response!!.jsonObject
             val returnedJSON = json.getJSONArray("json")
             it("should be equal") {
                 assertEquals(jsonArray.string, String(returnedJSON.mapIndexed { i, any -> returnedJSON.getString(i)[0] }.toCharArray()))
             }
         }
     }
-    given("a request with json as a List") {
+    given("an async request with json as a List") {
         val jsonList = listOf("A thing", "another thing")
-        val request = post("https://httpbin.org/post", json = jsonList)
+        beforeGroup {
+            AsyncUtil.execute { async.post("https://httpbin.org/post", json = jsonList, onError = errorCallback, onResponse = responseCallback) }
+        }
         on("accessing the json") {
-            val json = request.jsonObject
+            if (error != null) throw error!!
+            val json = response!!.jsonObject
             val returnedJSON = json.getJSONArray("json")
             it("should have an equal first element") {
                 assertEquals(jsonList[0], returnedJSON.getString(0))
@@ -98,11 +109,14 @@ class KHttpPostSpec : Spek({
             }
         }
     }
-    given("a request with json as an Array") {
+    given("an async request with json as an Array") {
         val jsonArray = arrayOf("A thing", "another thing")
-        val request = post("https://httpbin.org/post", json = jsonArray)
+        beforeGroup {
+            AsyncUtil.execute { async.post("https://httpbin.org/post", json = jsonArray, onError = errorCallback, onResponse = responseCallback) }
+        }
         on("accessing the json") {
-            val json = request.jsonObject
+            if (error != null) throw error!!
+            val json = response!!.jsonObject
             val returnedJSON = json.getJSONArray("json")
             it("should have an equal first element") {
                 assertEquals(jsonArray[0], returnedJSON.getString(0))
@@ -112,42 +126,54 @@ class KHttpPostSpec : Spek({
             }
         }
     }
-    given("a request with json as a JSONObject") {
+    given("an async request with json as a JSONObject") {
         val jsonObject = JSONObject("""{"valid": true}""")
-        val request = post("https://httpbin.org/post", json = jsonObject)
+        beforeGroup {
+            AsyncUtil.execute { async.post("https://httpbin.org/post", json = jsonObject, onError = errorCallback, onResponse = responseCallback) }
+        }
         on("accessing the json") {
-            val json = request.jsonObject
+            if (error != null) throw error!!
+            val json = response!!.jsonObject
             val returnedJSON = json.getJSONObject("json")
             it("should have a true value for the key \"valid\"") {
                 assertTrue(returnedJSON.getBoolean("valid"))
             }
         }
     }
-    given("a request with json as a JSONArray") {
+    given("an async request with json as a JSONArray") {
         val jsonObject = JSONArray("[true]")
-        val request = post("https://httpbin.org/post", json = jsonObject)
+        beforeGroup {
+            AsyncUtil.execute { async.post("https://httpbin.org/post", json = jsonObject, onError = errorCallback, onResponse = responseCallback) }
+        }
         on("accessing the json") {
-            val json = request.jsonObject
+            if (error != null) throw error!!
+            val json = response!!.jsonObject
             val returnedJSON = json.getJSONArray("json")
             it("should have a true value for the first key") {
                 assertTrue(returnedJSON.getBoolean(0))
             }
         }
     }
-    given("a request with invalid json") {
+    given("an async request with invalid json") {
+        beforeGroup {
+            AsyncUtil.execute { async.post("https://httpbin.org/post", json = object {}, onError = { AsyncUtil.set(err = this) }) }
+        }
         on("construction") {
             it("should throw an IllegalArgumentException") {
                 assertFailsWith(IllegalArgumentException::class) {
-                    post("https://httpbin.org/post", json = object {})
+                    throw error!!
                 }
             }
         }
     }
-    given("a file upload without form parameters") {
+    given("an async file upload without form parameters") {
         val file = "hello".fileLike("derp")
-        val response = post("https://httpbin.org/post", files = listOf(file))
+        beforeGroup {
+            AsyncUtil.execute { async.post("https://httpbin.org/post", files = listOf(file), onError = errorCallback, onResponse = responseCallback) }
+        }
         on("accessing the json") {
-            val json = response.jsonObject
+            if (error != null) throw error!!
+            val json = response!!.jsonObject
             val files = json.getJSONObject("files")
             it("should have one file") {
                 assertEquals(1, files.length())
@@ -160,12 +186,15 @@ class KHttpPostSpec : Spek({
             }
         }
     }
-    given("a file upload with form parameters") {
+    given("an async file upload with form parameters") {
         val file = "hello".fileLike("derp")
         val params = mapOf("top" to "kek")
-        val response = post("https://httpbin.org/post", files = listOf(file), data = params)
+        beforeGroup {
+            AsyncUtil.execute { async.post("https://httpbin.org/post", files = listOf(file), data = params, onError = errorCallback, onResponse = responseCallback) }
+        }
         on("accessing the json") {
-            val json = response.jsonObject
+            if (error != null) throw error!!
+            val json = response!!.jsonObject
             val files = json.getJSONObject("files")
             val form = json.getJSONObject("form")
             it("should have one file") {
@@ -188,12 +217,15 @@ class KHttpPostSpec : Spek({
             }
         }
     }
-    given("a streaming file upload") {
+    given("an async streaming file upload") {
         // Get our file to stream (a beautiful rare pepe)
         val file = File("src/test/resources/rarest_of_pepes.png")
-        val response = post("https://httpbin.org/post", data = file)
+        beforeGroup {
+            AsyncUtil.execute { async.post("https://httpbin.org/post", data = file, onError = errorCallback, onResponse = responseCallback) }
+        }
         on("accessing the data") {
-            val json = response.jsonObject
+            if (error != null) throw error!!
+            val json = response!!.jsonObject
             val data = json.getString("data")
             it("should start with a base64 header") {
                 assertTrue(data.startsWith("data:application/octet-stream;base64,"))
@@ -205,13 +237,16 @@ class KHttpPostSpec : Spek({
             }
         }
     }
-    given("a streaming InputStream upload") {
+    given("an async streaming InputStream upload") {
         // Get our file to stream (a beautiful rare pepe)
         val file = File("src/test/resources/rarest_of_pepes.png")
         val inputStream = file.inputStream()
-        val response = post("https://httpbin.org/post", data = inputStream)
+        beforeGroup {
+            AsyncUtil.execute { async.post("https://httpbin.org/post", data = inputStream, onError = errorCallback, onResponse = responseCallback) }
+        }
         on("accessing the data") {
-            val json = response.jsonObject
+            if (error != null) throw error!!
+            val json = response!!.jsonObject
             val data = json.getString("data")
             it("should start with a base64 header") {
                 assertTrue(data.startsWith("data:application/octet-stream;base64,"))
@@ -223,11 +258,14 @@ class KHttpPostSpec : Spek({
             }
         }
     }
-    given("a JSON request") {
+    given("an async JSON request") {
         val expected = """{"test":true}"""
-        val response = post("https://httpbin.org/post", json = mapOf("test" to true))
+        beforeGroup {
+            AsyncUtil.execute { async.post("https://httpbin.org/post", json = mapOf("test" to true), onError = errorCallback, onResponse = responseCallback) }
+        }
         on("accessing the request body") {
-            val body = response.request.body
+            if (error != null) throw error!!
+            val body = response!!.request.body
             it("should be the expected valid json") {
                 assertEquals(expected, body.toString(Charsets.UTF_8))
             }
