@@ -130,6 +130,30 @@ class KHttpAsyncGetSpec : Spek({
             }
         }
     }
+    given("an async get request that redirects with HTTP 307 and allowing redirects") {
+        beforeGroup {
+            AsyncUtil.execute { async.get("http://httpbin.org/redirect-to?status_code=307&url=${URLEncoder.encode("http://httpbin.org/get", "utf-8")}", onError = errorCallback, onResponse = responseCallback) }
+        }
+        on("accessing the json") {
+            if (error != null) throw error!!
+            val json = response!!.jsonObject
+            it("should have the redirected url") {
+                assertEquals("http://httpbin.org/get", json.getString("url"))
+            }
+        }
+    }
+    given("an async get request that redirects with HTTP 308 and allowing redirects") {
+        beforeGroup {
+            AsyncUtil.execute { async.get("http://httpbin.org/redirect-to?status_code=308&url=${URLEncoder.encode("http://httpbin.org/get", "utf-8")}", onError = errorCallback, onResponse = responseCallback) }
+        }
+        on("accessing the json") {
+            if (error != null) throw error!!
+            val json = response!!.jsonObject
+            it("should have the redirected url") {
+                assertEquals("http://httpbin.org/get", json.getString("url"))
+            }
+        }
+    }
     given("an async get request that redirects and disallowing redirects") {
         beforeGroup {
             AsyncUtil.execute { async.get("http://httpbin.org/redirect-to?url=${URLEncoder.encode("http://httpbin.org/get", "utf-8")}", allowRedirects = false, onError = errorCallback, onResponse = responseCallback) }
@@ -139,6 +163,30 @@ class KHttpAsyncGetSpec : Spek({
             val code = response!!.statusCode
             it("should be 302") {
                 assertEquals(302, code)
+            }
+        }
+    }
+    given("an async get request that redirects with HTTP 307 and disallowing redirects") {
+        beforeGroup {
+            AsyncUtil.execute { async.get("http://httpbin.org/redirect-to?status_code=307&url=${URLEncoder.encode("http://httpbin.org/get", "utf-8")}", allowRedirects = false, onError = errorCallback, onResponse = responseCallback) }
+        }
+        on("accessing the status code") {
+            if (error != null) throw error!!
+            val code = response!!.statusCode
+            it("should be 307") {
+                assertEquals(307, code)
+            }
+        }
+    }
+    given("an async get request that redirects with HTTP 308 and disallowing redirects") {
+        beforeGroup {
+            AsyncUtil.execute { async.get("http://httpbin.org/redirect-to?status_code=308&url=${URLEncoder.encode("http://httpbin.org/get", "utf-8")}", allowRedirects = false, onError = errorCallback, onResponse = responseCallback) }
+        }
+        on("accessing the status code") {
+            if (error != null) throw error!!
+            val code = response!!.statusCode
+            it("should be 308") {
+                assertEquals(308, code)
             }
         }
     }

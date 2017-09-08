@@ -124,7 +124,7 @@ class GenericResponse internal constructor(override val request: Request) : Resp
             this.receiver()
             this.connect()
         }
-        if (first.request.allowRedirects && connection.responseCode in 301..303) {
+        if (first.request.allowRedirects && connection.responseCode in arrayOf(301, 302, 303, 307, 308)) {
             val cookies = connection.cookieJar
             val req = with(first.request) {
                 GenericResponse(

@@ -103,12 +103,48 @@ class KHttpGetSpec : Spek({
             }
         }
     }
+    given("a get request that redirects with HTTP 307 and allowing redirects") {
+        val response = get("http://httpbin.org/redirect-to?status_code=307&url=http://httpbin.org/get")
+        on("accessing the json") {
+            val json = response.jsonObject
+            it("should have the redirected url") {
+                assertEquals("http://httpbin.org/get", json.getString("url"))
+            }
+        }
+    }
+    given("a get request that redirects with HTTP 308 and allowing redirects") {
+        val response = get("http://httpbin.org/redirect-to?status_code=308&url=http://httpbin.org/get")
+        on("accessing the json") {
+            val json = response.jsonObject
+            it("should have the redirected url") {
+                assertEquals("http://httpbin.org/get", json.getString("url"))
+            }
+        }
+    }
     given("a get request that redirects and disallowing redirects") {
         val response = get("http://httpbin.org/redirect-to?url=http://httpbin.org/get", allowRedirects = false)
         on("accessing the status code") {
             val code = response.statusCode
             it("should be 302") {
                 assertEquals(302, code)
+            }
+        }
+    }
+    given("a get request that redirects with HTTP 307 and disallowing redirects") {
+        val response = get("http://httpbin.org/redirect-to?status_code=307&url=http://httpbin.org/get", allowRedirects = false)
+        on("accessing the status code") {
+            val code = response.statusCode
+            it("should be 307") {
+                assertEquals(307, code)
+            }
+        }
+    }
+    given("a get request that redirects with HTTP 308 and disallowing redirects") {
+        val response = get("http://httpbin.org/redirect-to?status_code=308&url=http://httpbin.org/get", allowRedirects = false)
+        on("accessing the status code") {
+            val code = response.statusCode
+            it("should be 308") {
+                assertEquals(308, code)
             }
         }
     }
