@@ -11,7 +11,7 @@ import org.jetbrains.spek.api.dsl.it
 import org.jetbrains.spek.api.dsl.on
 import kotlin.test.assertEquals
 
-class BasicAuthorizationSpec : Spek({
+class BearerTokenAuthorizationSpec : Spek({
     given("a BearerTokenAuthorization object") {
         // Sample JWT token. See https://jwt.io/
         val token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWV9.TJVA95OrM7E2cBab30RMHrHDcEfxjoYZgeFONFh7HgQ"
