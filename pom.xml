@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>khttp</groupId>
     <artifactId>khttp</artifactId>
-    <version>0.1.1-SNAPSHOT</version>
+    <version>1.0.0</version>
     <name>khttp</name>
     <description>A HTTP request library for Kotlin.</description>
     <url>https://github.com/jkcclemens/khttp</url>
