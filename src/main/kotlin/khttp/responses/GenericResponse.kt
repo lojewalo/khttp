@@ -132,7 +132,7 @@ class GenericResponse internal constructor(override val request: Request) : Resp
                         method = when(connection.responseCode) {
                             303 -> "GET"
                             else -> this.method
-                        }                        
+                        },
                         url = this@openRedirectingConnection.toURI().resolve(connection.getHeaderField("Location")).toASCIIString(),
                         headers = this.headers,
                         params = this.params,
