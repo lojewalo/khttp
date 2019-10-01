@@ -25,6 +25,7 @@ fun main(args: Array<out String>) {
 
 Stable releases are hosted on [JCenter](https://bintray.com/bintray/jcenter).
 
+Maven:
 ```xml
 <repository>
   <id>jcenter</id>
@@ -36,6 +37,17 @@ Stable releases are hosted on [JCenter](https://bintray.com/bintray/jcenter).
   <artifactId>khttp</artifactId>
   <version>1.0.0</version>
 </dependency>
+```
+Gradle:
+```gradle
+repositories {
+    ...
+    jcenter()
+}
+
+dependencies {
+    implementation 'khttp:khttp:1.0.0'
+}
 ```
 
 ### Development
