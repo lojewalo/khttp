@@ -202,7 +202,10 @@ class GenericRequest internal constructor(
         } else {
             URLDecoder.decode(this.query, "UTF-8")
         }
-        return URL(URI(this.protocol, this.userInfo, this.host, this.port, this.path, query, this.ref).toASCIIString())
+//        return URL(URI(this.protocol, this.userInfo, this.host, this.port, this.path, query, this.ref).toASCIIString())
+        val uri = URI(this.protocol, this.userInfo, this.host, this.port, this.path, query, this.ref).toASCIIString()
+        println(uri)
+        return URL(uri)
     }
 
     private fun makeRoute(route: String) = URL(route + if (this.params.isNotEmpty()) "?${Parameters(this.params)}" else "").toIDN().toString()
