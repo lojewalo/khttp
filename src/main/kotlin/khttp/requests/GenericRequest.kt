@@ -22,40 +22,40 @@ import java.net.IDN
 import java.net.URI
 import java.net.URL
 import java.net.URLDecoder
-import java.util.*
+import java.util.UUID
 
 class GenericRequest internal constructor(
-        override val method: String,
-        url: String,
-        override val params: Map<String, String>,
-        headers: Map<String, String?>,
-        data: Any?,
-        override val json: Any?,
-        override val auth: Authorization?,
-        override val cookies: Map<String, String>?,
-        override val timeout: Double,
-        allowRedirects: Boolean?,
-        override val stream: Boolean,
-        override val files: List<FileLike>
+    override val method: String,
+    url: String,
+    override val params: Map<String, String>,
+    headers: Map<String, String?>,
+    data: Any?,
+    override val json: Any?,
+    override val auth: Authorization?,
+    override val cookies: Map<String, String>?,
+    override val timeout: Double,
+    allowRedirects: Boolean?,
+    override val stream: Boolean,
+    override val files: List<FileLike>
 ) : Request {
 
     companion object {
         val DEFAULT_HEADERS = mapOf(
-                "Accept" to "*/*",
-                "Accept-Encoding" to "gzip, deflate",
-                "User-Agent" to "khttp/1.0.0-SNAPSHOT"
+            "Accept" to "*/*",
+            "Accept-Encoding" to "gzip, deflate",
+            "User-Agent" to "khttp/1.0.0-SNAPSHOT"
         )
         val DEFAULT_DATA_HEADERS = mapOf(
-                "Content-Type" to "text/plain"
+            "Content-Type" to "text/plain"
         )
         val DEFAULT_FORM_HEADERS = mapOf(
-                "Content-Type" to "application/x-www-form-urlencoded"
+            "Content-Type" to "application/x-www-form-urlencoded"
         )
         val DEFAULT_UPLOAD_HEADERS = mapOf(
-                "Content-Type" to "multipart/form-data; boundary=%s"
+            "Content-Type" to "multipart/form-data; boundary=%s"
         )
         val DEFAULT_JSON_HEADERS = mapOf(
-                "Content-Type" to "application/json"
+            "Content-Type" to "application/json"
         )
     }
 
@@ -202,10 +202,7 @@ class GenericRequest internal constructor(
         } else {
             URLDecoder.decode(this.query, "UTF-8")
         }
-//        return URL(URI(this.protocol, this.userInfo, this.host, this.port, this.path, query, this.ref).toASCIIString())
-        val uri = URI(this.protocol, this.userInfo, this.host, this.port, this.path, query, this.ref).toASCIIString()
-        println(uri)
-        return URL(uri)
+        return URL(URI(this.protocol, this.userInfo, this.host, this.port, this.path, query, this.ref).toASCIIString())
     }
 
     private fun makeRoute(route: String) = URL(route + if (this.params.isNotEmpty()) "?${Parameters(this.params)}" else "").toIDN().toString()
