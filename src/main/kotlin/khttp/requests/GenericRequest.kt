@@ -208,8 +208,9 @@ class GenericRequest internal constructor(
         } catch (e: java.net.URISyntaxException) {
             val uriObj = URI(this.toString())
             if (uriObj.host == null) {
-                val hostField = this.javaClass.getDeclaredField("host")
+                val hostField = URI::class.java.getDeclaredField("host")
                 hostField.isAccessible = true
+                println("${this.authority}${this.path}")
                 hostField.set(uriObj, "${this.authority}${this.path}")
             }
             URL(uriObj.toASCIIString())
