@@ -202,7 +202,6 @@ class GenericRequest internal constructor(
         } else {
             URLDecoder.decode(this.query, "UTF-8")
         }
-//        return URL(URI(this.protocol, this.userInfo, this.host, this.port, this.path, query, this.ref).toASCIIString())
         return try {
             URL(URI(this.protocol, this.userInfo, this.host, this.port, this.path, query, this.ref).toASCIIString())
         } catch (e: java.net.URISyntaxException) {
@@ -210,7 +209,6 @@ class GenericRequest internal constructor(
             if (uriObj.host == null) {
                 val hostField = URI::class.java.getDeclaredField("host")
                 hostField.isAccessible = true
-                println("${this.authority}${this.path}")
                 hostField.set(uriObj, "${this.authority}${this.path}")
             }
             URL(uriObj.toASCIIString())
