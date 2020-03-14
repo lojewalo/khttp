@@ -203,14 +203,17 @@ class GenericRequest internal constructor(
             URLDecoder.decode(this.query, "UTF-8")
         }
 //        return URL(URI(this.protocol, this.userInfo, this.host, this.port, this.path, query, this.ref).toASCIIString())
-        val uri = URI(this.protocol, this.userInfo, this.host, this.port, this.path, query, this.ref)
-        if (uri.host == null) {
-            val hostField = this.javaClass.getDeclaredField("host")
-            hostField.isAccessible = true
-            hostField.set(uri, "${this.authority}${this.path}")
+        return try {
+            URL(URI(this.protocol, this.userInfo, this.host, this.port, this.path, query, this.ref).toASCIIString())
+        } catch (e: java.net.URISyntaxException) {
+            val uriObj = URI(this.toString())
+            if (uriObj.host == null) {
+                val hostField = this.javaClass.getDeclaredField("host")
+                hostField.isAccessible = true
+                hostField.set(uriObj, "${this.authority}${this.path}")
+            }
+            URL(uriObj.toASCIIString())
         }
-        println(uri)
-        return URL(uri.toASCIIString())
     }
 
     private fun makeRoute(route: String) = URL(route + if (this.params.isNotEmpty()) "?${Parameters(this.params)}" else "").toIDN().toString()
