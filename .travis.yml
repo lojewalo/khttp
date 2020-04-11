@@ -27,9 +27,9 @@ env:
     - *reference_jdk
     - JDK="adopt-openj9@1.8"
     - JDK="adopt@1.11"
-    - JDK="adopt-openj91.11"
+    - JDK="adopt-openj9@1.11"
     - JDK="adopt@"
-    - JDK="adopt-openj9"
+    - JDK="adopt-openj9@"
 
 stages:
   - base
