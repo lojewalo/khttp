@@ -1,5 +1,4 @@
 import org.danilopianini.gradle.mavencentral.JavadocJar
-import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.jetbrains.dokka.gradle.DokkaTask
 
 plugins {
@@ -35,8 +34,6 @@ dependencies {
     testRuntimeOnly("org.jetbrains.spek:spek-junit-platform-engine:_")
 }
 
-group = "org.danilopianini" // This must be configured for the generated pom.xml to work correctly
-
 tasks.withType<DokkaTask> {
     // Workaround for https://github.com/Kotlin/dokka/issues/294
     outputFormat = if (JavaVersion.current().isJava10Compatible) "html" else "javadoc"
@@ -51,6 +48,8 @@ signing {
     val signingPassword: String? by project
     useInMemoryPgpKeys(signingKey, signingPassword)
 }
+
+group = "org.danilopianini" // This must be configured for the generated pom.xml to work correctly
 
 publishOnCentral {
     projectDescription.set("A HTTP request library for Kotlin.")
