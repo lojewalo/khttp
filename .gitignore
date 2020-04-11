@@ -32,3 +32,4 @@ package
 *.ipr
 *.iws
 .idea/
+.gradle/
