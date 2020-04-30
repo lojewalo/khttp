@@ -23,6 +23,8 @@ import java.net.URI
 import java.net.URL
 import java.net.URLDecoder
 import java.util.UUID
+import javax.net.ssl.HostnameVerifier
+import javax.net.ssl.SSLContext
 
 class GenericRequest internal constructor(
     override val method: String,
@@ -36,7 +38,9 @@ class GenericRequest internal constructor(
     override val timeout: Double,
     allowRedirects: Boolean?,
     override val stream: Boolean,
-    override val files: List<FileLike>
+    override val files: List<FileLike>,
+    override val sslContext: SSLContext?,
+    hostnameVerifier: HostnameVerifier?
 ) : Request {
 
     companion object {
@@ -64,6 +68,7 @@ class GenericRequest internal constructor(
     override val headers: Map<String, String>
     override val data: Any?
     override val allowRedirects = allowRedirects ?: (this.method != "HEAD")
+    override val hostnameVerifier: HostnameVerifier = hostnameVerifier ?: HostnameVerifier { hostname, session -> hostname.equals(session.peerHost, true) }
     private var _body: ByteArray? = null
     override val body: ByteArray
         get() {
