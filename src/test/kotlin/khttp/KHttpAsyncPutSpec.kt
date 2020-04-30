@@ -10,19 +10,17 @@ import khttp.helpers.AsyncUtil.Companion.error
 import khttp.helpers.AsyncUtil.Companion.errorCallback
 import khttp.helpers.AsyncUtil.Companion.response
 import khttp.helpers.AsyncUtil.Companion.responseCallback
-import org.jetbrains.spek.api.Spek
-import org.jetbrains.spek.api.dsl.given
-import org.jetbrains.spek.api.dsl.it
-import org.jetbrains.spek.api.dsl.on
+import org.spekframework.spek2.Spek
+import org.spekframework.spek2.style.specification.describe
 import kotlin.test.assertEquals
 
 class KHttpAsyncPutSpec : Spek({
-    given("a put request") {
+    describe("a put request") {
         val url = "https://httpbin.org/put"
         beforeGroup {
             AsyncUtil.execute { async.put(url, onError = errorCallback, onResponse = responseCallback) }
         }
-        on("accessing the json") {
+        context("accessing the json") {
             if (error != null) throw error!!
             val json = response!!.jsonObject
             it("should have the same url") {

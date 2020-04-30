@@ -10,18 +10,16 @@ import khttp.helpers.AsyncUtil.Companion.error
 import khttp.helpers.AsyncUtil.Companion.errorCallback
 import khttp.helpers.AsyncUtil.Companion.response
 import khttp.helpers.AsyncUtil.Companion.responseCallback
-import org.jetbrains.spek.api.Spek
-import org.jetbrains.spek.api.dsl.given
-import org.jetbrains.spek.api.dsl.it
-import org.jetbrains.spek.api.dsl.on
+import org.spekframework.spek2.Spek
+import org.spekframework.spek2.style.specification.describe
 import kotlin.test.assertEquals
 
 class KHttpAsyncOptionsSpec : Spek({
-    given("an async options request") {
+    describe("an async options request") {
         beforeGroup {
             AsyncUtil.execute { async.options("https://httpbin.org/get", onError = errorCallback, onResponse = responseCallback) }
         }
-        on("accessing the status code") {
+        context("accessing the status code") {
             if (error != null) throw error!!
             val status = response!!.statusCode
             it("should be 200") {

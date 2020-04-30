@@ -6,11 +6,9 @@
 package khttp
 
 import khttp.structures.authorization.BasicAuthorization
-import org.jetbrains.spek.api.Spek
-import org.jetbrains.spek.api.dsl.given
-import org.jetbrains.spek.api.dsl.it
-import org.jetbrains.spek.api.dsl.on
 import org.json.JSONObject
+import org.spekframework.spek2.Spek
+import org.spekframework.spek2.style.specification.describe
 import java.net.MalformedURLException
 import java.net.SocketTimeoutException
 import java.util.zip.GZIPInputStream
@@ -22,37 +20,37 @@ import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
 class KHttpGetSpec : Spek({
-    given("a get request") {
+    describe("a get request") {
         val url = "http://httpbin.org/range/26"
         val response = get(url)
-        on("accessing the string") {
+        context("accessing the string") {
             val string = response.text
             it("should equal the alphabet in lowercase") {
                 assertEquals("abcdefghijklmnopqrstuvwxyz", string)
             }
         }
-        on("accessing the url") {
+        context("accessing the url") {
             val resultantURL = response.url
             it("should equal the starting url") {
                 assertEquals(url, resultantURL)
             }
         }
-        on("accessing the status code") {
+        context("accessing the status code") {
             val statusCode = response.statusCode
             it("should be 200") {
                 assertEquals(200, statusCode)
             }
         }
-        on("converting it to a string") {
+        context("converting it to a string") {
             val string = response.toString()
             it("should be correct") {
                 assertEquals("<Response [200]>", string)
             }
         }
     }
-    given("a json object get request with parameters") {
+    describe("a json object get request with parameters") {
         val response = get("http://httpbin.org/get", params = mapOf("a" to "b", "c" to "d"))
-        on("accessing the json") {
+        context("accessing the json") {
             val json = response.jsonObject
             it("should contain the parameters") {
                 val args = json.getJSONObject("args")
@@ -61,9 +59,9 @@ class KHttpGetSpec : Spek({
             }
         }
     }
-    given("a json object get request with a map of parameters") {
+    describe("a json object get request with a map of parameters") {
         val response = get("http://httpbin.org/get", params = mapOf("a" to "b", "c" to "d"))
-        on("accessing the json") {
+        context("accessing the json") {
             val json = response.jsonObject
             it("should contain the parameters") {
                 val args = json.getJSONObject("args")
@@ -72,9 +70,9 @@ class KHttpGetSpec : Spek({
             }
         }
     }
-    given("a get request with basic auth") {
+    describe("a get request with basic auth") {
         val response = get("http://httpbin.org/basic-auth/khttp/isawesome", auth = BasicAuthorization("khttp", "isawesome"))
-        on("accessing the json") {
+        context("accessing the json") {
             val json = response.jsonObject
             it("should be authenticated") {
                 assertTrue(json.getBoolean("authenticated"))
@@ -84,9 +82,9 @@ class KHttpGetSpec : Spek({
             }
         }
     }
-    given("a get request with cookies") {
+    describe("a get request with cookies") {
         val response = get("http://httpbin.org/cookies", cookies = mapOf("test" to "success"))
-        on("accessing the json") {
+        context("accessing the json") {
             val json = response.jsonObject
             it("should have the same cookies") {
                 val cookies = json.getJSONObject("cookies")
@@ -94,71 +92,71 @@ class KHttpGetSpec : Spek({
             }
         }
     }
-    given("a get request that redirects and allowing redirects") {
+    describe("a get request that redirects and allowing redirects") {
         val response = get("http://httpbin.org/redirect-to?url=http://httpbin.org/get")
-        on("accessing the json") {
+        context("accessing the json") {
             val json = response.jsonObject
             it("should have the redirected url") {
                 assertEquals("http://httpbin.org/get", json.getString("url"))
             }
         }
     }
-    given("a get request that redirects with HTTP 307 and allowing redirects") {
+    describe("a get request that redirects with HTTP 307 and allowing redirects") {
         val response = get("http://httpbin.org/redirect-to?status_code=307&url=http://httpbin.org/get")
-        on("accessing the json") {
+        context("accessing the json") {
             val json = response.jsonObject
             it("should have the redirected url") {
                 assertEquals("http://httpbin.org/get", json.getString("url"))
             }
         }
     }
-    given("a get request that redirects with HTTP 308 and allowing redirects") {
+    describe("a get request that redirects with HTTP 308 and allowing redirects") {
         val response = get("http://httpbin.org/redirect-to?status_code=308&url=http://httpbin.org/get")
-        on("accessing the json") {
+        context("accessing the json") {
             val json = response.jsonObject
             it("should have the redirected url") {
                 assertEquals("http://httpbin.org/get", json.getString("url"))
             }
         }
     }
-    given("a get request that redirects and disallowing redirects") {
+    describe("a get request that redirects and disallowing redirects") {
         val response = get("http://httpbin.org/redirect-to?url=http://httpbin.org/get", allowRedirects = false)
-        on("accessing the status code") {
+        context("accessing the status code") {
             val code = response.statusCode
             it("should be 302") {
                 assertEquals(302, code)
             }
         }
     }
-    given("a get request that redirects with HTTP 307 and disallowing redirects") {
+    describe("a get request that redirects with HTTP 307 and disallowing redirects") {
         val response = get("http://httpbin.org/redirect-to?status_code=307&url=http://httpbin.org/get", allowRedirects = false)
-        on("accessing the status code") {
+        context("accessing the status code") {
             val code = response.statusCode
             it("should be 307") {
                 assertEquals(307, code)
             }
         }
     }
-    given("a get request that redirects with HTTP 308 and disallowing redirects") {
+    describe("a get request that redirects with HTTP 308 and disallowing redirects") {
         val response = get("http://httpbin.org/redirect-to?status_code=308&url=http://httpbin.org/get", allowRedirects = false)
-        on("accessing the status code") {
+        context("accessing the status code") {
             val code = response.statusCode
             it("should be 308") {
                 assertEquals(308, code)
             }
         }
     }
-    given("a get request that redirects five times") {
+    describe("a get request that redirects five times") {
         val response = get("http://httpbin.org/redirect/5")
-        on("accessing the json") {
+        context("accessing the json") {
             val json = response.jsonObject
             it("should have the get url") {
                 assertEquals("http://httpbin.org/get", json.getString("url"))
             }
         }
     }
-    given("a get request that takes ten seconds to complete") {
-        on("request") {
+    describe("a get request that takes ten seconds to complete") {
+        context("request") {
             it("should throw a timeout exception") {
                 assertFailsWith(SocketTimeoutException::class) {
                     get("http://httpbin.org/delay/10", timeout = 1.0)
@@ -166,11 +164,11 @@ class KHttpGetSpec : Spek({
             }
         }
     }
-    given("a get request that sets cookies without redirects") {
+    describe("a get request that sets cookies without redirects") {
         val cookieName = "test"
         val cookieValue = "quite"
         val response = get("http://httpbin.org/cookies/set?$cookieName=$cookieValue", allowRedirects = false)
-        on("inspecting the cookies") {
+        context("inspecting the cookies") {
             val cookies = response.cookies
             it("should set a cookie") {
                 assertEquals(1, cookies.size)
@@ -192,11 +190,11 @@ class KHttpGetSpec : Spek({
             }
         }
     }
-    given("a get request that sets cookies with redirects") {
+    describe("a get request that sets cookies with redirects") {
         val cookieName = "test"
         val cookieValue = "quite"
         val response = get("http://httpbin.org/cookies/set?$cookieName=$cookieValue")
-        on("inspecting the cookies") {
+        context("inspecting the cookies") {
             val cookies = response.cookies
             it("should set a cookie") {
                 assertEquals(1, cookies.size)
@@ -218,13 +216,13 @@ class KHttpGetSpec : Spek({
             }
         }
     }
-    given("a get request that sets multiple cookies with redirects") {
+    describe("a get request that sets multiple cookies with redirects") {
         val cookieNameOne = "test"
         val cookieValueOne = "quite"
         val cookieNameTwo = "derp"
         val cookieValueTwo = "herp"
         val response = get("http://httpbin.org/cookies/set?$cookieNameOne=$cookieValueOne&$cookieNameTwo=$cookieValueTwo")
-        on("inspecting the cookies") {
+        context("inspecting the cookies") {
             val cookies = response.cookies
             it("should set two cookies") {
                 assertEquals(2, cookies.size)
@@ -261,81 +259,81 @@ class KHttpGetSpec : Spek({
             }
         }
     }
-    given("a gzip get request") {
+    describe("a gzip get request") {
         val response = get("https://httpbin.org/gzip")
-        on("accessing the stream") {
+        context("accessing the stream") {
             val stream = response.raw
             it("should be a GZIPInputStream") {
                 assertTrue(stream is GZIPInputStream)
             }
         }
-        on("accessing the json") {
+        context("accessing the json") {
             val json = response.jsonObject
             it("should be gzipped") {
                 assertTrue(json.getBoolean("gzipped"))
             }
         }
     }
-    given("a deflate get request") {
+    describe("a deflate get request") {
         val response = get("https://httpbin.org/deflate")
-        on("accessing the stream") {
+        context("accessing the stream") {
             val stream = response.raw
             it("should be a InflaterInputStream") {
                 assertTrue(stream is InflaterInputStream)
             }
         }
-        on("accessing the json") {
+        context("accessing the json") {
             val json = response.jsonObject
             it("should be deflated") {
                 assertTrue(json.getBoolean("deflated"))
             }
         }
     }
-    given("a get request that returns 418") {
+    describe("a get request that returns 418") {
         val response = get("https://httpbin.org/status/418")
-        on("accessing the status code") {
+        context("accessing the status code") {
             val status = response.statusCode
             it("should be 418") {
                 assertEquals(418, status)
             }
         }
-        on("accessing the text") {
+        context("accessing the text") {
             val text = response.text
             it("should contain \"teapot\"") {
                 assertTrue(text.contains("teapot"))
             }
         }
     }
-    given("a get request for a UTF-8 document") {
+    describe("a get request for a UTF-8 document") {
         val response = get("https://httpbin.org/encoding/utf8")
-        on("checking the encoding") {
+        context("checking the encoding") {
             val encoding = response.encoding
             it("should be UTF-8") {
                 assertEquals(Charsets.UTF_8, encoding)
             }
         }
-        on("reading the text") {
+        context("reading the text") {
             val text = response.text
             it("should contain ∮") {
                 assertTrue(text.contains("∮"))
             }
         }
-        on("changing the encoding") {
+        context("changing the encoding") {
             response.encoding = Charsets.ISO_8859_1
             val encoding = response.encoding
             it("should be ISO-8859-1") {
                 assertEquals(Charsets.ISO_8859_1, encoding)
             }
         }
-        on("reading the text") {
+        context("reading the text") {
             val text = response.text
             it("should not contain ∮") {
                 assertFalse(text.contains("∮"))
             }
         }
     }
-    given("an unsupported khttp schema") {
-        on("construction") {
+    describe("an unsupported khttp schema") {
+        context("construction") {
             it("should throw an IllegalArgumentException") {
                 assertFailsWith(IllegalArgumentException::class) {
                     get("ftp://google.com")
@@ -343,8 +341,8 @@ class KHttpGetSpec : Spek({
             }
         }
     }
-    given("an unsupported Java schema") {
-        on("construction") {
+    describe("an unsupported Java schema") {
+        context("construction") {
             it("should throw a MalformedURLException") {
                 assertFailsWith(MalformedURLException::class) {
                     get("gopher://google.com")
@@ -352,10 +350,10 @@ class KHttpGetSpec : Spek({
             }
         }
     }
-    given("a request with a user agent set") {
+    describe("a request with a user agent set") {
         val userAgent = "khttp/test"
         val request = get("https://httpbin.org/user-agent", headers = mapOf("User-Agent" to userAgent))
-        on("accessing the json") {
+        context("accessing the json") {
             val json = request.jsonObject
             val responseUserAgent = json.getString("user-agent")
             it("should have the same user agent") {
@@ -363,45 +361,45 @@ class KHttpGetSpec : Spek({
             }
         }
     }
-    given("a request with a port") {
+    describe("a request with a port") {
         val request = get("https://httpbin.org:443/get")
-        on("accessing the json") {
+        context("accessing the json") {
             val json = request.jsonObject
             it("should not be null") {
                 assertNotNull(json)
             }
         }
     }
-    given("a get request for a JSON array") {
+    describe("a get request for a JSON array") {
         val request = get("http://jsonplaceholder.typicode.com/users")
-        on("accessing the json") {
+        context("accessing the json") {
             val json = request.jsonArray
             it("should have ten items") {
                 assertEquals(10, json.length())
             }
         }
     }
-    given("a non-streaming get request") {
+    describe("a non-streaming get request") {
         val response = get("https://httpbin.org/get")
-        on("checking the bytes available to be read") {
+        context("checking the bytes available to be read") {
             val available = response.raw.available()
             it("should be 0") {
                 assertEquals(0, available)
             }
         }
     }
-    given("a streaming get request") {
+    describe("a streaming get request") {
         val response = get("https://httpbin.org/get", stream = true)
-        on("checking the bytes available to be read") {
+        context("checking the bytes available to be read") {
             val available = response.raw.available()
             it("should be greater than 0") {
                 assertTrue(available > 0)
             }
         }
     }
-    given("a streaming get request with a streaming line response") {
+    describe("a streaming get request with a streaming line response") {
         val response = get("http://httpbin.org/stream/4", stream = true)
-        on("iterating over the lines") {
+        context("iterating over the lines") {
             val iterator = response.lineIterator()
             var counter = 0
             for (line in iterator) {
@@ -413,9 +411,9 @@ class KHttpGetSpec : Spek({
             }
         }
     }
-    given("a streaming get request with a streaming byte response") {
+    describe("a streaming get request with a streaming byte response") {
         val response = get("http://httpbin.org/stream-bytes/4?seed=1", stream = true)
-        on("iterating over the bytes") {
+        context("iterating over the bytes") {
             val iterator = response.contentIterator(chunkSize = 1)
             var counter = 0
             val expected = byteArrayOf(0x22, 0xD8.toByte(), 0xC3.toByte(), 0x41)
@@ -428,10 +426,10 @@ class KHttpGetSpec : Spek({
             }
         }
     }
-    given("a streaming get request without even lines") {
+    describe("a streaming get request without even lines") {
         val url = "https://httpbin.org/bytes/1690?seed=1"
         val response = get(url, stream = true)
-        on("iterating the lines") {
+        context("iterating the lines") {
             val iterator = response.lineIterator()
             val bytes = iterator.asSequence().toList().flatMap { it.toList() }
             val contentWithoutBytes = get(url).content.toList().filter { it != '\r'.toByte() && it != '\n'.toByte() }
@@ -440,10 +438,10 @@ class KHttpGetSpec : Spek({
             }
         }
     }
-    given("a request with a space in the url") {
+    describe("a request with a space in the url") {
         val url = "https://httpbin.org/anything/some text"
         val response = get(url)
-        on("check the url") {
+        context("check the url") {
             val responseUrl = response.jsonObject["url"]
             it("should be the same as the request url") {
                 assertEquals(url, responseUrl)

@@ -7,12 +7,10 @@ package khttp
 
 import khttp.extensions.fileLike
 import khttp.helpers.StringIterable
-import org.jetbrains.spek.api.Spek
-import org.jetbrains.spek.api.dsl.given
-import org.jetbrains.spek.api.dsl.it
-import org.jetbrains.spek.api.dsl.on
 import org.json.JSONArray
 import org.json.JSONObject
+import org.spekframework.spek2.Spek
+import org.spekframework.spek2.style.specification.describe
 import java.io.File
 import java.util.Base64
 import kotlin.test.assertEquals
@@ -21,27 +19,27 @@ import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
 class KHttpPostSpec : Spek({
-    given("a post request with raw data") {
+    describe("a post request with raw data") {
         val request = post("http://httpbin.org/post", data = "Hello, world!")
-        on("accessing json") {
+        context("accessing json") {
             val json = request.jsonObject
             it("should contain the data") {
                 assertEquals("Hello, world!", json.getString("data"))
             }
         }
     }
-    given("a post request with raw data") {
+    describe("a post request with raw data") {
         val request = post("http://httpbin.org/post", data = "a=b&c=d")
-        on("accessing json") {
+        context("accessing json") {
             val json = request.jsonObject
             it("should contain the data") {
                 assertEquals("a=b&c=d", json.getString("data"))
             }
         }
     }
-    given("a post form request") {
+    describe("a post form request") {
         val request = post("http://httpbin.org/post", data = mapOf("a" to "b", "c" to "d"))
-        on("accessing json") {
+        context("accessing json") {
             val json = request.jsonObject
             it("should contain the form data") {
                 val form = json.getJSONObject("form")
@@ -50,10 +48,10 @@ class KHttpPostSpec : Spek({
             }
         }
     }
-    given("a request with json as a Map") {
+    describe("a request with json as a Map") {
         val jsonMap = mapOf("books" to listOf(mapOf("title" to "Pride and Prejudice", "author" to "Jane Austen")))
         val request = post("http://httpbin.org/post", json = jsonMap)
-        on("accessing the json") {
+        context("accessing the json") {
             val json = request.jsonObject
             val returnedJSON = json.getJSONObject("json")
             val returnedBooks = returnedJSON.getJSONArray("books")
@@ -73,10 +71,10 @@ class KHttpPostSpec : Spek({
             }
         }
     }
-    given("a request with json as an Iterable") {
+    describe("a request with json as an Iterable") {
         val jsonArray = StringIterable("a word")
         val request = post("http://httpbin.org/post", json = jsonArray)
-        on("accessing the json") {
+        context("accessing the json") {
             val json = request.jsonObject
             val returnedJSON = json.getJSONArray("json")
             it("should be equal") {
@@ -84,10 +82,10 @@ class KHttpPostSpec : Spek({
             }
         }
     }
-    given("a request with json as a List") {
+    describe("a request with json as a List") {
         val jsonList = listOf("A thing", "another thing")
         val request = post("https://httpbin.org/post", json = jsonList)
-        on("accessing the json") {
+        context("accessing the json") {
             val json = request.jsonObject
             val returnedJSON = json.getJSONArray("json")
             it("should have an equal first element") {
@@ -98,10 +96,10 @@ class KHttpPostSpec : Spek({
             }
         }
     }
-    given("a request with json as an Array") {
+    describe("a request with json as an Array") {
         val jsonArray = arrayOf("A thing", "another thing")
         val request = post("https://httpbin.org/post", json = jsonArray)
-        on("accessing the json") {
+        context("accessing the json") {
             val json = request.jsonObject
             val returnedJSON = json.getJSONArray("json")
             it("should have an equal first element") {
@@ -112,10 +110,10 @@ class KHttpPostSpec : Spek({
             }
         }
     }
-    given("a request with json as a JSONObject") {
+    describe("a request with json as a JSONObject") {
         val jsonObject = JSONObject("""{"valid": true}""")
         val request = post("https://httpbin.org/post", json = jsonObject)
-        on("accessing the json") {
+        context("accessing the json") {
             val json = request.jsonObject
             val returnedJSON = json.getJSONObject("json")
             it("should have a true value for the key \"valid\"") {
@@ -123,10 +121,10 @@ class KHttpPostSpec : Spek({
             }
         }
     }
-    given("a request with json as a JSONArray") {
+    describe("a request with json as a JSONArray") {
         val jsonObject = JSONArray("[true]")
         val request = post("https://httpbin.org/post", json = jsonObject)
-        on("accessing the json") {
+        context("accessing the json") {
             val json = request.jsonObject
             val returnedJSON = json.getJSONArray("json")
             it("should have a true value for the first key") {
@@ -134,8 +132,8 @@ class KHttpPostSpec : Spek({
             }
         }
     }
-    given("a request with invalid json") {
-        on("construction") {
+    describe("a request with invalid json") {
+        context("construction") {
             it("should throw an IllegalArgumentException") {
                 assertFailsWith(IllegalArgumentException::class) {
                     post("https://httpbin.org/post", json = object {})
@@ -143,10 +141,10 @@ class KHttpPostSpec : Spek({
             }
         }
     }
-    given("a file upload without form parameters") {
+    describe("a file upload without form parameters") {
         val file = "hello".fileLike("derp")
         val response = post("https://httpbin.org/post", files = listOf(file))
-        on("accessing the json") {
+        context("accessing the json") {
             val json = response.jsonObject
             val files = json.getJSONObject("files")
             it("should have one file") {
@@ -160,11 +158,11 @@ class KHttpPostSpec : Spek({
             }
         }
     }
-    given("a file upload with form parameters") {
+    describe("a file upload with form parameters") {
         val file = "hello".fileLike("derp")
         val params = mapOf("top" to "kek")
         val response = post("https://httpbin.org/post", files = listOf(file), data = params)
-        on("accessing the json") {
+        context("accessing the json") {
             val json = response.jsonObject
             val files = json.getJSONObject("files")
             val form = json.getJSONObject("form")
@@ -188,11 +186,11 @@ class KHttpPostSpec : Spek({
             }
         }
     }
-    given("a streaming file upload") {
+    describe("a streaming file upload") {
         // Get our file to stream (a beautiful rare pepe)
         val file = File("src/test/resources/rarest_of_pepes.png")
         val response = post("https://httpbin.org/post", data = file)
-        on("accessing the data") {
+        context("accessing the data") {
             val json = response.jsonObject
             val data = json.getString("data")
             it("should start with a base64 header") {
@@ -205,12 +203,12 @@ class KHttpPostSpec : Spek({
             }
         }
     }
-    given("a streaming InputStream upload") {
+    describe("a streaming InputStream upload") {
         // Get our file to stream (a beautiful rare pepe)
         val file = File("src/test/resources/rarest_of_pepes.png")
         val inputStream = file.inputStream()
         val response = post("https://httpbin.org/post", data = inputStream)
-        on("accessing the data") {
+        context("accessing the data") {
             val json = response.jsonObject
             val data = json.getString("data")
             it("should start with a base64 header") {
@@ -223,10 +221,10 @@ class KHttpPostSpec : Spek({
             }
         }
     }
-    given("a JSON request") {
+    describe("a JSON request") {
         val expected = """{"test":true}"""
         val response = post("https://httpbin.org/post", json = mapOf("test" to true))
-        on("accessing the request body") {
+        context("accessing the request body") {
             val body = response.request.body
             it("should be the expected valid json") {
                 assertEquals(expected, body.toString(Charsets.UTF_8))
