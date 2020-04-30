@@ -16,9 +16,8 @@ import kotlin.test.assertEquals
 
 class KHttpAsyncOptionsSpec : Spek({
     describe("an async options request") {
-        beforeGroup {
-            AsyncUtil.execute { async.options("https://httpbin.org/get", onError = errorCallback, onResponse = responseCallback) }
-        }
+        AsyncUtil.execute { async.options("https://httpbin.org/get", onError = errorCallback, onResponse = responseCallback) }
+
         context("accessing the status code") {
             if (error != null) throw error!!
             val status = response!!.statusCode

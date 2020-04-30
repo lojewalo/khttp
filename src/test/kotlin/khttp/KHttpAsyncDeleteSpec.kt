@@ -17,9 +17,8 @@ import kotlin.test.assertEquals
 class KHttpAsyncDeleteSpec : Spek({
     describe("an async delete request") {
         val url = "https://httpbin.org/delete"
-        beforeGroup {
-            AsyncUtil.execute { async.delete(url, onError = errorCallback, onResponse =  responseCallback) }
-        }
+        AsyncUtil.execute { async.delete(url, onError = errorCallback, onResponse =  responseCallback) }
+
         context("accessing the json") {
             if (error != null) throw error!!
             val json = response!!.jsonObject

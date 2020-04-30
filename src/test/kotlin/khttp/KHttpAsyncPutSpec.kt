@@ -17,9 +17,8 @@ import kotlin.test.assertEquals
 class KHttpAsyncPutSpec : Spek({
     describe("a put request") {
         val url = "https://httpbin.org/put"
-        beforeGroup {
-            AsyncUtil.execute { async.put(url, onError = errorCallback, onResponse = responseCallback) }
-        }
+        AsyncUtil.execute { async.put(url, onError = errorCallback, onResponse = responseCallback) }
+
         context("accessing the json") {
             if (error != null) throw error!!
             val json = response!!.jsonObject

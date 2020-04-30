@@ -17,9 +17,8 @@ import kotlin.test.assertEquals
 class KHttpAsyncPatchSpec : Spek({
     describe("an async patch request") {
         val url = "https://httpbin.org/patch"
-        beforeGroup {
-            AsyncUtil.execute { async.patch(url, onError = errorCallback, onResponse = responseCallback) }
-        }
+        AsyncUtil.execute { async.patch(url, onError = errorCallback, onResponse = responseCallback) }
+
         context("accessing the json") {
             if (error != null) throw error!!
             val json = response!!.jsonObject

@@ -16,9 +16,8 @@ import kotlin.test.assertEquals
 
 class KHttpAsyncHeadSpec : Spek({
     describe("an async head request") {
-        beforeGroup {
-            AsyncUtil.execute { async.head("https://httpbin.org/get", onError = errorCallback, onResponse = responseCallback) }
-        }
+        AsyncUtil.execute { async.head("https://httpbin.org/get", onError = errorCallback, onResponse = responseCallback) }
+
         context("accessing the status code") {
             if (error != null) throw error!!
             val status = response!!.statusCode
@@ -28,9 +27,8 @@ class KHttpAsyncHeadSpec : Spek({
         }
     }
     describe("an async head request to a redirecting URL") {
-        beforeGroup {
-            AsyncUtil.execute { async.head("https://httpbin.org/redirect/2", onError = errorCallback, onResponse = responseCallback) }
-        }
+        AsyncUtil.execute { async.head("https://httpbin.org/redirect/2", onError = errorCallback, onResponse = responseCallback) }
+
         context("accessing the status code") {
             if (error != null) throw error!!
             val status = response!!.statusCode
@@ -40,9 +38,8 @@ class KHttpAsyncHeadSpec : Spek({
         }
     }
     describe("an async head request to a redirecting URL, specifically allowing redirects") {
-        beforeGroup {
-            AsyncUtil.execute { async.head("https://httpbin.org/redirect/2", allowRedirects = true, onError = errorCallback, onResponse = responseCallback) }
-        }
+        AsyncUtil.execute { async.head("https://httpbin.org/redirect/2", allowRedirects = true, onError = errorCallback, onResponse = responseCallback) }
+
         context("accessing the status code") {
             if (error != null) throw error!!
             val status = response!!.statusCode
