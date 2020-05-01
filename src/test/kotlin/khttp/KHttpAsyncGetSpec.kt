@@ -10,7 +10,9 @@ import khttp.helpers.AsyncUtil.Companion.error
 import khttp.helpers.AsyncUtil.Companion.errorCallback
 import khttp.helpers.AsyncUtil.Companion.response
 import khttp.helpers.AsyncUtil.Companion.responseCallback
+import khttp.responses.Response
 import khttp.structures.authorization.BasicAuthorization
+import kotlinx.coroutines.runBlocking
 import org.json.JSONObject
 import org.spekframework.spek2.Spek
 import org.spekframework.spek2.style.specification.describe
@@ -189,7 +191,8 @@ class KHttpAsyncGetSpec : Spek({
         }
     }
     describe("an async get request that takes ten seconds to complete") {
-        AsyncUtil.execute { async.get("http://httpbin.org/delay/10", timeout = 1.0, onError = { AsyncUtil.set(err = this) }) }
+        var error: Throwable? = null
+        runBlocking { async.get("http://httpbin.org/delay/10", timeout = 1.0, onError = { error = this }) }
 
         context("request") {
             it("should throw a timeout exception") {
@@ -388,7 +391,8 @@ class KHttpAsyncGetSpec : Spek({
         }
     }
     describe("an async unsupported khttp schema") {
-        AsyncUtil.execute { async.get("ftp://google.com", onError = { AsyncUtil.set(err = this) }) }
+        var error: Throwable? = null
+        runBlocking { async.get("ftp://google.com", onError = { error = this }) }
 
         context("construction") {
             it("should throw an IllegalArgumentException") {
@@ -399,7 +403,8 @@ class KHttpAsyncGetSpec : Spek({
         }
     }
     describe("an async unsupported Java schema") {
-        AsyncUtil.execute { async.get("gopher://google.com", onError = { AsyncUtil.set(err = this) }) }
+        var error: Throwable? = null
+        runBlocking { async.get("gopher://google.com", onError = { error = this }) }
 
         context("construction") {
             it("should throw a MalformedURLException") {
