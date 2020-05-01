@@ -388,15 +388,6 @@ class KHttpGetSpec : Spek({
             }
         }
     }
-    describe("a streaming get request") {
-        val response = get("https://httpbin.org/get", stream = true)
-        context("checking the bytes available to be read") {
-            val available = response.raw.available()
-            it("should be greater than 0") {
-                assertTrue(available > 0)
-            }
-        }
-    }
     describe("a streaming get request with a streaming line response") {
         val response = get("http://httpbin.org/stream/4", stream = true)
         context("iterating over the lines") {
