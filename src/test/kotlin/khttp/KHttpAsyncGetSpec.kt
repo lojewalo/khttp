@@ -584,22 +584,6 @@ class KHttpAsyncGetSpec : Spek({
             }
         }
     }
-    describe("an async streaming get request") {
-        var error: Throwable? = null
-        var response: Response? = null
-
-        async.get("https://httpbin.org/get", stream = true, onError = { error = this }, onResponse = {response = this} )
-        await.atMost(5, TimeUnit.SECONDS)
-                .until { response != null }
-
-        context("checking the bytes available to be read") {
-            if (error != null) throw error!!
-            val available = response!!.raw.available()
-            it("should be greater than 0") {
-                assertTrue(available > 0)
-            }
-        }
-    }
     describe("an async streaming get request with a streaming line response") {
         var error: Throwable? = null
         var response: Response? = null
