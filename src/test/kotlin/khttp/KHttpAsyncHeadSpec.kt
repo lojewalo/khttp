@@ -5,18 +5,21 @@
  */
 package khttp
 
-import khttp.helpers.AsyncUtil
-import khttp.helpers.AsyncUtil.Companion.error
-import khttp.helpers.AsyncUtil.Companion.errorCallback
-import khttp.helpers.AsyncUtil.Companion.response
-import khttp.helpers.AsyncUtil.Companion.responseCallback
+import khttp.responses.Response
+import org.awaitility.kotlin.await
 import org.spekframework.spek2.Spek
 import org.spekframework.spek2.style.specification.describe
+import java.util.concurrent.TimeUnit
 import kotlin.test.assertEquals
 
 class KHttpAsyncHeadSpec : Spek({
     describe("an async head request") {
-        AsyncUtil.execute { async.head("https://httpbin.org/get", onError = errorCallback, onResponse = responseCallback) }
+        var error: Throwable? = null
+        var response: Response? = null
+
+        async.head("https://httpbin.org/get", onError = { error = this }, onResponse = { response = this })
+        await.atMost(5, TimeUnit.SECONDS)
+                .until { response != null }
 
         context("accessing the status code") {
             if (error != null) throw error!!
@@ -27,7 +30,12 @@ class KHttpAsyncHeadSpec : Spek({
         }
     }
     describe("an async head request to a redirecting URL") {
-        AsyncUtil.execute { async.head("https://httpbin.org/redirect/2", onError = errorCallback, onResponse = responseCallback) }
+        var error: Throwable? = null
+        var response: Response? = null
+
+        async.head("https://httpbin.org/redirect/2", onError = { error = this }, onResponse = { response = this })
+        await.atMost(5, TimeUnit.SECONDS)
+                .until { response != null }
 
         context("accessing the status code") {
             if (error != null) throw error!!
@@ -38,7 +46,12 @@ class KHttpAsyncHeadSpec : Spek({
         }
     }
     describe("an async head request to a redirecting URL, specifically allowing redirects") {
-        AsyncUtil.execute { async.head("https://httpbin.org/redirect/2", allowRedirects = true, onError = errorCallback, onResponse = responseCallback) }
+        var error: Throwable? = null
+        var response: Response? = null
+
+        async.head("https://httpbin.org/redirect/2", allowRedirects = true, onError = { error = this }, onResponse = { response = this })
+        await.atMost(5, TimeUnit.SECONDS)
+                .until { response != null }
 
         context("accessing the status code") {
             if (error != null) throw error!!

@@ -78,7 +78,7 @@ class KHttpPostSpec : Spek({
             val json = request.jsonObject
             val returnedJSON = json.getJSONArray("json")
             it("should be equal") {
-                assertEquals(jsonArray.string, String(returnedJSON.mapIndexed { i, any -> returnedJSON.getString(i)[0] }.toCharArray()))
+                assertEquals(jsonArray.string, String(returnedJSON.mapIndexed { i, _ -> returnedJSON.getString(i)[0] }.toCharArray()))
             }
         }
     }

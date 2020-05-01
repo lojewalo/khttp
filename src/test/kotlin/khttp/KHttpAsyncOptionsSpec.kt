@@ -5,18 +5,21 @@
  */
 package khttp
 
-import khttp.helpers.AsyncUtil
-import khttp.helpers.AsyncUtil.Companion.error
-import khttp.helpers.AsyncUtil.Companion.errorCallback
-import khttp.helpers.AsyncUtil.Companion.response
-import khttp.helpers.AsyncUtil.Companion.responseCallback
+import khttp.responses.Response
+import org.awaitility.kotlin.await
 import org.spekframework.spek2.Spek
 import org.spekframework.spek2.style.specification.describe
+import java.util.concurrent.TimeUnit
 import kotlin.test.assertEquals
 
 class KHttpAsyncOptionsSpec : Spek({
     describe("an async options request") {
-        AsyncUtil.execute { async.options("https://httpbin.org/get", onError = errorCallback, onResponse = responseCallback) }
+        var error: Throwable? = null
+        var response: Response? = null
+
+        async.options("https://httpbin.org/get", onError = { error = this }, onResponse = { response = this })
+        await.atMost(5, TimeUnit.SECONDS)
+                .until { response != null }
 
         context("accessing the status code") {
             if (error != null) throw error!!

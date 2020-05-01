@@ -6,18 +6,16 @@
 package khttp
 
 import khttp.extensions.fileLike
-import khttp.helpers.AsyncUtil
-import khttp.helpers.AsyncUtil.Companion.error
-import khttp.helpers.AsyncUtil.Companion.errorCallback
-import khttp.helpers.AsyncUtil.Companion.response
-import khttp.helpers.AsyncUtil.Companion.responseCallback
 import khttp.helpers.StringIterable
+import khttp.responses.Response
+import org.awaitility.kotlin.await
 import org.json.JSONArray
 import org.json.JSONObject
 import org.spekframework.spek2.Spek
 import org.spekframework.spek2.style.specification.describe
 import java.io.File
-import java.util.Base64
+import java.util.*
+import java.util.concurrent.TimeUnit
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertNotNull
@@ -25,7 +23,12 @@ import kotlin.test.assertTrue
 
 class KHttpAsyncPostSpec : Spek({
     describe("an async post request with raw data") {
-        AsyncUtil.execute { async.post("http://httpbin.org/post", data = "Hello, world!", onError = errorCallback, onResponse = responseCallback) }
+        var error: Throwable? = null
+        var response: Response? = null
+
+        async.post("http://httpbin.org/post", data = "Hello, world!", onError = { error = this }, onResponse = { response = this })
+        await.atMost(5, TimeUnit.SECONDS)
+                .until { response != null }
 
         context("accessing json") {
             if (error != null) throw error!!
@@ -36,7 +39,12 @@ class KHttpAsyncPostSpec : Spek({
         }
     }
     describe("an async post form request") {
-        AsyncUtil.execute { async.post("http://httpbin.org/post", data = mapOf("a" to "b", "c" to "d"), onError = errorCallback, onResponse = responseCallback) }
+        var error: Throwable? = null
+        var response: Response? = null
+
+        async.post("http://httpbin.org/post", data = mapOf("a" to "b", "c" to "d"), onError = { error = this }, onResponse = { response = this })
+        await.atMost(5, TimeUnit.SECONDS)
+                .until { response != null }
 
         context("accessing json") {
             if (error != null) throw error!!
@@ -50,7 +58,12 @@ class KHttpAsyncPostSpec : Spek({
     }
     describe("an async request with json as a Map") {
         val jsonMap = mapOf("books" to listOf(mapOf("title" to "Pride and Prejudice", "author" to "Jane Austen")))
-        AsyncUtil.execute { async.post("http://httpbin.org/post", json = jsonMap, onError = errorCallback, onResponse = responseCallback) }
+        var error: Throwable? = null
+        var response: Response? = null
+
+        async.post("http://httpbin.org/post", json = jsonMap, onError = { error = this }, onResponse = { response = this })
+        await.atMost(5, TimeUnit.SECONDS)
+                .until { response != null }
 
         context("accessing the json") {
             if (error != null) throw error!!
@@ -75,20 +88,30 @@ class KHttpAsyncPostSpec : Spek({
     }
     describe("an async request with json as an Iterable") {
         val jsonArray = StringIterable("a word")
-        AsyncUtil.execute { async.post("http://httpbin.org/post", json = jsonArray, onError = errorCallback, onResponse = responseCallback) }
+        var error: Throwable? = null
+        var response: Response? = null
+
+        async.post("http://httpbin.org/post", json = jsonArray, onError = { error = this }, onResponse = { response = this })
+        await.atMost(5, TimeUnit.SECONDS)
+                .until { response != null }
 
         context("accessing the json") {
             if (error != null) throw error!!
             val json = response!!.jsonObject
             val returnedJSON = json.getJSONArray("json")
             it("should be equal") {
-                assertEquals(jsonArray.string, String(returnedJSON.mapIndexed { i, any -> returnedJSON.getString(i)[0] }.toCharArray()))
+                assertEquals(jsonArray.string, String(returnedJSON.mapIndexed { i, _ -> returnedJSON.getString(i)[0] }.toCharArray()))
             }
         }
     }
     describe("an async request with json as a List") {
         val jsonList = listOf("A thing", "another thing")
-        AsyncUtil.execute { async.post("https://httpbin.org/post", json = jsonList, onError = errorCallback, onResponse = responseCallback) }
+        var error: Throwable? = null
+        var response: Response? = null
+
+        async.post("https://httpbin.org/post", json = jsonList, onError = { error = this }, onResponse = { response = this })
+        await.atMost(5, TimeUnit.SECONDS)
+                .until { response != null }
 
         context("accessing the json") {
             if (error != null) throw error!!
@@ -104,7 +127,12 @@ class KHttpAsyncPostSpec : Spek({
     }
     describe("an async request with json as an Array") {
         val jsonArray = arrayOf("A thing", "another thing")
-        AsyncUtil.execute { async.post("https://httpbin.org/post", json = jsonArray, onError = errorCallback, onResponse = responseCallback) }
+        var error: Throwable? = null
+        var response: Response? = null
+
+        async.post("https://httpbin.org/post", json = jsonArray, onError = { error = this }, onResponse = { response = this })
+        await.atMost(5, TimeUnit.SECONDS)
+                .until { response != null }
 
         context("accessing the json") {
             if (error != null) throw error!!
@@ -120,7 +148,12 @@ class KHttpAsyncPostSpec : Spek({
     }
     describe("an async request with json as a JSONObject") {
         val jsonObject = JSONObject("""{"valid": true}""")
-        AsyncUtil.execute { async.post("https://httpbin.org/post", json = jsonObject, onError = errorCallback, onResponse = responseCallback) }
+        var error: Throwable? = null
+        var response: Response? = null
+
+        async.post("https://httpbin.org/post", json = jsonObject, onError = { error = this }, onResponse = { response = this })
+        await.atMost(5, TimeUnit.SECONDS)
+                .until { response != null }
 
         context("accessing the json") {
             if (error != null) throw error!!
@@ -133,7 +166,12 @@ class KHttpAsyncPostSpec : Spek({
     }
     describe("an async request with json as a JSONArray") {
         val jsonObject = JSONArray("[true]")
-        AsyncUtil.execute { async.post("https://httpbin.org/post", json = jsonObject, onError = errorCallback, onResponse = responseCallback) }
+        var error: Throwable? = null
+        var response: Response? = null
+
+        async.post("https://httpbin.org/post", json = jsonObject, onError = { error = this }, onResponse = { response = this })
+        await.atMost(5, TimeUnit.SECONDS)
+                .until { response != null }
 
         context("accessing the json") {
             if (error != null) throw error!!
@@ -145,7 +183,11 @@ class KHttpAsyncPostSpec : Spek({
         }
     }
     describe("an async request with invalid json") {
-        AsyncUtil.execute { async.post("https://httpbin.org/post", json = object {}, onError = { AsyncUtil.set(err = this) }) }
+        var error: Throwable? = null
+
+        async.post("https://httpbin.org/post", json = object {}, onError = { error = this } )
+        await.atMost(5, TimeUnit.SECONDS)
+                .until { error != null }
 
         context("construction") {
             it("should throw an IllegalArgumentException") {
@@ -157,7 +199,12 @@ class KHttpAsyncPostSpec : Spek({
     }
     describe("an async file upload without form parameters") {
         val file = "hello".fileLike("derp")
-        AsyncUtil.execute { async.post("https://httpbin.org/post", files = listOf(file), onError = errorCallback, onResponse = responseCallback) }
+        var error: Throwable? = null
+        var response: Response? = null
+
+        async.post("https://httpbin.org/post", files = listOf(file), onError = { error = this }, onResponse = { response = this })
+        await.atMost(5, TimeUnit.SECONDS)
+                .until { response != null }
 
         context("accessing the json") {
             if (error != null) throw error!!
@@ -177,7 +224,12 @@ class KHttpAsyncPostSpec : Spek({
     describe("an async file upload with form parameters") {
         val file = "hello".fileLike("derp")
         val params = mapOf("top" to "kek")
-        AsyncUtil.execute { async.post("https://httpbin.org/post", files = listOf(file), data = params, onError = errorCallback, onResponse = responseCallback) }
+        var error: Throwable? = null
+        var response: Response? = null
+
+        async.post("https://httpbin.org/post", files = listOf(file), data = params, onError = { error = this }, onResponse = { response = this })
+        await.atMost(5, TimeUnit.SECONDS)
+                .until { response != null }
 
         context("accessing the json") {
             if (error != null) throw error!!
@@ -207,7 +259,12 @@ class KHttpAsyncPostSpec : Spek({
     describe("an async streaming file upload") {
         // Get our file to stream (a beautiful rare pepe)
         val file = File("src/test/resources/rarest_of_pepes.png")
-        AsyncUtil.execute { async.post("https://httpbin.org/post", data = file, onError = errorCallback, onResponse = responseCallback) }
+        var error: Throwable? = null
+        var response: Response? = null
+
+        async.post("https://httpbin.org/post", data = file, onError = { error = this }, onResponse = { response = this })
+        await.atMost(5, TimeUnit.SECONDS)
+                .until { response != null }
 
         context("accessing the data") {
             if (error != null) throw error!!
@@ -227,7 +284,12 @@ class KHttpAsyncPostSpec : Spek({
         // Get our file to stream (a beautiful rare pepe)
         val file = File("src/test/resources/rarest_of_pepes.png")
         val inputStream = file.inputStream()
-        AsyncUtil.execute { async.post("https://httpbin.org/post", data = inputStream, onError = errorCallback, onResponse = responseCallback) }
+        var error: Throwable? = null
+        var response: Response? = null
+
+        async.post("https://httpbin.org/post", data = inputStream, onError = { error = this }, onResponse = { response = this })
+        await.atMost(5, TimeUnit.SECONDS)
+                .until { response != null }
 
         context("accessing the data") {
             if (error != null) throw error!!
@@ -245,7 +307,12 @@ class KHttpAsyncPostSpec : Spek({
     }
     describe("an async JSON request") {
         val expected = """{"test":true}"""
-        AsyncUtil.execute { async.post("https://httpbin.org/post", json = mapOf("test" to true), onError = errorCallback, onResponse = responseCallback) }
+        var error: Throwable? = null
+        var response: Response? = null
+
+        async.post("https://httpbin.org/post", json = mapOf("test" to true), onError = { error = this }, onResponse = { response = this })
+        await.atMost(5, TimeUnit.SECONDS)
+                .until { response != null }
 
         context("accessing the request body") {
             if (error != null) throw error!!

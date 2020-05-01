@@ -198,7 +198,7 @@ class CookieJarSpec : Spek({
         }
         context("removing an object that is not a string") {
             val originalSize = cookieJar.size
-            val removed: Any? = (cookieJar as MutableMap<Any?, String>).remove(null)
+            val removed: Any? = (cookieJar as MutableMap<*, *>).remove(null)
             val size = cookieJar.size
             it("should be the same size") {
                 assertTrue(originalSize == size)
