@@ -5,6 +5,7 @@
  */
 package khttp
 
+import khttp.helpers.SslContextUtils
 import khttp.responses.Response
 import khttp.structures.authorization.BasicAuthorization
 import org.awaitility.kotlin.await
@@ -644,6 +645,30 @@ class KHttpAsyncGetSpec : Spek({
             val contentWithoutBytes = get(url).content.toList().filter { it != '\r'.toByte() && it != '\n'.toByte() }
             it("should be the same as the content without line breaks") {
                 assertEquals(contentWithoutBytes, bytes)
+            }
+        }
+    }
+
+    describe("an async request where the client needs to authenticate itself by certificates") {
+        val url = "https://httpbin.org/bytes/1690?seed=1"
+        val sslContext = SslContextUtils.createFromKeyMaterial("keystores/badssl.com-client.p12", "badssl.com".toCharArray())
+
+        var error: Throwable? = null
+        var response: Response? = null
+
+        async.get(url, sslContext = sslContext, stream = true, onError = { error = this }, onResponse = { response = this })
+        await.atMost(5, TimeUnit.SECONDS)
+                .until { response != null }
+
+        context("iterating the lines") {
+            if (error != null) throw error!!
+            val statusCode = response!!.statusCode
+            it("should be ok") {
+                if (statusCode == 400) {
+                    print("WARNING: Certificate may have expired and needs to be updated")
+                } else {
+                    assertEquals(200, statusCode)
+                }
             }
         }
     }

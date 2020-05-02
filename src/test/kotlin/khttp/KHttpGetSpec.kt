@@ -5,6 +5,7 @@
  */
 package khttp
 
+import khttp.helpers.SslContextUtils
 import khttp.structures.authorization.BasicAuthorization
 import org.json.JSONObject
 import org.spekframework.spek2.Spek
@@ -436,6 +437,22 @@ class KHttpGetSpec : Spek({
             val responseUrl = response.jsonObject["url"]
             it("should be the same as the request url") {
                 assertEquals(url, responseUrl)
+            }
+        }
+    }
+    describe("a request where the client needs to authenticate itself by certificates") {
+        val url = "https://client.badssl.com/"
+        val sslContext = SslContextUtils.createFromKeyMaterial("keystores/badssl.com-client.p12", "badssl.com".toCharArray())
+
+        val response = get(url, sslContext = sslContext)
+        context("check the url") {
+            val statusCode = response.statusCode
+            it("should be ok") {
+                if (statusCode == 400) {
+                    print("WARNING: Certificate may have expired and needs to be updated")
+                } else {
+                    assertEquals(200, statusCode)
+                }
             }
         }
     }
