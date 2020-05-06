@@ -296,7 +296,16 @@ class GenericResponse internal constructor(override val request: Request) : Resp
             val overflow = arrayListOf<ByteArray>()
 
             override fun next(): ByteArray {
-                if (overflow.isNotEmpty()) return overflow.removeAt(0)
+                val appendLeftOver = leftOver?.isNotEmpty() == true && !byteArrays.hasNext()
+                if (overflow.isNotEmpty()) {
+                    return if (appendLeftOver) {
+                        byteArrayOf(*overflow.removeAt(0), *leftOver!!)
+                    } else {
+                        overflow.removeAt(0)
+                    }
+                } else if (appendLeftOver) {
+                    return leftOver!!
+                }
                 while (byteArrays.hasNext()) {
                     do {
                         val left = leftOver
