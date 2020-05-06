@@ -15,6 +15,7 @@ import khttp.structures.cookie.CookieJar
 import khttp.structures.maps.CaseInsensitiveMap
 import org.json.JSONArray
 import org.json.JSONObject
+import java.io.BufferedInputStream
 import java.io.File
 import java.io.IOException
 import java.io.InputStream
@@ -261,47 +262,29 @@ class GenericResponse internal constructor(override val request: Request) : Resp
 
     override fun contentIterator(chunkSize: Int): Iterator<ByteArray> {
         return object : Iterator<ByteArray> {
-            var readBytes: ByteArray = ByteArray(0)
-            val stream = if (this@GenericResponse.request.stream) this@GenericResponse.raw else this@GenericResponse.content.inputStream()
+            val stream = BufferedInputStream(if (this@GenericResponse.request.stream) this@GenericResponse.raw else this@GenericResponse.content.inputStream())
+            val buffer = ByteArray(chunkSize)
+            var closed = false
+            var lastChunkSize: Int? = null
 
             override fun next(): ByteArray {
-                val bytes = readBytes
-                val readSize = Math.min(chunkSize, bytes.size + stream.available())
-                val left = if (bytes.size > readSize) {
-                    return bytes.asList().subList(0, readSize).toByteArray().apply {
-                        readBytes = bytes.asList().subList(readSize, bytes.size).toByteArray()
-                    }
-                } else if (bytes.isNotEmpty()) {
-                    readSize - bytes.size
-                } else {
-                    readSize
-                }
-                val array = ByteArray(left).apply { stream.read(this) }
-                readBytes = ByteArray(0)
-                return bytes + array
+                lastChunkSize = stream.read(buffer)
+                if (lastChunkSize == -1) return ByteArray(0)
+                return buffer.toList().subList(0, lastChunkSize!!).toByteArray()
             }
 
             override fun hasNext(): Boolean {
-                return try {
-                    val mark = this@GenericResponse.raw.markSupported()
-                    if (mark) {
-                        this@GenericResponse.raw.mark(1)
-                    }
-                    val read = this@GenericResponse.raw.read()
-                    if (read == -1) {
-                        stream.close()
-                        false
-                    } else {
-                        if (mark) {
-                            this@GenericResponse.raw.reset()
-                        } else {
-                            readBytes += ByteArray(1).apply { this[0] = read.toByte() }
-                        }
-                        true
-                    }
-                } catch(ex: IOException) {
-                    false
+                if (closed) return false
+                stream.mark(1)
+                val nextByte = stream.read()
+                val hasNext = nextByte != -1
+                if (hasNext) {
+                    stream.reset()
+                } else {
+                    stream.close()
+                    closed = true
                 }
+                return hasNext
             }
         }
     }
