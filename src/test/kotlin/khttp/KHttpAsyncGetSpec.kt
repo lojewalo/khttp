@@ -489,7 +489,7 @@ class KHttpAsyncGetSpec : Spek({
         }
         on("checking the bytes available to be read") {
             if (error != null) throw error!!
-            val available = response!!.raw.available()
+            val available = response!!.raw.read()
             it("should be greater than 0") {
                 assertTrue(available > 0)
             }
