@@ -28,7 +28,7 @@ Stable releases are hosted on [JCenter](https://bintray.com/bintray/jcenter).
 ```xml
 <repository>
   <id>jcenter</id>
-  <url>http://jcenter.bintray.com/</url>
+  <url>https://jcenter.bintray.com/</url>
 </repository>
 <!-- ... -->
 <dependency>
