@@ -5,10 +5,8 @@
  */
 package khttp.structures.cookie
 
-import org.jetbrains.spek.api.Spek
-import org.jetbrains.spek.api.dsl.given
-import org.jetbrains.spek.api.dsl.it
-import org.jetbrains.spek.api.dsl.on
+import org.spekframework.spek2.Spek
+import org.spekframework.spek2.style.specification.describe
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
@@ -16,18 +14,18 @@ import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 class CookieJarSpec : Spek({
-    given("a CookieJar constructed with Cookies") {
+    describe("a CookieJar constructed with Cookies") {
         val cookie1 = Cookie("test1", "value1")
         val cookie2 = Cookie("test2", "value2", mapOf("attr1" to "attrv1"))
         val cookies = listOf(cookie1, cookie2)
         val cookieJar = CookieJar(*cookies.toTypedArray())
-        on("inspecting the cookie jar") {
+        context("inspecting the cookie jar") {
             val size = cookieJar.size
             it("should have two cookies") {
                 assertEquals(2, size)
             }
         }
-        on("accessing a cookie by name") {
+        context("accessing a cookie by name") {
             val cookie = cookieJar.getCookie("test1")
             it("should not be null") {
                 assertNotNull(cookie)
@@ -42,7 +40,7 @@ class CookieJarSpec : Spek({
                 assertEquals(0, cookie!!.attributes.size)
             }
         }
-        on("checking if a cookie exists by name") {
+        context("checking if a cookie exists by name") {
             it("should exist") {
                 assertTrue("test1" in cookieJar)
             }
@@ -53,7 +51,7 @@ class CookieJarSpec : Spek({
                 assertFalse(cookieJar.containsKey(null as String?))
             }
         }
-        on("checking if a cookie exists by value") {
+        context("checking if a cookie exists by value") {
             it("should exist") {
                 assertTrue(cookieJar.containsValue(cookie1.valueWithAttributes))
             }
@@ -64,7 +62,7 @@ class CookieJarSpec : Spek({
                 assertFalse(cookieJar.containsValue(null as String?))
             }
         }
-        on("accessing another cookie by name") {
+        context("accessing another cookie by name") {
             val cookie = cookieJar.getCookie("test2")
             it("should not be null") {
                 assertNotNull(cookie)
@@ -79,7 +77,7 @@ class CookieJarSpec : Spek({
                 assertEquals(mapOf("attr1" to "attrv1"), cookie!!.attributes)
             }
         }
-        on("accessing a cookie that doesn't exist") {
+        context("accessing a cookie that doesn't exist") {
             val cookie = cookieJar.getCookie("test3")
             val cookieRaw: Any? = cookieJar.get(null as String?)
             it("should be null") {
@@ -89,7 +87,7 @@ class CookieJarSpec : Spek({
                 assertNull(cookieRaw)
             }
         }
-        on("accessing a cookie with Map methods") {
+        context("accessing a cookie with Map methods") {
             val cookieValue = cookieJar["test1"]
             it("should exist") {
                 assertNotNull(cookieValue)
@@ -98,13 +96,13 @@ class CookieJarSpec : Spek({
                 assertEquals(cookie1.valueWithAttributes, cookieValue)
             }
         }
-        on("accessing a cookie that doesn't exist with Map methods") {
+        context("accessing a cookie that doesn't exist with Map methods") {
             val cookieValue = cookieJar["test3"]
             it("should not exist") {
                 assertNull(cookieValue)
             }
         }
-        on("adding a cookie to the cookie jar") {
+        context("adding a cookie to the cookie jar") {
             val cookie = Cookie("delicious", "cookie", mapOf("edible" to "damn straight"))
             cookieJar.setCookie(cookie)
             val size = cookieJar.size
@@ -117,16 +115,16 @@ class CookieJarSpec : Spek({
             }
         }
     }
-    given("a CookieJar constructed with a map") {
+    describe("a CookieJar constructed with a map") {
         val cookies = mapOf("test1" to "value1", "test2" to "value2; attr1=attrv1")
         val cookieJar = CookieJar(cookies)
-        on("inspecting the cookie jar") {
+        context("inspecting the cookie jar") {
             val size = cookieJar.size
             it("should have two cookies") {
                 assertEquals(2, size)
             }
         }
-        on("accessing a cookie by name") {
+        context("accessing a cookie by name") {
             val cookie = cookieJar.getCookie("test1")
             it("should not be null") {
                 assertNotNull(cookie)
@@ -141,7 +139,7 @@ class CookieJarSpec : Spek({
                 assertEquals(0, cookie!!.attributes.size)
             }
         }
-        on("accessing another cookie by name") {
+        context("accessing another cookie by name") {
             val cookie = cookieJar.getCookie("test2")
             it("should not be null") {
                 assertNotNull(cookie)
@@ -156,13 +154,13 @@ class CookieJarSpec : Spek({
                 assertEquals(mapOf("attr1" to "attrv1"), cookie!!.attributes)
             }
         }
-        on("accessing a cookie that doesn't exist") {
+        context("accessing a cookie that doesn't exist") {
             val cookie = cookieJar.getCookie("test3")
             it("should be null") {
                 assertNull(cookie)
             }
         }
-        on("adding a cookie to the cookie jar") {
+        context("adding a cookie to the cookie jar") {
             val cookie = Cookie("delicious", "cookie", mapOf("edible" to "damn straight"))
             cookieJar.setCookie(cookie)
             val size = cookieJar.size
@@ -174,7 +172,7 @@ class CookieJarSpec : Spek({
                 assertEquals(added, cookie)
             }
         }
-        on("adding a cookie to the cookie jar with Map methods") {
+        context("adding a cookie to the cookie jar with Map methods") {
             val cookie = Cookie("tasty", "cookie", mapOf("edible" to "damn straight"))
             cookieJar[cookie.key] = cookie.valueWithAttributes
             val size = cookieJar.size
@@ -186,7 +184,7 @@ class CookieJarSpec : Spek({
                 assertEquals(added, cookie)
             }
         }
-        on("removing a cookie with Map methods") {
+        context("removing a cookie with Map methods") {
             val originalSize = cookieJar.size
             cookieJar.remove("tasty")
             val cookieValue = cookieJar["tasty"]
@@ -198,9 +196,9 @@ class CookieJarSpec : Spek({
                 assertNull(cookieValue)
             }
         }
-        on("removing an object that is not a string") {
+        context("removing an object that is not a string") {
             val originalSize = cookieJar.size
-            val removed: Any? = (cookieJar as MutableMap<Any?, String>).remove(null)
+            val removed: Any? = (cookieJar as MutableMap<*, *>).remove(null)
             val size = cookieJar.size
             it("should be the same size") {
                 assertTrue(originalSize == size)

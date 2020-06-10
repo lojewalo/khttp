@@ -5,25 +5,23 @@
  */
 package khttp.extensions
 
-import org.jetbrains.spek.api.Spek
-import org.jetbrains.spek.api.dsl.given
-import org.jetbrains.spek.api.dsl.it
-import org.jetbrains.spek.api.dsl.on
+import org.spekframework.spek2.Spek
+import org.spekframework.spek2.style.specification.describe
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 class ExtensionsSpec : Spek({
-    given("a ByteArray") {
+    describe("a ByteArray") {
         val string = "\"Goddammit\", he said\nThis is a load of bullshit.\r\nPlease, just kill me now.\r"
         val byteArray = string.toByteArray()
-        on("splitting by lines") {
+        context("splitting by lines") {
             val split = byteArray.splitLines().map { it.toString(Charsets.UTF_8) }
             val expected = string.split(Regex("(\r\n|\r|\n)"))
             it("should be split by lines") {
                 assertEquals(expected, split)
             }
         }
-        on("splitting by the letter e") {
+        context("splitting by the letter e") {
             val splitBy = "e"
             val split = byteArray.split(splitBy.toByteArray()).map { it.toString(Charsets.UTF_8) }
             val expected = string.split(splitBy)
@@ -31,7 +29,7 @@ class ExtensionsSpec : Spek({
                 assertEquals(expected, split)
             }
         }
-        on("splitting by is") {
+        context("splitting by is") {
             val splitBy = "is"
             val split = byteArray.split(splitBy.toByteArray()).map { it.toString(Charsets.UTF_8) }
             val expected = string.split(splitBy)
@@ -40,15 +38,15 @@ class ExtensionsSpec : Spek({
             }
         }
     }
-    given("an empty ByteArray") {
+    describe("an empty ByteArray") {
         val empty = ByteArray(0)
-        on("splitting by lines") {
+        context("splitting by lines") {
             val split = empty.splitLines()
             it("should be empty") {
                 assertEquals(0, split.size)
             }
         }
-        on("splitting by anything") {
+        context("splitting by anything") {
             val split = empty.split(ByteArray(0))
             it("should have one element") {
                 assertEquals(1, split.size)

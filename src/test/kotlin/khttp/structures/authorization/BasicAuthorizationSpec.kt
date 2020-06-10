@@ -5,32 +5,30 @@
  */
 package khttp.structures.authorization
 
-import org.jetbrains.spek.api.Spek
-import org.jetbrains.spek.api.dsl.given
-import org.jetbrains.spek.api.dsl.it
-import org.jetbrains.spek.api.dsl.on
+import org.spekframework.spek2.Spek
+import org.spekframework.spek2.style.specification.describe
 import java.util.Base64
 import kotlin.test.assertEquals
 
 class BasicAuthorizationSpec : Spek({
-    given("a BasicAuthorization object") {
+    describe("a BasicAuthorization object") {
         val username = "test"
         val password = "hunter2"
         val base64 = "Basic " + Base64.getEncoder().encode("$username:$password".toByteArray()).toString(Charsets.UTF_8)
         val auth = BasicAuthorization(username, password)
-        on("checking the username") {
+        context("checking the username") {
             val authUsername = auth.user
             it("should equal the original") {
                 assertEquals(username, authUsername)
             }
         }
-        on("checking the password") {
+        context("checking the password") {
             val authPassword = auth.password
             it("should equal the original") {
                 assertEquals(password, authPassword)
             }
         }
-        on("checking the header") {
+        context("checking the header") {
             val (header, value) = auth.header
             it("should have a first value of \"Authorization\"") {
                 assertEquals("Authorization", header)
