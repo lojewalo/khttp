@@ -6,18 +6,16 @@
 package khttp.structures.files
 
 import khttp.extensions.fileLike
-import org.jetbrains.spek.api.Spek
-import org.jetbrains.spek.api.dsl.given
-import org.jetbrains.spek.api.dsl.it
-import org.jetbrains.spek.api.dsl.on
+import org.spekframework.spek2.Spek
+import org.spekframework.spek2.style.specification.describe
 import java.io.File
 import java.nio.file.Paths
 import kotlin.test.assertEquals
 
 class FileLikeSpec : Spek({
-    given("a File") {
+    describe("a File") {
         val file = File(PATH)
-        on("creating a FileLike without a custom name") {
+        context("creating a FileLike without a custom name") {
             val fileLike = file.fileLike()
             it("should have the same name") {
                 assertEquals(NAME, fileLike.fieldName)
@@ -26,7 +24,7 @@ class FileLikeSpec : Spek({
                 assertEquals(file.readBytes().asList(), fileLike.contents.asList())
             }
         }
-        on("creating a FileLike with a custom name") {
+        context("creating a FileLike with a custom name") {
             val name = "not_rare_pepe.png"
             val fileLike = file.fileLike(name = name)
             it("should have the custom name") {
@@ -37,9 +35,9 @@ class FileLikeSpec : Spek({
             }
         }
     }
-    given("a Path") {
+    describe("a Path") {
         val path = Paths.get(PATH)
-        on("creating a FileLike without a custom name") {
+        context("creating a FileLike without a custom name") {
             val fileLike = path.fileLike()
             it("should have the same name") {
                 assertEquals(NAME, fileLike.fieldName)
@@ -48,7 +46,7 @@ class FileLikeSpec : Spek({
                 assertEquals(path.toFile().readBytes().asList(), fileLike.contents.asList())
             }
         }
-        on("creating a FileLike with a custom name") {
+        context("creating a FileLike with a custom name") {
             val name = "not_rare_pepe.png"
             val fileLike = path.fileLike(name = name)
             it("should have the custom name") {
@@ -59,9 +57,9 @@ class FileLikeSpec : Spek({
             }
         }
     }
-    given("a String") {
+    describe("a String") {
         val string = "toppest of keks"
-        on("creating a FileLike with a custom name") {
+        context("creating a FileLike with a custom name") {
             val name = "not_rare_pepe.png"
             val fileLike = string.fileLike(name = name)
             it("should have the custom name") {

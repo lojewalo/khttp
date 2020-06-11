@@ -27,6 +27,7 @@ import java.nio.charset.Charset
 import java.util.Collections
 import java.util.zip.GZIPInputStream
 import java.util.zip.InflaterInputStream
+import javax.net.ssl.HttpsURLConnection
 
 class GenericResponse internal constructor(override val request: Request) : Response {
 
@@ -75,6 +76,14 @@ class GenericResponse internal constructor(override val request: Request) : Resp
                 val timeout = (response.request.timeout * 1000.0).toInt()
                 connection.connectTimeout = timeout
                 connection.readTimeout = timeout
+            },
+            { response, connection ->
+                if (connection is HttpsURLConnection) {
+                    if (response.request.sslContext != null) {
+                        connection.sslSocketFactory = response.request.sslContext?.socketFactory
+                    }
+                    connection.hostnameVerifier = response.request.hostnameVerifier
+                }
             },
             { _, connection ->
                 connection.instanceFollowRedirects = false
@@ -141,7 +150,9 @@ class GenericResponse internal constructor(override val request: Request) : Resp
                         timeout = this.timeout,
                         allowRedirects = false,
                         stream = this.stream,
-                        files = this.files
+                        files = this.files,
+                        sslContext = this.sslContext,
+                        hostnameVerifier = this.hostnameVerifier
                     )
                 )
             }
