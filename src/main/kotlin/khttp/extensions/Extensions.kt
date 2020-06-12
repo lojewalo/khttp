@@ -73,7 +73,8 @@ fun ByteArray.split(delimiter: ByteArray): List<ByteArray> {
             skip--
             continue
         }
-        if (this.sliceArray(i..i + delimiter.size - 1).toList() == delimiter.toList()) {
+        val sliceRange = i..kotlin.math.min(i + delimiter.size - 1, this.size - 1)
+        if (this.sliceArray(sliceRange).toList() == delimiter.toList()) {
             skip = delimiter.size
             lines += this.sliceArray(lastSplit..i - 1)
             lastSplit = i + delimiter.size
