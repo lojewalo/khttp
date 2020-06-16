@@ -27,39 +27,39 @@ import javax.net.ssl.HostnameVerifier
 import javax.net.ssl.SSLContext
 
 class GenericRequest internal constructor(
-    override val method: String,
-    url: String,
-    override val params: Map<String, String>,
-    headers: Map<String, String?>,
-    data: Any?,
-    override val json: Any?,
-    override val auth: Authorization?,
-    override val cookies: Map<String, String>?,
-    override val timeout: Double,
-    allowRedirects: Boolean?,
-    override val stream: Boolean,
-    override val files: List<FileLike>,
-    override val sslContext: SSLContext?,
-    hostnameVerifier: HostnameVerifier?
+        override val method: String,
+        url: String,
+        override val params: Map<String, String>,
+        headers: Map<String, String?>,
+        data: Any?,
+        override val json: Any?,
+        override val auth: Authorization?,
+        override val cookies: Map<String, String>?,
+        override val timeout: Double,
+        allowRedirects: Boolean?,
+        override val stream: Boolean,
+        override val files: List<FileLike>,
+        override val sslContext: SSLContext?,
+        hostnameVerifier: HostnameVerifier?
 ) : Request {
 
     companion object {
         val DEFAULT_HEADERS = mapOf(
-            "Accept" to "*/*",
-            "Accept-Encoding" to "gzip, deflate",
-            "User-Agent" to "khttp/1.0.0-SNAPSHOT"
+                "Accept" to "*/*",
+                "Accept-Encoding" to "gzip, deflate",
+                "User-Agent" to "khttp/1.0.0-SNAPSHOT"
         )
         val DEFAULT_DATA_HEADERS = mapOf(
-            "Content-Type" to "text/plain"
+                "Content-Type" to "text/plain"
         )
         val DEFAULT_FORM_HEADERS = mapOf(
-            "Content-Type" to "application/x-www-form-urlencoded"
+                "Content-Type" to "application/x-www-form-urlencoded"
         )
         val DEFAULT_UPLOAD_HEADERS = mapOf(
-            "Content-Type" to "multipart/form-data; boundary=%s"
+                "Content-Type" to "multipart/form-data; boundary=%s"
         )
         val DEFAULT_JSON_HEADERS = mapOf(
-            "Content-Type" to "application/json"
+                "Content-Type" to "application/json"
         )
     }
 
@@ -68,7 +68,8 @@ class GenericRequest internal constructor(
     override val headers: Map<String, String>
     override val data: Any?
     override val allowRedirects = allowRedirects ?: (this.method != "HEAD")
-    override val hostnameVerifier: HostnameVerifier = hostnameVerifier ?: HostnameVerifier { hostname, session -> hostname.equals(session.peerHost, true) }
+    override val hostnameVerifier: HostnameVerifier = hostnameVerifier
+            ?: HostnameVerifier { hostname, session -> hostname.equals(session.peerHost, true) }
     private var _body: ByteArray? = null
     override val body: ByteArray
         get() {
@@ -118,7 +119,8 @@ class GenericRequest internal constructor(
                     // Add the files
                     files.forEach {
                         writer.writeAndFlush("--$boundary\r\n")
-                        writer.writeAndFlush("Content-Disposition: form-data; name=\"${it.fieldName}\"; filename=\"${it.fileName}\"\r\n\r\n")
+                        val contentType = if (it.contentType != null) "Content-Type: ${it.contentType}\r\n\r\n" else ""
+                        writer.writeAndFlush("Content-Disposition: form-data; name=\"${it.fieldName}\"; filename=\"${it.fileName}\"\r\n$contentType\r\n")
                         bytes.write(it.contents)
                         writer.writeAndFlush("\r\n")
                     }
