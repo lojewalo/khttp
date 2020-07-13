@@ -5,20 +5,18 @@
  */
 package khttp.structures.maps
 
-import org.jetbrains.spek.api.Spek
-import org.jetbrains.spek.api.dsl.given
-import org.jetbrains.spek.api.dsl.it
-import org.jetbrains.spek.api.dsl.on
+import org.spekframework.spek2.Spek
+import org.spekframework.spek2.style.specification.describe
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 class CaseInsensitiveMapSpec : Spek({
-    given("a case-insensitive map initialized with a backing map") {
+    describe("a case-insensitive map initialized with a backing map") {
         val backingMap = hashMapOf("a" to "b", "c" to "d")
         val caseInsensitiveMap = CaseInsensitiveMap(backingMap)
-        on("accessing a mapping") {
+        context("accessing a mapping") {
             val backed = backingMap["a"]
             val lower = caseInsensitiveMap["a"]
             val upper = caseInsensitiveMap["A"]
@@ -32,7 +30,7 @@ class CaseInsensitiveMapSpec : Spek({
                 assertTrue(upper == lower)
             }
         }
-        on("checking if a mapping is present") {
+        context("checking if a mapping is present") {
             val backed = backingMap.containsKey("c")
             val lower = caseInsensitiveMap.containsKey("c")
             val upper = caseInsensitiveMap.containsKey("C")
@@ -46,14 +44,14 @@ class CaseInsensitiveMapSpec : Spek({
                 assertTrue(upper == lower)
             }
         }
-        on("toString") {
+        context("toString") {
             val backing = backingMap.toString()
             val insensitive = caseInsensitiveMap.toString()
             it("should be the same string returned by the backing map") {
                 assertEquals(backing, insensitive)
             }
         }
-        on("checking for invalid mappings") {
+        context("checking for invalid mappings") {
             it("should be null") {
                 assertFalse(caseInsensitiveMap.containsKey(null as String?))
             }
@@ -74,10 +72,10 @@ class CaseInsensitiveMapSpec : Spek({
             }
         }
     }
-    given("a case-insensitive map initialized with an empty backing map") {
+    describe("a case-insensitive map initialized with an empty backing map") {
         val backingMap = hashMapOf<String, String>()
         val caseInsensitiveMap = CaseInsensitiveMap(backingMap)
-        on("checking for invalid mappings") {
+        context("checking for invalid mappings") {
             it("should be null") {
                 assertFalse(caseInsensitiveMap.containsKey(null as String?))
             }

@@ -7,6 +7,8 @@ package khttp.requests
 
 import khttp.structures.authorization.Authorization
 import khttp.structures.files.FileLike
+import javax.net.ssl.HostnameVerifier
+import javax.net.ssl.SSLContext
 
 interface Request {
 
@@ -77,5 +79,12 @@ interface Request {
      * The body of the request to be sent.
      */
     val body: ByteArray
-
+    /**
+     * SSL configuration for the request
+     */
+    val sslContext: SSLContext?
+    /**
+     * URL's hostname and the server's identification hostname validation
+     */
+    val hostnameVerifier: HostnameVerifier
 }
