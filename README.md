@@ -15,5 +15,5 @@ fun main(args: Array<out String>) {
 
 ## Use
 
-This for is meant to provide a way to use khttp when using The Central Repository.
+This fork is meant to provide a way to use khttp when using The Central Repository. Nothing more.
 Use [the following artifact](https://search.maven.org/artifact/org.danilopianini/khttp)
