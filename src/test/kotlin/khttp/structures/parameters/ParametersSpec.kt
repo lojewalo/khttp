@@ -5,10 +5,8 @@
  */
 package khttp.structures.parameters
 
-import org.jetbrains.spek.api.Spek
-import org.jetbrains.spek.api.dsl.given
-import org.jetbrains.spek.api.dsl.it
-import org.jetbrains.spek.api.dsl.on
+import org.spekframework.spek2.Spek
+import org.spekframework.spek2.style.specification.describe
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
@@ -16,19 +14,19 @@ import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 class ParametersSpec : Spek({
-    given("Parameters generated from an empty map") {
+    describe("Parameters generated from an empty map") {
         val params = Parameters(mapOf())
-        on("toString") {
+        context("toString") {
             val string = params.toString()
             it("should be empty") {
                 assertTrue(string.isEmpty())
             }
         }
     }
-    given("Parameters generated from a populated map") {
+    describe("Parameters generated from a populated map") {
         val map = mapOf("test" to "value", "jest" to "lalue")
         val params = Parameters(map)
-        on("inspecting the object") {
+        context("inspecting the object") {
             val size = params.size
             val containsTest = "test" in params
             val containsJest = "jest" in params
@@ -68,19 +66,19 @@ class ParametersSpec : Spek({
                 assertEquals("test=value&jest=lalue", toString)
             }
         }
-        on("getting null") {
+        context("getting null") {
             val result: Any? = params.get(null as String?)
             it("should be null") {
                 assertNull(result)
             }
         }
-        on("checking for key null") {
+        context("checking for key null") {
             val result = params.containsKey(null as String?)
             it("should be false") {
                 assertFalse(result)
             }
         }
-        on("checking for value null") {
+        context("checking for value null") {
             val result = params.containsValue(null as String?)
             it("should be false") {
                 assertFalse(result)

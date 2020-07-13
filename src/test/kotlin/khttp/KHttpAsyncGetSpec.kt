@@ -5,20 +5,17 @@
  */
 package khttp
 
-import khttp.helpers.AsyncUtil
-import khttp.helpers.AsyncUtil.Companion.error
-import khttp.helpers.AsyncUtil.Companion.errorCallback
-import khttp.helpers.AsyncUtil.Companion.response
-import khttp.helpers.AsyncUtil.Companion.responseCallback
+import khttp.helpers.SslContextUtils
+import khttp.responses.Response
 import khttp.structures.authorization.BasicAuthorization
-import org.jetbrains.spek.api.Spek
-import org.jetbrains.spek.api.dsl.given
-import org.jetbrains.spek.api.dsl.it
-import org.jetbrains.spek.api.dsl.on
+import org.awaitility.kotlin.await
 import org.json.JSONObject
+import org.spekframework.spek2.Spek
+import org.spekframework.spek2.style.specification.describe
 import java.net.MalformedURLException
 import java.net.SocketTimeoutException
 import java.net.URLEncoder
+import java.util.concurrent.TimeUnit
 import java.util.zip.GZIPInputStream
 import java.util.zip.InflaterInputStream
 import kotlin.test.assertEquals
@@ -28,33 +25,37 @@ import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
 class KHttpAsyncGetSpec : Spek({
-    given("an async get request") {
+    describe("an async get request") {
         val url = "http://httpbin.org/range/26"
-        beforeGroup {
-            AsyncUtil.execute { async.get(url, onError = errorCallback, onResponse = responseCallback) }
-        }
-        on("accessing the string") {
+        var error: Throwable? = null
+        var response: Response? = null
+
+        async.get(url, onError = { error = this }, onResponse = {response = this })
+        await.atMost(5, TimeUnit.SECONDS)
+                .until { response != null }
+
+        context("accessing the string") {
             if (error != null) throw error!!
             val string = response!!.text
             it("should equal the alphabet in lowercase") {
                 assertEquals("abcdefghijklmnopqrstuvwxyz", string)
             }
         }
-        on("accessing the url") {
+        context("accessing the url") {
             if (error != null) throw error!!
             val resultantURL = response!!.url
             it("should equal the starting url") {
                 assertEquals(url, resultantURL)
             }
         }
-        on("accessing the status code") {
+        context("accessing the status code") {
             if (error != null) throw error!!
             val statusCode = response!!.statusCode
             it("should be 200") {
                 assertEquals(200, statusCode)
             }
         }
-        on("converting it to a string") {
+        context("converting it to a string") {
             if (error != null) throw error!!
             val string = response!!.toString()
             it("should be correct") {
@@ -62,11 +63,15 @@ class KHttpAsyncGetSpec : Spek({
             }
         }
     }
-    given("an async json object get request with parameters") {
-        beforeGroup {
-            AsyncUtil.execute { async.get("http://httpbin.org/get", params = mapOf("a" to "b", "c" to "d"), onError = errorCallback, onResponse = responseCallback) }
-        }
-        on("accessing the json") {
+    describe("an async json object get request with parameters") {
+        var error: Throwable? = null
+        var response: Response? = null
+
+        async.get("http://httpbin.org/get", params = mapOf("a" to "b", "c" to "d"), onError = { error = this }, onResponse = { response = this })
+        await.atMost(5, TimeUnit.SECONDS)
+                .until { response != null }
+
+        context("accessing the json") {
             if (error != null) throw error!!
             val json = response!!.jsonObject
             it("should contain the parameters") {
@@ -76,11 +81,15 @@ class KHttpAsyncGetSpec : Spek({
             }
         }
     }
-    given("an async json object get request with a map of parameters") {
-        beforeGroup {
-            AsyncUtil.execute { async.get("http://httpbin.org/get", params = mapOf("a" to "b", "c" to "d"), onError = errorCallback, onResponse = responseCallback) }
-        }
-        on("accessing the json") {
+    describe("an async json object get request with a map of parameters") {
+        var error: Throwable? = null
+        var response: Response? = null
+
+        async.get("http://httpbin.org/get", params = mapOf("a" to "b", "c" to "d"), onError = { error = this }, onResponse = { response = this })
+        await.atMost(5, TimeUnit.SECONDS)
+                .until { response != null }
+
+        context("accessing the json") {
             if (error != null) throw error!!
             val json = response!!.jsonObject
             it("should contain the parameters") {
@@ -90,11 +99,15 @@ class KHttpAsyncGetSpec : Spek({
             }
         }
     }
-    given("an async get request with basic auth") {
-        beforeGroup {
-            AsyncUtil.execute { async.get("http://httpbin.org/basic-auth/khttp/isawesome", auth = BasicAuthorization("khttp", "isawesome"), onError = errorCallback, onResponse = responseCallback) }
-        }
-        on("accessing the json") {
+    describe("an async get request with basic auth") {
+        var error: Throwable? = null
+        var response: Response? = null
+
+        async.get("http://httpbin.org/basic-auth/khttp/isawesome", auth = BasicAuthorization("khttp", "isawesome"), onError = { error = this }, onResponse = { response = this })
+        await.atMost(5, TimeUnit.SECONDS)
+                .until { response != null }
+
+        context("accessing the json") {
             if (error != null) throw error!!
             val json = response!!.jsonObject
             it("should be authenticated") {
@@ -105,11 +118,15 @@ class KHttpAsyncGetSpec : Spek({
             }
         }
     }
-    given("an async get request with cookies") {
-        beforeGroup {
-            AsyncUtil.execute { async.get("http://httpbin.org/cookies", cookies = mapOf("test" to "success"), onError = errorCallback, onResponse = responseCallback) }
-        }
-        on("accessing the json") {
+    describe("an async get request with cookies") {
+        var error: Throwable? = null
+        var response: Response? = null
+
+        async.get("http://httpbin.org/cookies", cookies = mapOf("test" to "success"), onError = { error = this }, onResponse = { response = this })
+        await.atMost(5, TimeUnit.SECONDS)
+                .until { response != null }
+
+        context("accessing the json") {
             if (error != null) throw error!!
             val json = response!!.jsonObject
             it("should have the same cookies") {
@@ -118,11 +135,15 @@ class KHttpAsyncGetSpec : Spek({
             }
         }
     }
-    given("an async get request that redirects and allowing redirects") {
-        beforeGroup {
-            AsyncUtil.execute { async.get("http://httpbin.org/redirect-to?url=${URLEncoder.encode("http://httpbin.org/get", "utf-8")}", onError = errorCallback, onResponse = responseCallback) }
-        }
-        on("accessing the json") {
+    describe("an async get request that redirects and allowing redirects") {
+        var error: Throwable? = null
+        var response: Response? = null
+
+        async.get("http://httpbin.org/redirect-to?url=${URLEncoder.encode("http://httpbin.org/get", "utf-8")}", onError = { error = this }, onResponse = { response = this })
+        await.atMost(5, TimeUnit.SECONDS)
+                .until { response != null }
+
+        context("accessing the json") {
             if (error != null) throw error!!
             val json = response!!.jsonObject
             it("should have the redirected url") {
@@ -130,11 +151,15 @@ class KHttpAsyncGetSpec : Spek({
             }
         }
     }
-    given("an async get request that redirects with HTTP 307 and allowing redirects") {
-        beforeGroup {
-            AsyncUtil.execute { async.get("http://httpbin.org/redirect-to?status_code=307&url=${URLEncoder.encode("http://httpbin.org/get", "utf-8")}", onError = errorCallback, onResponse = responseCallback) }
-        }
-        on("accessing the json") {
+    describe("an async get request that redirects with HTTP 307 and allowing redirects") {
+        var error: Throwable? = null
+        var response: Response? = null
+
+        async.get("http://httpbin.org/redirect-to?status_code=307&url=${URLEncoder.encode("http://httpbin.org/get", "utf-8")}", onError = { error = this }, onResponse = { response = this })
+        await.atMost(5, TimeUnit.SECONDS)
+                .until { response != null }
+
+        context("accessing the json") {
             if (error != null) throw error!!
             val json = response!!.jsonObject
             it("should have the redirected url") {
@@ -142,11 +167,15 @@ class KHttpAsyncGetSpec : Spek({
             }
         }
     }
-    given("an async get request that redirects with HTTP 308 and allowing redirects") {
-        beforeGroup {
-            AsyncUtil.execute { async.get("http://httpbin.org/redirect-to?status_code=308&url=${URLEncoder.encode("http://httpbin.org/get", "utf-8")}", onError = errorCallback, onResponse = responseCallback) }
-        }
-        on("accessing the json") {
+    describe("an async get request that redirects with HTTP 308 and allowing redirects") {
+        var error: Throwable? = null
+        var response: Response? = null
+
+        async.get("http://httpbin.org/redirect-to?status_code=308&url=${URLEncoder.encode("http://httpbin.org/get", "utf-8")}", onError = { error = this }, onResponse = { response = this })
+        await.atMost(5, TimeUnit.SECONDS)
+                .until { response != null }
+
+        context("accessing the json") {
             if (error != null) throw error!!
             val json = response!!.jsonObject
             it("should have the redirected url") {
@@ -154,11 +183,15 @@ class KHttpAsyncGetSpec : Spek({
             }
         }
     }
-    given("an async get request that redirects and disallowing redirects") {
-        beforeGroup {
-            AsyncUtil.execute { async.get("http://httpbin.org/redirect-to?url=${URLEncoder.encode("http://httpbin.org/get", "utf-8")}", allowRedirects = false, onError = errorCallback, onResponse = responseCallback) }
-        }
-        on("accessing the status code") {
+    describe("an async get request that redirects and disallowing redirects") {
+        var error: Throwable? = null
+        var response: Response? = null
+
+        async.get("http://httpbin.org/redirect-to?url=${URLEncoder.encode("http://httpbin.org/get", "utf-8")}", allowRedirects = false, onError = { error = this }, onResponse = { response = this })
+        await.atMost(5, TimeUnit.SECONDS)
+                .until { response != null }
+
+        context("accessing the status code") {
             if (error != null) throw error!!
             val code = response!!.statusCode
             it("should be 302") {
@@ -166,11 +199,15 @@ class KHttpAsyncGetSpec : Spek({
             }
         }
     }
-    given("an async get request that redirects with HTTP 307 and disallowing redirects") {
-        beforeGroup {
-            AsyncUtil.execute { async.get("http://httpbin.org/redirect-to?status_code=307&url=${URLEncoder.encode("http://httpbin.org/get", "utf-8")}", allowRedirects = false, onError = errorCallback, onResponse = responseCallback) }
-        }
-        on("accessing the status code") {
+    describe("an async get request that redirects with HTTP 307 and disallowing redirects") {
+        var error: Throwable? = null
+        var response: Response? = null
+
+        async.get("http://httpbin.org/redirect-to?status_code=307&url=${URLEncoder.encode("http://httpbin.org/get", "utf-8")}", allowRedirects = false, onError = { error = this }, onResponse = { response = this })
+        await.atMost(5, TimeUnit.SECONDS)
+                .until { response != null }
+
+        context("accessing the status code") {
             if (error != null) throw error!!
             val code = response!!.statusCode
             it("should be 307") {
@@ -178,11 +215,15 @@ class KHttpAsyncGetSpec : Spek({
             }
         }
     }
-    given("an async get request that redirects with HTTP 308 and disallowing redirects") {
-        beforeGroup {
-            AsyncUtil.execute { async.get("http://httpbin.org/redirect-to?status_code=308&url=${URLEncoder.encode("http://httpbin.org/get", "utf-8")}", allowRedirects = false, onError = errorCallback, onResponse = responseCallback) }
-        }
-        on("accessing the status code") {
+    describe("an async get request that redirects with HTTP 308 and disallowing redirects") {
+        var error: Throwable? = null
+        var response: Response? = null
+
+        async.get("http://httpbin.org/redirect-to?status_code=308&url=${URLEncoder.encode("http://httpbin.org/get", "utf-8")}", allowRedirects = false, onError = { error = this }, onResponse = { response = this })
+        await.atMost(5, TimeUnit.SECONDS)
+                .until { response != null }
+
+        context("accessing the status code") {
             if (error != null) throw error!!
             val code = response!!.statusCode
             it("should be 308") {
@@ -190,11 +231,15 @@ class KHttpAsyncGetSpec : Spek({
             }
         }
     }
-    given("an async get request that redirects five times") {
-        beforeGroup {
-            AsyncUtil.execute { async.get("http://httpbin.org/redirect/5", onError = errorCallback, onResponse = responseCallback) }
-        }
-        on("accessing the json") {
+    describe("an async get request that redirects five times") {
+        var error: Throwable? = null
+        var response: Response? = null
+
+        async.get("http://httpbin.org/redirect/5", onError = { error = this }, onResponse = { response = this })
+        await.atMost(5, TimeUnit.SECONDS)
+                .until { response != null }
+
+        context("accessing the json") {
             if (error != null) throw error!!
             val json = response!!.jsonObject
             it("should have the get url") {
@@ -202,11 +247,14 @@ class KHttpAsyncGetSpec : Spek({
             }
         }
     }
-    given("an async get request that takes ten seconds to complete") {
-        beforeGroup {
-            AsyncUtil.execute { async.get("http://httpbin.org/delay/10", timeout = 1.0, onError = { AsyncUtil.set(err = this) }) }
-        }
-        on("request") {
+    describe("an async get request that takes ten seconds to complete") {
+        var error: Throwable? = null
+
+        async.get("http://httpbin.org/delay/10", timeout = 1.0, onError = { error = this })
+        await.atMost(5, TimeUnit.SECONDS)
+                .until { error != null }
+
+        context("request") {
             it("should throw a timeout exception") {
                 assertFailsWith(SocketTimeoutException::class) {
                     throw error!!
@@ -214,13 +262,18 @@ class KHttpAsyncGetSpec : Spek({
             }
         }
     }
-    given("an async get request that sets cookies without redirects") {
+    describe("an async get request that sets cookies without redirects") {
         val cookieName = "test"
         val cookieValue = "quite"
-        beforeGroup {
-            AsyncUtil.execute { async.get("http://httpbin.org/cookies/set?$cookieName=$cookieValue", allowRedirects = false, onError = errorCallback, onResponse = responseCallback) }
-        }
-        on("inspecting the cookies") {
+
+        var error: Throwable? = null
+        var response: Response? = null
+
+        async.get("http://httpbin.org/cookies/set?$cookieName=$cookieValue", allowRedirects = false, onError = { error = this }, onResponse = { response = this })
+        await.atMost(5, TimeUnit.SECONDS)
+                .until { response != null }
+
+        context("inspecting the cookies") {
             if (error != null) throw error!!
             val cookies = response!!.cookies
             it("should set a cookie") {
@@ -243,13 +296,18 @@ class KHttpAsyncGetSpec : Spek({
             }
         }
     }
-    given("an async get request that sets cookies with redirects") {
+    describe("an async get request that sets cookies with redirects") {
         val cookieName = "test"
         val cookieValue = "quite"
-        beforeGroup {
-            AsyncUtil.execute { async.get("http://httpbin.org/cookies/set?$cookieName=$cookieValue", onError = errorCallback, onResponse = responseCallback) }
-        }
-        on("inspecting the cookies") {
+
+        var error: Throwable? = null
+        var response: Response? = null
+
+        async.get("http://httpbin.org/cookies/set?$cookieName=$cookieValue", onError = { error = this }, onResponse = { response = this })
+        await.atMost(5, TimeUnit.SECONDS)
+                .until { response != null }
+
+        context("inspecting the cookies") {
             if (error != null) throw error!!
             val cookies = response!!.cookies
             it("should set a cookie") {
@@ -272,15 +330,20 @@ class KHttpAsyncGetSpec : Spek({
             }
         }
     }
-    given("an async get request that sets multiple cookies with redirects") {
+    describe("an async get request that sets multiple cookies with redirects") {
         val cookieNameOne = "test"
         val cookieValueOne = "quite"
         val cookieNameTwo = "derp"
         val cookieValueTwo = "herp"
-        beforeGroup {
-            AsyncUtil.execute { async.get("http://httpbin.org/cookies/set?$cookieNameOne=$cookieValueOne&$cookieNameTwo=$cookieValueTwo", onError = errorCallback, onResponse = responseCallback) }
-        }
-        on("inspecting the cookies") {
+
+        var error: Throwable? = null
+        var response: Response? = null
+
+        async.get("http://httpbin.org/cookies/set?$cookieNameOne=$cookieValueOne&$cookieNameTwo=$cookieValueTwo", onError = { error = this }, onResponse = { response = this })
+        await.atMost(5, TimeUnit.SECONDS)
+                .until { response != null }
+
+        context("inspecting the cookies") {
             if (error != null) throw error!!
             val cookies = response!!.cookies
             it("should set two cookies") {
@@ -318,18 +381,22 @@ class KHttpAsyncGetSpec : Spek({
             }
         }
     }
-    given("an async gzip get request") {
-        beforeGroup {
-            AsyncUtil.execute { async.get("https://httpbin.org/gzip", onError = errorCallback, onResponse = responseCallback) }
-        }
-        on("accessing the stream") {
+    describe("an async gzip get request") {
+        var error: Throwable? = null
+        var response: Response? = null
+
+        async.get("https://httpbin.org/gzip", onError = { error = this }, onResponse = { response = this })
+        await.atMost(5, TimeUnit.SECONDS)
+                .until { response != null }
+
+        context("accessing the stream") {
             if (error != null) throw error!!
             val stream = response!!.raw
             it("should be a GZIPInputStream") {
                 assertTrue(stream is GZIPInputStream)
             }
         }
-        on("accessing the json") {
+        context("accessing the json") {
             if (error != null) throw error!!
             val json = response!!.jsonObject
             it("should be gzipped") {
@@ -337,18 +404,22 @@ class KHttpAsyncGetSpec : Spek({
             }
         }
     }
-    given("an async deflate get request") {
-        beforeGroup {
-            AsyncUtil.execute { async.get("https://httpbin.org/deflate", onError = errorCallback, onResponse = responseCallback) }
-        }
-        on("accessing the stream") {
+    describe("an async deflate get request") {
+        var error: Throwable? = null
+        var response: Response? = null
+
+        async.get("https://httpbin.org/deflate", onError = { error = this }, onResponse = { response = this })
+        await.atMost(5, TimeUnit.SECONDS)
+                .until { response != null }
+
+        context("accessing the stream") {
             if (error != null) throw error!!
             val stream = response!!.raw
             it("should be a InflaterInputStream") {
                 assertTrue(stream is InflaterInputStream)
             }
         }
-        on("accessing the json") {
+        context("accessing the json") {
             if (error != null) throw error!!
             val json = response!!.jsonObject
             it("should be deflated") {
@@ -356,18 +427,22 @@ class KHttpAsyncGetSpec : Spek({
             }
         }
     }
-    given("an async get request that returns 418") {
-        beforeGroup {
-            AsyncUtil.execute { async.get("https://httpbin.org/status/418", onError = errorCallback, onResponse = responseCallback) }
-        }
-        on("accessing the status code") {
+    describe("an async get request that returns 418") {
+        var error: Throwable? = null
+        var response: Response? = null
+
+        async.get("https://httpbin.org/status/418", onError = { error = this }, onResponse = { response = this })
+        await.atMost(5, TimeUnit.SECONDS)
+                .until { response != null }
+
+        context("accessing the status code") {
             if (error != null) throw error!!
             val status = response!!.statusCode
             it("should be 418") {
                 assertEquals(418, status)
             }
         }
-        on("accessing the text") {
+        context("accessing the text") {
             if (error != null) throw error!!
             val text = response!!.text
             it("should contain \"teapot\"") {
@@ -375,25 +450,29 @@ class KHttpAsyncGetSpec : Spek({
             }
         }
     }
-    given("an async get request for a UTF-8 document") {
-        beforeGroup {
-            AsyncUtil.execute { async.get("https://httpbin.org/encoding/utf8", onError = errorCallback, onResponse = responseCallback) }
-        }
-        on("checking the encoding") {
+    describe("an async get request for a UTF-8 document") {
+        var error: Throwable? = null
+        var response: Response? = null
+
+        async.get("https://httpbin.org/encoding/utf8", onError = { error = this }, onResponse = { response = this })
+        await.atMost(5, TimeUnit.SECONDS)
+                .until { response != null }
+
+        context("checking the encoding") {
             if (error != null) throw error!!
             val encoding = response!!.encoding
             it("should be UTF-8") {
                 assertEquals(Charsets.UTF_8, encoding)
             }
         }
-        on("reading the text") {
+        context("reading the text") {
             if (error != null) throw error!!
             val text = response!!.text
             it("should contain ∮") {
                 assertTrue(text.contains("∮"))
             }
         }
-        on("changing the encoding") {
+        context("changing the encoding") {
             if (error != null) throw error!!
             response!!.encoding = Charsets.ISO_8859_1
             val encoding = response!!.encoding
@@ -401,7 +480,7 @@ class KHttpAsyncGetSpec : Spek({
                 assertEquals(Charsets.ISO_8859_1, encoding)
             }
         }
-        on("reading the text") {
+        context("reading the text") {
             if (error != null) throw error!!
             val text = response!!.text
             it("should not contain ∮") {
@@ -409,11 +488,14 @@ class KHttpAsyncGetSpec : Spek({
             }
         }
     }
-    given("an async unsupported khttp schema") {
-        beforeGroup {
-            AsyncUtil.execute { async.get("ftp://google.com", onError = { AsyncUtil.set(err = this) }) }
-        }
-        on("construction") {
+    describe("an async unsupported khttp schema") {
+        var error: Throwable? = null
+
+        async.get("ftp://google.com", onError = { error = this })
+        await.atMost(5, TimeUnit.SECONDS)
+                .until { error != null }
+
+        context("construction") {
             it("should throw an IllegalArgumentException") {
                 assertFailsWith(IllegalArgumentException::class) {
                     throw error!!
@@ -421,11 +503,14 @@ class KHttpAsyncGetSpec : Spek({
             }
         }
     }
-    given("an async unsupported Java schema") {
-        beforeGroup {
-            AsyncUtil.execute { async.get("gopher://google.com", onError = { AsyncUtil.set(err = this) }) }
-        }
-        on("construction") {
+    describe("an async unsupported Java schema") {
+        var error: Throwable? = null
+
+        async.get("gopher://google.com", onError = { error = this })
+        await.atMost(5, TimeUnit.SECONDS)
+                .until { error != null }
+
+        context("construction") {
             it("should throw a MalformedURLException") {
                 assertFailsWith(MalformedURLException::class) {
                     throw error!!
@@ -433,12 +518,17 @@ class KHttpAsyncGetSpec : Spek({
             }
         }
     }
-    given("an async request with a user agent set") {
+    describe("an async request with a user agent set") {
         val userAgent = "khttp/test"
-        beforeGroup {
-            AsyncUtil.execute { async.get("https://httpbin.org/user-agent", headers = mapOf("User-Agent" to userAgent), onError = errorCallback, onResponse = responseCallback) }
-        }
-        on("accessing the json") {
+
+        var error: Throwable? = null
+        var response: Response? = null
+
+        async.get("https://httpbin.org/user-agent", headers = mapOf("User-Agent" to userAgent), onError = { error = this }, onResponse = { response = this })
+        await.atMost(5, TimeUnit.SECONDS)
+                .until { response != null }
+
+        context("accessing the json") {
             if (error != null) throw error!!
             val json = response!!.jsonObject
             val responseUserAgent = json.getString("user-agent")
@@ -447,11 +537,15 @@ class KHttpAsyncGetSpec : Spek({
             }
         }
     }
-    given("an async request with a port") {
-        beforeGroup {
-            AsyncUtil.execute { async.get("https://httpbin.org:443/get", onError = errorCallback, onResponse = responseCallback) }
-        }
-        on("accessing the json") {
+    describe("an async request with a port") {
+        var error: Throwable? = null
+        var response: Response? = null
+
+        async.get("https://httpbin.org:443/get", onError = { error = this }, onResponse = { response = this })
+        await.atMost(5, TimeUnit.SECONDS)
+                .until { response != null }
+
+        context("accessing the json") {
             if (error != null) throw error!!
             val json = response!!.jsonObject
             it("should not be null") {
@@ -459,11 +553,15 @@ class KHttpAsyncGetSpec : Spek({
             }
         }
     }
-    given("an async get request for a JSON array") {
-        beforeGroup {
-            AsyncUtil.execute { async.get("http://jsonplaceholder.typicode.com/users", onError = errorCallback, onResponse = responseCallback) }
-        }
-        on("accessing the json") {
+    describe("an async get request for a JSON array") {
+        var error: Throwable? = null
+        var response: Response? = null
+
+        async.get("http://jsonplaceholder.typicode.com/users", onError = { error = this }, onResponse = { response = this })
+        await.atMost(5, TimeUnit.SECONDS)
+                .until { response != null }
+
+        context("accessing the json") {
             if (error != null) throw error!!
             val json = response!!.jsonArray
             it("should have ten items") {
@@ -471,11 +569,15 @@ class KHttpAsyncGetSpec : Spek({
             }
         }
     }
-    given("an async non-streaming get request") {
-        beforeGroup {
-            AsyncUtil.execute { async.get("https://httpbin.org/get", onError = errorCallback, onResponse = responseCallback) }
-        }
-        on("checking the bytes available to be read") {
+    describe("an async non-streaming get request") {
+        var error: Throwable? = null
+        var response: Response? = null
+
+        async.get("https://httpbin.org/get", onError = { error = this }, onResponse = { response = this })
+        await.atMost(5, TimeUnit.SECONDS)
+                .until { response != null }
+
+        context("checking the bytes available to be read") {
             if (error != null) throw error!!
             val available = response!!.raw.available()
             it("should be 0") {
@@ -483,23 +585,15 @@ class KHttpAsyncGetSpec : Spek({
             }
         }
     }
-    given("an async streaming get request") {
-        beforeGroup {
-            AsyncUtil.execute { async.get("https://httpbin.org/get", stream = true, onError = errorCallback, onResponse = responseCallback) }
-        }
-        on("checking the bytes available to be read") {
-            if (error != null) throw error!!
-            val available = response!!.raw.available()
-            it("should be greater than 0") {
-                assertTrue(available > 0)
-            }
-        }
-    }
-    given("an async streaming get request with a streaming line response") {
-        beforeGroup {
-            AsyncUtil.execute { async.get("http://httpbin.org/stream/4", stream = true, onError = errorCallback, onResponse = responseCallback) }
-        }
-        on("iterating over the lines") {
+    describe("an async streaming get request with a streaming line response") {
+        var error: Throwable? = null
+        var response: Response? = null
+
+        async.get("http://httpbin.org/stream/4", stream = true, onError = { error = this }, onResponse = { response = this })
+        await.atMost(5, TimeUnit.SECONDS)
+                .until { response != null }
+
+        context("iterating over the lines") {
             if (error != null) throw error!!
             val iterator = response!!.lineIterator()
             var counter = 0
@@ -512,11 +606,15 @@ class KHttpAsyncGetSpec : Spek({
             }
         }
     }
-    given("an async streaming get request with a streaming byte response") {
-        beforeGroup {
-            AsyncUtil.execute { async.get("http://httpbin.org/stream-bytes/4?seed=1", stream = true, onError = errorCallback, onResponse = responseCallback) }
-        }
-        on("iterating over the bytes") {
+    describe("an async streaming get request with a streaming byte response") {
+        var error: Throwable? = null
+        var response: Response? = null
+
+        async.get("http://httpbin.org/stream-bytes/4?seed=1", stream = true, onError = { error = this }, onResponse = { response = this })
+        await.atMost(5, TimeUnit.SECONDS)
+                .until { response != null }
+
+        context("iterating over the bytes") {
             if (error != null) throw error!!
             val iterator = response!!.contentIterator(chunkSize = 1)
             var counter = 0
@@ -530,18 +628,47 @@ class KHttpAsyncGetSpec : Spek({
             }
         }
     }
-    given("an async streaming get request without even lines") {
+    describe("an async streaming get request without even lines") {
         val url = "https://httpbin.org/bytes/1690?seed=1"
-        beforeGroup {
-            AsyncUtil.execute { async.get(url, stream = true, onError = errorCallback, onResponse = responseCallback) }
-        }
-        on("iterating the lines") {
+
+        var error: Throwable? = null
+        var response: Response? = null
+
+        async.get(url, stream = true, onError = { error = this }, onResponse = { response = this })
+        await.atMost(5, TimeUnit.SECONDS)
+                .until { response != null }
+
+        context("iterating the lines") {
             if (error != null) throw error!!
             val iterator = response!!.lineIterator()
             val bytes = iterator.asSequence().toList().flatMap { it.toList() }
             val contentWithoutBytes = get(url).content.toList().filter { it != '\r'.toByte() && it != '\n'.toByte() }
             it("should be the same as the content without line breaks") {
                 assertEquals(contentWithoutBytes, bytes)
+            }
+        }
+    }
+
+    describe("an async request where the client needs to authenticate itself by certificates") {
+        val url = "https://httpbin.org/bytes/1690?seed=1"
+        val sslContext = SslContextUtils.createFromKeyMaterial("keystores/badssl.com-client.p12", "badssl.com".toCharArray())
+
+        var error: Throwable? = null
+        var response: Response? = null
+
+        async.get(url, sslContext = sslContext, stream = true, onError = { error = this }, onResponse = { response = this })
+        await.atMost(5, TimeUnit.SECONDS)
+                .until { response != null }
+
+        context("iterating the lines") {
+            if (error != null) throw error!!
+            val statusCode = response!!.statusCode
+            it("should be ok") {
+                if (statusCode == 400) {
+                    print("WARNING: Certificate may have expired and needs to be updated")
+                } else {
+                    assertEquals(200, statusCode)
+                }
             }
         }
     }

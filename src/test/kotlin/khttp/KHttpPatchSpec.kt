@@ -5,17 +5,15 @@
  */
 package khttp
 
-import org.jetbrains.spek.api.Spek
-import org.jetbrains.spek.api.dsl.given
-import org.jetbrains.spek.api.dsl.it
-import org.jetbrains.spek.api.dsl.on
+import org.spekframework.spek2.Spek
+import org.spekframework.spek2.style.specification.describe
 import kotlin.test.assertEquals
 
 class KHttpPatchSpec : Spek({
-    given("a patch request") {
+    describe("a patch request") {
         val url = "https://httpbin.org/patch"
         val request = patch(url)
-        on("accessing the json") {
+        context("accessing the json") {
             val json = request.jsonObject
             it("should have the same url") {
                 assertEquals(url, json.getString("url"))
