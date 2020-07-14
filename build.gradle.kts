@@ -29,9 +29,10 @@ dependencies {
     implementation("org.json:json:_")
     testImplementation(kotlin("test"))
     testImplementation(kotlin("reflect"))
+    testImplementation("org.awaitility:awaitility-kotlin:_")
     testImplementation("org.json:json:_")
-    testImplementation("org.jetbrains.spek:spek-api:_")
-    testRuntimeOnly("org.jetbrains.spek:spek-junit-platform-engine:_")
+    testImplementation("org.spekframework.spek2:spek-dsl-jvm:_")
+    testRuntimeOnly("org.spekframework.spek2:spek-runner-junit5:_")
 }
 
 tasks.withType<DokkaTask> {
