@@ -51,7 +51,7 @@ jobs:
         - export ORG_GRADLE_PROJECT_signingKey=$(cat secrets.asc)
         - rm secrets.asc
       script:
-        - travis_retry ./gradlew dokka publish
+        - travis_retry ./gradlew publish
 
 before_install:
   - travis_retry git clone --depth 1 $GRAVIS_REPO $GRAVIS
