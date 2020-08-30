@@ -1,4 +1,4 @@
-import de.fayard.dependencies.bootstrapRefreshVersionsAndDependencies
+import de.fayard.refreshVersions.bootstrapRefreshVersions
 import org.danilopianini.VersionAliases.justAdditionalAliases
 buildscript {
     repositories {
@@ -6,9 +6,9 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath("de.fayard:dependencies:0.+")
-        classpath("org.danilopianini:refreshversions-aliases:[0.1.2, 1.0.0[")
+        classpath("de.fayard.refreshVersions:refreshVersions:0.9.5")
+        classpath("org.danilopianini:refreshversions-aliases:+")
     }
 }
-bootstrapRefreshVersionsAndDependencies(justAdditionalAliases)
+bootstrapRefreshVersions(justAdditionalAliases)
 rootProject.name = "khttp"

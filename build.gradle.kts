@@ -12,10 +12,10 @@ plugins {
 
 repositories {
     mavenCentral()
-    maven {
-        url = uri("https://dl.bintray.com/kotlin/dokka")
+    jcenter {
         content {
-            includeGroup("org.jetbrains.dokka")
+            includeGroup("com.soywiz.korlibs.korte")
+            includeGroupByRegex("""org\.jetbrains(\.(dokka|kotlinx))?""")
         }
     }
 }
@@ -35,13 +35,9 @@ dependencies {
     testRuntimeOnly("org.spekframework.spek2:spek-runner-junit5:_")
 }
 
-tasks.withType<DokkaTask> {
-    // Workaround for https://github.com/Kotlin/dokka/issues/294
-    outputFormat = if (JavaVersion.current().isJava10Compatible) "html" else "javadoc"
-    outputDirectory = "$buildDir/javadoc"
-    tasks.withType<JavadocJar> {
-        from(outputDirectory)
-    }
+tasks.withType<JavadocJar> {
+    dependsOn(tasks.dokkaJavadoc)
+    from(tasks.dokkaJavadoc.get().outputDirectory)
 }
 
 signing {
