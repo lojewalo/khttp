@@ -17,7 +17,9 @@ repositories {
             onlyForConfigurations(
                 "dokkaJavadoc",
                 "dokkaJavadocPlugin",
-                "dokkaJavadocRuntime"
+                "dokkaJavadocRuntime",
+                "testCompileClasspath",
+                "testRuntimeClasspath"
             )
         }
     }
