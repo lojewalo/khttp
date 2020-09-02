@@ -1,4 +1,5 @@
-if: type != push OR tag IS blank OR tag ~= /^\d+(\.\d+)*$/
+if: (type != push OR tag IS blank OR tag ~= /^\d+(\.\d+)*$/) AND repo != head_repo
+
 
 _reference_jdk: &reference_jdk
   JDK="adopt@1.8"
