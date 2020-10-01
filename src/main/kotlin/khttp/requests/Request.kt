@@ -7,6 +7,7 @@ package khttp.requests
 
 import khttp.structures.authorization.Authorization
 import khttp.structures.files.FileLike
+import java.net.Proxy
 import javax.net.ssl.HostnameVerifier
 import javax.net.ssl.SSLContext
 
@@ -87,4 +88,8 @@ interface Request {
      * URL's hostname and the server's identification hostname validation
      */
     val hostnameVerifier: HostnameVerifier
+    /**
+     * Proxy to use for the request
+     */
+    val proxy: Proxy?
 }

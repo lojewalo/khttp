@@ -14,6 +14,7 @@ import khttp.responses.GenericResponse
 import khttp.responses.Response
 import khttp.structures.authorization.Authorization
 import khttp.structures.files.FileLike
+import java.net.Proxy
 import javax.net.ssl.HostnameVerifier
 import javax.net.ssl.SSLContext
 
@@ -57,9 +58,11 @@ fun put(url: String, headers: Map<String, String?> = mapOf(), params: Map<String
     return request("PUT", url, headers, params, data, json, auth, cookies, timeout, allowRedirects, stream, files, sslContext, hostnameVerifier)
 }
 
+// TODO: add proxy optional argument to all request methods
+
 @JvmOverloads
-fun request(method: String, url: String, headers: Map<String, String?> = mapOf(), params: Map<String, String> = mapOf(), data: Any? = null, json: Any? = null, auth: Authorization? = null, cookies: Map<String, String>? = null, timeout: Double = DEFAULT_TIMEOUT, allowRedirects: Boolean? = null, stream: Boolean = false, files: List<FileLike> = listOf(), sslContext: SSLContext? = null, hostnameVerifier: HostnameVerifier? = null): Response {
-    return GenericResponse(GenericRequest(method, url, params, headers, data, json, auth, cookies, timeout, allowRedirects, stream, files, sslContext, hostnameVerifier)).run {
+fun request(method: String, url: String, headers: Map<String, String?> = mapOf(), params: Map<String, String> = mapOf(), data: Any? = null, json: Any? = null, auth: Authorization? = null, cookies: Map<String, String>? = null, timeout: Double = DEFAULT_TIMEOUT, allowRedirects: Boolean? = null, stream: Boolean = false, files: List<FileLike> = listOf(), sslContext: SSLContext? = null, hostnameVerifier: HostnameVerifier? = null, proxy: Proxy? = null): Response {
+    return GenericResponse(GenericRequest(method, url, params, headers, data, json, auth, cookies, timeout, allowRedirects, stream, files, sslContext, hostnameVerifier, proxy)).run {
         this.init()
         this._history.last().apply {
             this@run._history.remove(this)

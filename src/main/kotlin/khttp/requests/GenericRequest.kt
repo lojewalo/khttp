@@ -18,10 +18,7 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.InputStream
 import java.io.StringWriter
-import java.net.IDN
-import java.net.URI
-import java.net.URL
-import java.net.URLDecoder
+import java.net.*
 import java.util.UUID
 import javax.net.ssl.HostnameVerifier
 import javax.net.ssl.SSLContext
@@ -40,7 +37,8 @@ class GenericRequest internal constructor(
     override val stream: Boolean,
     override val files: List<FileLike>,
     override val sslContext: SSLContext?,
-    hostnameVerifier: HostnameVerifier?
+    hostnameVerifier: HostnameVerifier?,
+    override val proxy: Proxy?
 ) : Request {
 
     companion object {

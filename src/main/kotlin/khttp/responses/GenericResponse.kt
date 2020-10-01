@@ -18,10 +18,7 @@ import org.json.JSONObject
 import java.io.File
 import java.io.IOException
 import java.io.InputStream
-import java.net.HttpURLConnection
-import java.net.ProtocolException
-import java.net.URL
-import java.net.URLConnection
+import java.net.*
 import java.nio.charset.Charset
 import java.util.Collections
 import java.util.zip.GZIPInputStream
@@ -128,11 +125,24 @@ class GenericResponse internal constructor(override val request: Request) : Resp
     }
 
     internal fun URL.openRedirectingConnection(first: Response, receiver: HttpURLConnection.() -> Unit): HttpURLConnection {
-        val connection = (this.openConnection() as HttpURLConnection).apply {
+
+        // TODO: maybe ready connection inside a new method
+        val connection = ((
+                    if (request.proxy != null)
+                        this.openConnection(request.proxy)
+                    else
+                        this.openConnection()) as HttpsURLConnection).apply {
             this.instanceFollowRedirects = false
             this.receiver()
             this.connect()
         }
+
+//        val connection = (this.openConnection() as HttpURLConnection).apply {
+//            this.instanceFollowRedirects = false
+//            this.receiver()
+//            this.connect()
+//        }
+
         if (first.request.allowRedirects && connection.responseCode in arrayOf(301, 302, 303, 307, 308)) {
             val cookies = connection.cookieJar
             val req = with(first.request) {
@@ -151,7 +161,8 @@ class GenericResponse internal constructor(override val request: Request) : Resp
                         stream = this.stream,
                         files = this.files,
                         sslContext = this.sslContext,
-                        hostnameVerifier = this.hostnameVerifier
+                        hostnameVerifier = this.hostnameVerifier,
+                        proxy = this.proxy
                     )
                 )
             }
