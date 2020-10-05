@@ -18,7 +18,11 @@ import org.json.JSONObject
 import java.io.File
 import java.io.IOException
 import java.io.InputStream
-import java.net.*
+import java.net.HttpURLConnection
+import java.net.ProtocolException
+import java.net.URL
+import java.net.URLConnection
+import java.net.Proxy
 import java.nio.charset.Charset
 import java.util.Collections
 import java.util.zip.GZIPInputStream
@@ -133,7 +137,7 @@ class GenericResponse internal constructor(override val request: Request) : Resp
                 this.openConnection()
         }
 
-        val connection = (createConnection() as HttpsURLConnection).apply {
+        val connection = (createConnection() as HttpURLConnection).apply {
             this.instanceFollowRedirects = false
             this.receiver()
             this.connect()
