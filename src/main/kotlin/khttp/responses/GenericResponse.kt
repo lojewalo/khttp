@@ -126,22 +126,18 @@ class GenericResponse internal constructor(override val request: Request) : Resp
 
     internal fun URL.openRedirectingConnection(first: Response, receiver: HttpURLConnection.() -> Unit): HttpURLConnection {
 
-        // TODO: maybe ready connection inside a new method
-        val connection = ((
-                    if (request.proxy != null)
-                        this.openConnection(request.proxy)
-                    else
-                        this.openConnection()) as HttpsURLConnection).apply {
+        fun createConnection(): URLConnection? {
+            return if (request.proxy != null)
+                this.openConnection(request.proxy)
+            else
+                this.openConnection()
+        }
+
+        val connection = (createConnection() as HttpsURLConnection).apply {
             this.instanceFollowRedirects = false
             this.receiver()
             this.connect()
         }
-
-//        val connection = (this.openConnection() as HttpURLConnection).apply {
-//            this.instanceFollowRedirects = false
-//            this.receiver()
-//            this.connect()
-//        }
 
         if (first.request.allowRedirects && connection.responseCode in arrayOf(301, 302, 303, 307, 308)) {
             val cookies = connection.cookieJar
