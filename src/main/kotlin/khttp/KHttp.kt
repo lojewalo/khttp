@@ -24,41 +24,39 @@ import javax.net.ssl.SSLContext
 const val DEFAULT_TIMEOUT = 30.0
 
 @JvmOverloads
-fun delete(url: String, headers: Map<String, String?> = mapOf(), params: Map<String, String> = mapOf(), data: Any? = null, json: Any? = null, auth: Authorization? = null, cookies: Map<String, String>? = null, timeout: Double = DEFAULT_TIMEOUT, allowRedirects: Boolean? = null, stream: Boolean = false, files: List<FileLike> = listOf(), sslContext: SSLContext? = null, hostnameVerifier: HostnameVerifier? = null): Response {
-    return request("DELETE", url, headers, params, data, json, auth, cookies, timeout, allowRedirects, stream, files, sslContext, hostnameVerifier)
+fun delete(url: String, headers: Map<String, String?> = mapOf(), params: Map<String, String> = mapOf(), data: Any? = null, json: Any? = null, auth: Authorization? = null, cookies: Map<String, String>? = null, timeout: Double = DEFAULT_TIMEOUT, allowRedirects: Boolean? = null, stream: Boolean = false, files: List<FileLike> = listOf(), sslContext: SSLContext? = null, hostnameVerifier: HostnameVerifier? = null, proxy: Proxy? = null): Response {
+    return request("DELETE", url, headers, params, data, json, auth, cookies, timeout, allowRedirects, stream, files, sslContext, hostnameVerifier, proxy)
 }
 
 @JvmOverloads
-fun get(url: String, headers: Map<String, String?> = mapOf(), params: Map<String, String> = mapOf(), data: Any? = null, json: Any? = null, auth: Authorization? = null, cookies: Map<String, String>? = null, timeout: Double = DEFAULT_TIMEOUT, allowRedirects: Boolean? = null, stream: Boolean = false, files: List<FileLike> = listOf(), sslContext: SSLContext? = null, hostnameVerifier: HostnameVerifier? = null): Response {
-    return request("GET", url, headers, params, data, json, auth, cookies, timeout, allowRedirects, stream, files, sslContext, hostnameVerifier)
+fun get(url: String, headers: Map<String, String?> = mapOf(), params: Map<String, String> = mapOf(), data: Any? = null, json: Any? = null, auth: Authorization? = null, cookies: Map<String, String>? = null, timeout: Double = DEFAULT_TIMEOUT, allowRedirects: Boolean? = null, stream: Boolean = false, files: List<FileLike> = listOf(), sslContext: SSLContext? = null, hostnameVerifier: HostnameVerifier? = null, proxy: Proxy? = null): Response {
+    return request("GET", url, headers, params, data, json, auth, cookies, timeout, allowRedirects, stream, files, sslContext, hostnameVerifier, proxy)
 }
 
 @JvmOverloads
-fun head(url: String, headers: Map<String, String?> = mapOf(), params: Map<String, String> = mapOf(), data: Any? = null, json: Any? = null, auth: Authorization? = null, cookies: Map<String, String>? = null, timeout: Double = DEFAULT_TIMEOUT, allowRedirects: Boolean? = null, stream: Boolean = false, files: List<FileLike> = listOf(), sslContext: SSLContext? = null, hostnameVerifier: HostnameVerifier? = null): Response {
-    return request("HEAD", url, headers, params, data, json, auth, cookies, timeout, allowRedirects, stream, files, sslContext, hostnameVerifier)
+fun head(url: String, headers: Map<String, String?> = mapOf(), params: Map<String, String> = mapOf(), data: Any? = null, json: Any? = null, auth: Authorization? = null, cookies: Map<String, String>? = null, timeout: Double = DEFAULT_TIMEOUT, allowRedirects: Boolean? = null, stream: Boolean = false, files: List<FileLike> = listOf(), sslContext: SSLContext? = null, hostnameVerifier: HostnameVerifier? = null, proxy: Proxy? = null): Response {
+    return request("HEAD", url, headers, params, data, json, auth, cookies, timeout, allowRedirects, stream, files, sslContext, hostnameVerifier, proxy)
 }
 
 @JvmOverloads
-fun options(url: String, headers: Map<String, String?> = mapOf(), params: Map<String, String> = mapOf(), data: Any? = null, json: Any? = null, auth: Authorization? = null, cookies: Map<String, String>? = null, timeout: Double = DEFAULT_TIMEOUT, allowRedirects: Boolean? = null, stream: Boolean = false, files: List<FileLike> = listOf(), sslContext: SSLContext? = null, hostnameVerifier: HostnameVerifier? = null): Response {
-    return request("OPTIONS", url, headers, params, data, json, auth, cookies, timeout, allowRedirects, stream, files, sslContext, hostnameVerifier)
+fun options(url: String, headers: Map<String, String?> = mapOf(), params: Map<String, String> = mapOf(), data: Any? = null, json: Any? = null, auth: Authorization? = null, cookies: Map<String, String>? = null, timeout: Double = DEFAULT_TIMEOUT, allowRedirects: Boolean? = null, stream: Boolean = false, files: List<FileLike> = listOf(), sslContext: SSLContext? = null, hostnameVerifier: HostnameVerifier? = null, proxy: Proxy? = null): Response {
+    return request("OPTIONS", url, headers, params, data, json, auth, cookies, timeout, allowRedirects, stream, files, sslContext, hostnameVerifier, proxy)
 }
 
 @JvmOverloads
-fun patch(url: String, headers: Map<String, String?> = mapOf(), params: Map<String, String> = mapOf(), data: Any? = null, json: Any? = null, auth: Authorization? = null, cookies: Map<String, String>? = null, timeout: Double = DEFAULT_TIMEOUT, allowRedirects: Boolean? = null, stream: Boolean = false, files: List<FileLike> = listOf(), sslContext: SSLContext? = null, hostnameVerifier: HostnameVerifier? = null): Response {
-    return request("PATCH", url, headers, params, data, json, auth, cookies, timeout, allowRedirects, stream, files, sslContext, hostnameVerifier)
+fun patch(url: String, headers: Map<String, String?> = mapOf(), params: Map<String, String> = mapOf(), data: Any? = null, json: Any? = null, auth: Authorization? = null, cookies: Map<String, String>? = null, timeout: Double = DEFAULT_TIMEOUT, allowRedirects: Boolean? = null, stream: Boolean = false, files: List<FileLike> = listOf(), sslContext: SSLContext? = null, hostnameVerifier: HostnameVerifier? = null, proxy: Proxy? = null): Response {
+    return request("PATCH", url, headers, params, data, json, auth, cookies, timeout, allowRedirects, stream, files, sslContext, hostnameVerifier, proxy)
 }
 
 @JvmOverloads
-fun post(url: String, headers: Map<String, String?> = mapOf(), params: Map<String, String> = mapOf(), data: Any? = null, json: Any? = null, auth: Authorization? = null, cookies: Map<String, String>? = null, timeout: Double = DEFAULT_TIMEOUT, allowRedirects: Boolean? = null, stream: Boolean = false, files: List<FileLike> = listOf(), sslContext: SSLContext? = null, hostnameVerifier: HostnameVerifier? = null): Response {
-    return request("POST", url, headers, params, data, json, auth, cookies, timeout, allowRedirects, stream, files, sslContext, hostnameVerifier)
+fun post(url: String, headers: Map<String, String?> = mapOf(), params: Map<String, String> = mapOf(), data: Any? = null, json: Any? = null, auth: Authorization? = null, cookies: Map<String, String>? = null, timeout: Double = DEFAULT_TIMEOUT, allowRedirects: Boolean? = null, stream: Boolean = false, files: List<FileLike> = listOf(), sslContext: SSLContext? = null, hostnameVerifier: HostnameVerifier? = null, proxy: Proxy? = null): Response {
+    return request("POST", url, headers, params, data, json, auth, cookies, timeout, allowRedirects, stream, files, sslContext, hostnameVerifier, proxy)
 }
 
 @JvmOverloads
-fun put(url: String, headers: Map<String, String?> = mapOf(), params: Map<String, String> = mapOf(), data: Any? = null, json: Any? = null, auth: Authorization? = null, cookies: Map<String, String>? = null, timeout: Double = DEFAULT_TIMEOUT, allowRedirects: Boolean? = null, stream: Boolean = false, files: List<FileLike> = listOf(), sslContext: SSLContext? = null, hostnameVerifier: HostnameVerifier? = null): Response {
-    return request("PUT", url, headers, params, data, json, auth, cookies, timeout, allowRedirects, stream, files, sslContext, hostnameVerifier)
+fun put(url: String, headers: Map<String, String?> = mapOf(), params: Map<String, String> = mapOf(), data: Any? = null, json: Any? = null, auth: Authorization? = null, cookies: Map<String, String>? = null, timeout: Double = DEFAULT_TIMEOUT, allowRedirects: Boolean? = null, stream: Boolean = false, files: List<FileLike> = listOf(), sslContext: SSLContext? = null, hostnameVerifier: HostnameVerifier? = null, proxy: Proxy? = null): Response {
+    return request("PUT", url, headers, params, data, json, auth, cookies, timeout, allowRedirects, stream, files, sslContext, hostnameVerifier, proxy)
 }
-
-// TODO: add proxy optional argument to all request methods
 
 @JvmOverloads
 fun request(method: String, url: String, headers: Map<String, String?> = mapOf(), params: Map<String, String> = mapOf(), data: Any? = null, json: Any? = null, auth: Authorization? = null, cookies: Map<String, String>? = null, timeout: Double = DEFAULT_TIMEOUT, allowRedirects: Boolean? = null, stream: Boolean = false, files: List<FileLike> = listOf(), sslContext: SSLContext? = null, hostnameVerifier: HostnameVerifier? = null, proxy: Proxy? = null): Response {
@@ -77,45 +75,45 @@ class async {
     companion object {
 
         @JvmOverloads
-        fun delete(url: String, headers: Map<String, String> = mapOf(), params: Map<String, String> = mapOf(), data: Any? = null, json: Any? = null, auth: Authorization? = null, cookies: Map<String, String>? = null, timeout: Double = DEFAULT_TIMEOUT, allowRedirects: Boolean? = null, stream: Boolean = false, files: List<FileLike> = listOf(), sslContext: SSLContext? = null, hostnameVerifier: HostnameVerifier? = null, onError: Throwable.() -> Unit = { throw this }, onResponse: Response.() -> Unit = {}): Unit {
-            request("DELETE", url, headers, params, data, json, auth, cookies, timeout, allowRedirects, stream, files, sslContext, hostnameVerifier, onError, onResponse)
+        fun delete(url: String, headers: Map<String, String> = mapOf(), params: Map<String, String> = mapOf(), data: Any? = null, json: Any? = null, auth: Authorization? = null, cookies: Map<String, String>? = null, timeout: Double = DEFAULT_TIMEOUT, allowRedirects: Boolean? = null, stream: Boolean = false, files: List<FileLike> = listOf(), sslContext: SSLContext? = null, hostnameVerifier: HostnameVerifier? = null, proxy: Proxy? = null, onError: Throwable.() -> Unit = { throw this }, onResponse: Response.() -> Unit = {}): Unit {
+            request("DELETE", url, headers, params, data, json, auth, cookies, timeout, allowRedirects, stream, files, sslContext, hostnameVerifier, proxy, onError, onResponse)
         }
 
         @JvmOverloads
-        fun get(url: String, headers: Map<String, String> = mapOf(), params: Map<String, String> = mapOf(), data: Any? = null, json: Any? = null, auth: Authorization? = null, cookies: Map<String, String>? = null, timeout: Double = DEFAULT_TIMEOUT, allowRedirects: Boolean? = null, stream: Boolean = false, files: List<FileLike> = listOf(), sslContext: SSLContext? = null, hostnameVerifier: HostnameVerifier? = null, onError: Throwable.() -> Unit = { throw this }, onResponse: Response.() -> Unit = {}): Unit {
-            request("GET", url, headers, params, data, json, auth, cookies, timeout, allowRedirects, stream, files, sslContext, hostnameVerifier, onError, onResponse)
+        fun get(url: String, headers: Map<String, String> = mapOf(), params: Map<String, String> = mapOf(), data: Any? = null, json: Any? = null, auth: Authorization? = null, cookies: Map<String, String>? = null, timeout: Double = DEFAULT_TIMEOUT, allowRedirects: Boolean? = null, stream: Boolean = false, files: List<FileLike> = listOf(), sslContext: SSLContext? = null, hostnameVerifier: HostnameVerifier? = null, proxy: Proxy? = null, onError: Throwable.() -> Unit = { throw this }, onResponse: Response.() -> Unit = {}): Unit {
+            request("GET", url, headers, params, data, json, auth, cookies, timeout, allowRedirects, stream, files, sslContext, hostnameVerifier, proxy, onError, onResponse)
         }
 
         @JvmOverloads
-        fun head(url: String, headers: Map<String, String> = mapOf(), params: Map<String, String> = mapOf(), data: Any? = null, json: Any? = null, auth: Authorization? = null, cookies: Map<String, String>? = null, timeout: Double = DEFAULT_TIMEOUT, allowRedirects: Boolean? = null, stream: Boolean = false, files: List<FileLike> = listOf(), sslContext: SSLContext? = null, hostnameVerifier: HostnameVerifier? = null, onError: Throwable.() -> Unit = { throw this }, onResponse: Response.() -> Unit = {}): Unit {
-            request("HEAD", url, headers, params, data, json, auth, cookies, timeout, allowRedirects, stream, files, sslContext, hostnameVerifier, onError, onResponse)
+        fun head(url: String, headers: Map<String, String> = mapOf(), params: Map<String, String> = mapOf(), data: Any? = null, json: Any? = null, auth: Authorization? = null, cookies: Map<String, String>? = null, timeout: Double = DEFAULT_TIMEOUT, allowRedirects: Boolean? = null, stream: Boolean = false, files: List<FileLike> = listOf(), sslContext: SSLContext? = null, hostnameVerifier: HostnameVerifier? = null, proxy: Proxy? = null, onError: Throwable.() -> Unit = { throw this }, onResponse: Response.() -> Unit = {}): Unit {
+            request("HEAD", url, headers, params, data, json, auth, cookies, timeout, allowRedirects, stream, files, sslContext, hostnameVerifier, proxy, onError, onResponse)
         }
 
         @JvmOverloads
-        fun options(url: String, headers: Map<String, String> = mapOf(), params: Map<String, String> = mapOf(), data: Any? = null, json: Any? = null, auth: Authorization? = null, cookies: Map<String, String>? = null, timeout: Double = DEFAULT_TIMEOUT, allowRedirects: Boolean? = null, stream: Boolean = false, files: List<FileLike> = listOf(), sslContext: SSLContext? = null, hostnameVerifier: HostnameVerifier? = null, onError: Throwable.() -> Unit = { throw this }, onResponse: Response.() -> Unit = {}): Unit {
-            request("OPTIONS", url, headers, params, data, json, auth, cookies, timeout, allowRedirects, stream, files, sslContext, hostnameVerifier, onError, onResponse)
+        fun options(url: String, headers: Map<String, String> = mapOf(), params: Map<String, String> = mapOf(), data: Any? = null, json: Any? = null, auth: Authorization? = null, cookies: Map<String, String>? = null, timeout: Double = DEFAULT_TIMEOUT, allowRedirects: Boolean? = null, stream: Boolean = false, files: List<FileLike> = listOf(), sslContext: SSLContext? = null, hostnameVerifier: HostnameVerifier? = null, proxy: Proxy? = null, onError: Throwable.() -> Unit = { throw this }, onResponse: Response.() -> Unit = {}): Unit {
+            request("OPTIONS", url, headers, params, data, json, auth, cookies, timeout, allowRedirects, stream, files, sslContext, hostnameVerifier, proxy, onError, onResponse)
         }
 
         @JvmOverloads
-        fun patch(url: String, headers: Map<String, String> = mapOf(), params: Map<String, String> = mapOf(), data: Any? = null, json: Any? = null, auth: Authorization? = null, cookies: Map<String, String>? = null, timeout: Double = DEFAULT_TIMEOUT, allowRedirects: Boolean? = null, stream: Boolean = false, files: List<FileLike> = listOf(), sslContext: SSLContext? = null, hostnameVerifier: HostnameVerifier? = null, onError: Throwable.() -> Unit = { throw this }, onResponse: Response.() -> Unit = {}): Unit {
-            request("PATCH", url, headers, params, data, json, auth, cookies, timeout, allowRedirects, stream, files, sslContext, hostnameVerifier, onError, onResponse)
+        fun patch(url: String, headers: Map<String, String> = mapOf(), params: Map<String, String> = mapOf(), data: Any? = null, json: Any? = null, auth: Authorization? = null, cookies: Map<String, String>? = null, timeout: Double = DEFAULT_TIMEOUT, allowRedirects: Boolean? = null, stream: Boolean = false, files: List<FileLike> = listOf(), sslContext: SSLContext? = null, hostnameVerifier: HostnameVerifier? = null, proxy: Proxy? = null, onError: Throwable.() -> Unit = { throw this }, onResponse: Response.() -> Unit = {}): Unit {
+            request("PATCH", url, headers, params, data, json, auth, cookies, timeout, allowRedirects, stream, files, sslContext, hostnameVerifier, proxy, onError, onResponse)
         }
 
         @JvmOverloads
-        fun post(url: String, headers: Map<String, String> = mapOf(), params: Map<String, String> = mapOf(), data: Any? = null, json: Any? = null, auth: Authorization? = null, cookies: Map<String, String>? = null, timeout: Double = DEFAULT_TIMEOUT, allowRedirects: Boolean? = null, stream: Boolean = false, files: List<FileLike> = listOf(), sslContext: SSLContext? = null, hostnameVerifier: HostnameVerifier? = null, onError: Throwable.() -> Unit = { throw this }, onResponse: Response.() -> Unit = {}): Unit {
-            request("POST", url, headers, params, data, json, auth, cookies, timeout, allowRedirects, stream, files, sslContext, hostnameVerifier, onError, onResponse)
+        fun post(url: String, headers: Map<String, String> = mapOf(), params: Map<String, String> = mapOf(), data: Any? = null, json: Any? = null, auth: Authorization? = null, cookies: Map<String, String>? = null, timeout: Double = DEFAULT_TIMEOUT, allowRedirects: Boolean? = null, stream: Boolean = false, files: List<FileLike> = listOf(), sslContext: SSLContext? = null, hostnameVerifier: HostnameVerifier? = null, proxy: Proxy? = null, onError: Throwable.() -> Unit = { throw this }, onResponse: Response.() -> Unit = {}): Unit {
+            request("POST", url, headers, params, data, json, auth, cookies, timeout, allowRedirects, stream, files, sslContext, hostnameVerifier, proxy, onError, onResponse)
         }
 
         @JvmOverloads
-        fun put(url: String, headers: Map<String, String> = mapOf(), params: Map<String, String> = mapOf(), data: Any? = null, json: Any? = null, auth: Authorization? = null, cookies: Map<String, String>? = null, timeout: Double = DEFAULT_TIMEOUT, allowRedirects: Boolean? = null, stream: Boolean = false, files: List<FileLike> = listOf(), sslContext: SSLContext? = null, hostnameVerifier: HostnameVerifier? = null, onError: Throwable.() -> Unit = { throw this }, onResponse: Response.() -> Unit = {}): Unit {
-            request("PUT", url, headers, params, data, json, auth, cookies, timeout, allowRedirects, stream, files, sslContext, hostnameVerifier, onError, onResponse)
+        fun put(url: String, headers: Map<String, String> = mapOf(), params: Map<String, String> = mapOf(), data: Any? = null, json: Any? = null, auth: Authorization? = null, cookies: Map<String, String>? = null, timeout: Double = DEFAULT_TIMEOUT, allowRedirects: Boolean? = null, stream: Boolean = false, files: List<FileLike> = listOf(), sslContext: SSLContext? = null, hostnameVerifier: HostnameVerifier? = null, proxy: Proxy? = null, onError: Throwable.() -> Unit = { throw this }, onResponse: Response.() -> Unit = {}): Unit {
+            request("PUT", url, headers, params, data, json, auth, cookies, timeout, allowRedirects, stream, files, sslContext, hostnameVerifier, proxy, onError, onResponse)
         }
 
         @JvmOverloads
-        fun request(method: String, url: String, headers: Map<String, String> = mapOf(), params: Map<String, String> = mapOf(), data: Any? = null, json: Any? = null, auth: Authorization? = null, cookies: Map<String, String>? = null, timeout: Double = DEFAULT_TIMEOUT, allowRedirects: Boolean? = null, stream: Boolean = false, files: List<FileLike> = listOf(), sslContext: SSLContext? = null, hostnameVerifier: HostnameVerifier? = null, onError: Throwable.() -> Unit = { throw this }, onResponse: Response.() -> Unit = {}): Unit {
+        fun request(method: String, url: String, headers: Map<String, String> = mapOf(), params: Map<String, String> = mapOf(), data: Any? = null, json: Any? = null, auth: Authorization? = null, cookies: Map<String, String>? = null, timeout: Double = DEFAULT_TIMEOUT, allowRedirects: Boolean? = null, stream: Boolean = false, files: List<FileLike> = listOf(), sslContext: SSLContext? = null, hostnameVerifier: HostnameVerifier? = null, proxy: Proxy? = null, onError: Throwable.() -> Unit = { throw this }, onResponse: Response.() -> Unit = {}): Unit {
             thread {
                 try {
-                    onResponse(khttp.request(method, url, headers, params, data, json, auth, cookies, timeout, allowRedirects, stream, files, sslContext, hostnameVerifier))
+                    onResponse(khttp.request(method, url, headers, params, data, json, auth, cookies, timeout, allowRedirects, stream, files, sslContext, hostnameVerifier, proxy))
                 } catch (e: Throwable) {
                     onError(e)
                 }
