@@ -71,3 +71,19 @@ jobs:
             echo 'No valid configuration detected, failing'
             exit 1
           fi
+  Automerge:
+    needs: CI-Complete
+    runs-on: ubuntu-latest
+    steps:
+      - name: automerge
+        uses: "pascalgn/automerge-action@v0.12.0"
+        env:
+          GITHUB_TOKEN: "${{ secrets.AUTOMERGE_TOKEN }}"
+          MERGE_LABELS: "version-upgrade"
+          MERGE_REMOVE_LABELS: ""
+          MERGE_METHOD: "rebase"
+          MERGE_COMMIT_MESSAGE: "pull-request-title"
+          MERGE_FILTER_AUTHOR: "DanySK"
+          MERGE_FORKS: "false"
+          UPDATE_LABELS: "version-upgrade"
+          UPDATE_METHOD: "rebase"
