@@ -1,0 +1,70 @@
+name: CI
+on:
+  push:
+  schedule:
+    - cron: '0 3 * * SUN'
+
+jobs:
+  CI-Complete:
+    needs: Build
+    runs-on: ubuntu-latest
+    steps:
+      - run: 'echo Done'
+  Build:
+    strategy:
+      matrix:
+        os: [windows, macos, ubuntu]
+        jvm_version: [8, 11, 14]
+    runs-on: ${{ matrix.os }}-latest
+    steps:
+      - uses: actions/setup-java@v1
+        with:
+          java-version: ${{ matrix.jvm_version }}
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Check
+        shell: bash
+        run: |
+          if [ -x 'build.sh' ]
+          then
+            echo 'Detected custom build instructions'
+            ./build.sh
+          elif [ -x 'gradlew' ]
+          then
+            echo 'Detected gradle wrapper, running ./gradlew clean check --parallel'
+            ./gradlew clean check --parallel
+          elif [ -f 'pom.xml' ]
+          then
+            echo 'Detected Maven pom.xml, running mvn clean install'
+            mvn clean install
+          else
+            echo 'No valid configuration detected, failing'
+            exit 1
+          fi
+      - name: Deploy
+        if: ${{ matrix.os == 'ubuntu' && matrix.jvm_version == 8 }}
+        shell: bash
+        env:
+          ORG_GRADLE_PROJECT_signingKey: ${{ secrets.SIGNING_KEY }}
+          ORG_GRADLE_PROJECT_signingPassword: ${{ secrets.SIGNING_PASSWORD }}
+          MAVEN_CENTRAL_PASSWORD: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
+          MAVEN_CENTRAL_USERNAME: danysk
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if [ -x 'deploy.sh' ]
+          then
+            echo 'Detected custom deploy instructions'
+            ./deploy.sh
+          elif [ -x 'gradlew' ]
+          then
+            echo 'Detected gradle wrapper, running ./gradlew publish --parallel'
+            ./gradlew publish --parallel
+          elif [ -f 'pom.xml' ]
+          then
+            echo 'Detected Maven pom.xml, running mvn deploy'
+            mvn deploy
+          else
+            echo 'No valid configuration detected, failing'
+            exit 1
+          fi
