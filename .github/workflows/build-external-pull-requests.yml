@@ -1,0 +1,35 @@
+name: CI
+on:
+  pull_request:
+
+jobs:
+  Build-Foreign-Pull-Request:
+    if: ${{ github.event.repository.full_name != github.repository }}
+    strategy:
+      matrix:
+        os: [windows, macos, ubuntu]
+        jvm_version: [8, 11, 14]
+    runs-on: ${{ matrix.os }}-latest
+    steps:
+      - uses: actions/setup-java@v1
+        with:
+          java-version: ${{ matrix.jvm_version }}
+      - uses: actions/checkout@v2
+      - shell: bash 
+        run: |
+          if [ -x 'build.sh' ]
+          then
+            echo 'Detected custom build instructions'
+            ./build.sh
+          elif [ -x 'gradlew' ]
+          then
+            echo 'Detected gradle wrapper, running ./gradlew clean check --parallel'
+            ./gradlew clean check --parallel
+          elif [ -f 'pom.xml' ]
+          then
+            echo 'Detected Maven pom.xml, running mvn clean install'
+            mvn clean install
+          else
+            echo 'No valid configuration detected, failing'
+            exit 1
+          fi
