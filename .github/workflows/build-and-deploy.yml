@@ -58,8 +58,11 @@ jobs:
             ./deploy.sh
           elif [ -x 'gradlew' ]
           then
-            echo 'Detected gradle wrapper, running ./gradlew publish --parallel'
-            ./gradlew publish --parallel
+            echo 'Detected gradle wrapper, running ./gradlew publish --parallel (if available)'
+            if ./gradlew tasks | grep publish
+            then
+              ./gradlew publish --parallel
+            fi
           elif [ -f 'pom.xml' ]
           then
             echo 'Detected Maven pom.xml, running mvn deploy'
