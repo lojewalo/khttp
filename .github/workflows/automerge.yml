@@ -1,20 +1,8 @@
 name: automerge
 on:
-  push:
-  pull_request:
-    types:
-      - labeled
-      - unlabeled
-      - synchronize
-      - opened
-      - reopened
-      - unlocked
   check_suite:
     types:
       - completed
-  schedule:
-    - cron: '0 0 * * *'
-  status:
 jobs:
   automerge:
     runs-on: ubuntu-latest
