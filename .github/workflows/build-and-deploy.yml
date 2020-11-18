@@ -76,14 +76,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: automerge
-        uses: "pascalgn/automerge-action@v0.12.0"
+        uses: "DanySK/yaagha@master"
         env:
           GITHUB_TOKEN: "${{ secrets.AUTOMERGE_TOKEN }}"
-          MERGE_LABELS: "version-upgrade"
-          MERGE_REMOVE_LABELS: ""
-          MERGE_METHOD: "rebase"
-          MERGE_COMMIT_MESSAGE: "pull-request-title"
-          MERGE_FILTER_AUTHOR: "DanySK"
           MERGE_FORKS: "false"
-          UPDATE_LABELS: "version-upgrade"
-          UPDATE_METHOD: "rebase"
+          MERGE_LABELS: "version-upgrade"
+          MERGE_METHOD: "rebase"
+          CLOSE_ON_CONFLICT: "true"
+          DELETE_BRANCH_ON_CLOSE: "true"
+          GIT_USER_NAME: "Danilo Pianini"
+          GIT_USER_EMAIL: "danilo.pianini@gmail.com"
