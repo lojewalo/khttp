@@ -1,8 +1,0 @@
-name: automerge
-on:
-  gollum
-jobs:
-  automerge:
-    runs-on: ubuntu-latest
-    steps:
-      - run: echo ciao
