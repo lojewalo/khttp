@@ -6,10 +6,15 @@ on:
 
 jobs:
   CI-Complete:
-    needs: Build
+    needs: Build-Success
+    if: always()
     runs-on: ubuntu-latest
     steps:
-      - run: 'echo Done'
+      - uses: actions/download-artifact@v2
+        with:
+          name: success
+      - shell: bash
+        run: '[ -f ok ]'
   Build:
     strategy:
       matrix:
@@ -20,9 +25,12 @@ jobs:
       - uses: actions/setup-java@v1
         with:
           java-version: ${{ matrix.jvm_version }}
-      - uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
+      - name: Clone
+        shell: bash
+        run: git clone $GITHUB_SERVER_URL/$GITHUB_REPOSITORY $GITHUB_WORKSPACE
+      - name: Checkout
+        shell: bash
+        run: git checkout "$(echo ${{ github.event.ref }} | sed s#refs/heads/## | sed s#refs/tags##)"
       - name: Check
         shell: bash
         run: |
@@ -71,6 +79,16 @@ jobs:
             echo 'No valid configuration detected, failing'
             exit 1
           fi
+  Build-Success:
+    runs-on: ubuntu-latest
+    needs: Build
+    steps:
+      - shell: bash
+        run: touch ok
+      - uses: actions/upload-artifact@v2
+        with:
+          name: success
+          path: ok
   Automerge:
     needs: CI-Complete
     runs-on: ubuntu-latest
