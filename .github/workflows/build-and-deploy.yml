@@ -92,6 +92,7 @@ jobs:
   Automerge:
     needs: CI-Complete
     runs-on: ubuntu-latest
+    if: always()
     steps:
       - name: automerge
         uses: "DanySK/yaagha@master"
