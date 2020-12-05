@@ -54,10 +54,10 @@ signing {
 group = "org.danilopianini" // This must be configured for the generated pom.xml to work correctly
 
 publishOnCentral {
-    projectDescription.set("A HTTP request library for Kotlin.")
-    projectLongName.set("khttp")
-    licenseName.set("Mozilla Public License v. 2.0")
-    licenseUrl.set("https://mozorg.cdn.mozilla.net/media/MPL/2.0/index.815ca599c9df.txt")
+    projectDescription = "A HTTP request library for Kotlin."
+    projectLongName = "khttp"
+    licenseName = "Mozilla Public License v. 2.0"
+    licenseUrl = "https://mozorg.cdn.mozilla.net/media/MPL/2.0/index.815ca599c9df.txt"
 }
 
 publishing {
