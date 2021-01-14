@@ -30,8 +30,8 @@ gitSemVer {
 }
 
 dependencies {
-    implementation(kotlin("stdlib"))
-    implementation("org.json:json:_")
+    api(kotlin("stdlib"))
+    api("org.json:json:_")
     testImplementation(kotlin("test"))
     testImplementation(kotlin("reflect"))
     testImplementation("org.awaitility:awaitility-kotlin:_")
