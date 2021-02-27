@@ -80,11 +80,11 @@ jobs:
       - name: Build
         if: ${{ env.COMPATIBLE == 'true' }}
         shell: bash
-        run: .github/build-steps/build.sh
+        run: .github/build-steps/build.sh || .github/build-steps/build.sh
       - name: Check
         if: ${{ env.COMPATIBLE == 'true' }}
         shell: bash
-        run: .github/build-steps/check.sh
+        run: .github/build-steps/check.sh || .github/build-steps/check.sh
       - name: CodeCov
         if: ${{ env.REFERENCE == 'true' }}
         uses: codecov/codecov-action@v1
@@ -103,7 +103,7 @@ jobs:
           SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
           SURGE_LOGIN: ${{ secrets.SURGE_LOGIN }}
           SURGE_TOKEN: ${{ secrets.SURGE_TOKEN }}
-        run: .github/build-steps/deploy.sh
+        run: .github/build-steps/deploy.sh || .github/build-steps/deploy.sh
   Build-Success:
     runs-on: ubuntu-latest
     needs: Build
