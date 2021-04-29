@@ -11,15 +11,8 @@ plugins {
 }
 
 repositories {
+    google()
     mavenCentral()
-    jcenter {
-        content {
-            onlyForConfigurations(
-                "testCompileClasspath",
-                "testRuntimeClasspath"
-            )
-        }
-    }
 }
 
 gitSemVer {
