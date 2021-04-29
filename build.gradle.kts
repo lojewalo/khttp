@@ -15,9 +15,6 @@ repositories {
     jcenter {
         content {
             onlyForConfigurations(
-                "dokkaJavadoc",
-                "dokkaJavadocPlugin",
-                "dokkaJavadocRuntime",
                 "testCompileClasspath",
                 "testRuntimeClasspath"
             )
