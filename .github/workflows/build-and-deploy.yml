@@ -1,9 +1,10 @@
 name: CI
 on:
   push:
+    tags: '*'
     branches-ignore:
-      - 'autodelivery*'
-      - 'bump-*'
+      - 'autodelivery**'
+      - 'bump-**'
   pull_request:
   schedule:
     - cron: '0 3 * * SUN'
