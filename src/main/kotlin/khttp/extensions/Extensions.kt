@@ -5,6 +5,8 @@
  */
 package khttp.extensions
 
+import khttp.responses.Response
+import khttp.structures.Builder
 import khttp.structures.files.FileLike
 import java.io.File
 import java.io.Writer
@@ -103,4 +105,27 @@ fun <K, V> MutableMap<K, V>.putAllIfAbsentWithNull(other: Map<K, V>) {
     for ((key, value) in other) {
         this.putIfAbsentWithNull(key, value)
     }
+}
+
+/**
+ * Make a [request] by [Builder] receiver function and execute.
+ */
+fun request(method: String, url: String, receiver: (Builder.() -> Unit)? = null): Response {
+    Builder(method, url)
+            .also { receiver?.invoke(it) }
+            .run {
+                return khttp.request(method, url,
+                        headers,
+                        params,
+                        data,
+                        json,
+                        auth,
+                        cookies,
+                        timeout,
+                        allowRedirects,
+                        stream,
+                        files,
+                        sslContext,
+                        hostnameVerifier)
+            }
 }
