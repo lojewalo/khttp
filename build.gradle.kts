@@ -15,10 +15,6 @@ repositories {
     mavenCentral()
 }
 
-gitSemVer {
-    version = computeGitSemVer()
-}
-
 dependencies {
     api(kotlin("stdlib"))
     api("org.json:json:_")
