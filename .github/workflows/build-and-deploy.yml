@@ -15,6 +15,7 @@ jobs:
       matrix:
         os: [windows, macos, ubuntu]
         jvm_version: [8, 11, 15, 16]
+        distribution: [adopt]
     runs-on: ${{ matrix.os }}-latest
     env:
       JAVA_VERSION: ${{ matrix.jvm_version }}
@@ -48,9 +49,10 @@ jobs:
       - shell: bash
         run: .github/build-steps/compatibility_check.sh
       # Install the JDK
-      - uses: joschi/setup-jdk@v2.3.0
+      - uses: actions/setup-java@v2
         if: ${{ env.COMPATIBLE == 'true' }}
         with:
+          distribution: ${{ matrix.distribution }}
           java-version: ${{ matrix.jvm_version }}
           server-id: ossrh
           server-username: MAVEN_CENTRAL_USERNAME
