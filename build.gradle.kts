@@ -2,12 +2,10 @@ import org.danilopianini.gradle.mavencentral.JavadocJar
 import org.jetbrains.dokka.gradle.DokkaTask
 
 plugins {
-    kotlin("jvm")
-    signing
-    `maven-publish`
-    id("org.danilopianini.git-sensitive-semantic-versioning")
-    id("org.jetbrains.dokka")
-    id("org.danilopianini.publish-on-central")
+    alias(libs.plugins.dokka)
+    alias(libs.plugins.gitSemVer)
+    alias(libs.plugins.kotlin.jvm)
+    alias(libs.plugins.publishOnCentral)
 }
 
 repositories {
@@ -17,13 +15,13 @@ repositories {
 
 dependencies {
     api(kotlin("stdlib"))
-    api("org.json:json:_")
+    api(libs.json)
     testImplementation(kotlin("test"))
     testImplementation(kotlin("reflect"))
-    testImplementation("org.awaitility:awaitility-kotlin:_")
-    testImplementation("org.json:json:_")
-    testImplementation("org.spekframework.spek2:spek-dsl-jvm:_")
-    testRuntimeOnly("org.spekframework.spek2:spek-runner-junit5:_")
+    testImplementation(libs.awaitility)
+    testImplementation(libs.json)
+    testImplementation(libs.spek.dsl.jvm)
+    testRuntimeOnly(libs.spek.runner.junit5)
 }
 
 tasks.withType<JavadocJar> {
@@ -40,10 +38,10 @@ signing {
 group = "org.danilopianini" // This must be configured for the generated pom.xml to work correctly
 
 publishOnCentral {
-    projectDescription = "A HTTP request library for Kotlin."
-    projectLongName = "khttp"
-    licenseName = "Mozilla Public License v. 2.0"
-    licenseUrl = "https://mozorg.cdn.mozilla.net/media/MPL/2.0/index.815ca599c9df.txt"
+    projectDescription.set("A HTTP request library for Kotlin.")
+    projectLongName.set("khttp")
+    licenseName.set("Mozilla Public License v. 2.0")
+    licenseUrl.set("https://mozorg.cdn.mozilla.net/media/MPL/2.0/index.815ca599c9df.txt")
 }
 
 publishing {

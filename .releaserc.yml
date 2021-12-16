@@ -1,0 +1,13 @@
+tagFormat: "${version}"
+plugins:
+  - "@semantic-release/commit-analyzer"
+  - "@semantic-release/release-notes-generator"
+  - "@semantic-release/changelog"
+  -
+    - "@semantic-release/exec"
+    - publishCmd: |
+        git tag -a -f ${nextRelease.version} ${nextRelease.version} -F CHANGELOG.md
+        git push --force origin ${nextRelease.version}
+        ./gradlew releaseKotlinMavenOnMavenCentralNexus
+  - "@semantic-release/github"
+  - "@semantic-release/git"
