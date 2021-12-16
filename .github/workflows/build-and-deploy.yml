@@ -52,8 +52,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2.4.0
-        with:
-          token: ${{ secrets.DEPLOYMENT_TOKEN }}
       - uses: DanySK/build-check-deploy-gradle-action@1.1.1
         with:
           java-version: 17
