@@ -48,7 +48,7 @@ jobs:
     runs-on: ubuntu-latest
     if: >-
       contains('push workflow_dispatch', github.event_name)
-      && contains(github.repository, 'AlchemistSimulator/Alchemist')
+      && contains(github.repository, 'DanySK/khttp')
     steps:
       - name: Checkout
         uses: actions/checkout@v2.4.0
