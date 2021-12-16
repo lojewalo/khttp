@@ -1,5 +1,4 @@
 [versions]
-kotlin = "1.5.30"
 spek = "2.0.17"
 
 [libraries]
@@ -9,8 +8,8 @@ spek-dsl-jvm = { module = "org.spekframework.spek2:spek-dsl-jvm", version.ref = 
 spek-runner-junit5 = { module = "org.spekframework.spek2:spek-runner-junit5", version.ref = "spek" }
 
 [plugins]
-dokka = { id = "org.jetbrains.dokka", version.ref = "kotlin" }
+dokka = "org.jetbrains.dokka:1.5.30"
 gitSemVer = "org.danilopianini.git-sensitive-semantic-versioning:0.3.0"
-kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+kotlin-jvm = "org.jetbrains.kotlin.jvm", version.ref = "1.5.30"
 multiJvmTesting = "org.danilopianini.multi-jvm-test-plugin:0.3.0"
 publishOnCentral = "org.danilopianini.publish-on-central:0.7.7"
