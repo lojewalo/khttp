@@ -1,5 +1,4 @@
 import org.danilopianini.gradle.mavencentral.JavadocJar
-import org.jetbrains.dokka.gradle.DokkaTask
 
 plugins {
     alias(libs.plugins.dokka)
