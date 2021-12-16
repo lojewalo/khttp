@@ -1,0 +1,17 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "github>DanySK/renovate-config"
+  ],
+  "packageRules": [
+    {
+      "description": "Trigger a patch update on some dependencies",
+      "matchPackageNames": [
+        "org.jetbrains.dokka",
+        "org.jetbrains.kotlin.jvm",
+        "org.json:json"
+      ],
+      "semanticCommitType": "feat"
+    }
+  ]
+}
