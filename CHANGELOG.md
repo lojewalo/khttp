@@ -1,3 +1,10 @@
+## [1.1.2](https://github.com/DanySK/khttp/compare/1.1.1...1.1.2) (2021-12-17)
+
+
+### Bug Fixes
+
+* **deps:** update plugin kotlin-jvm to v1.6.10 ([727329e](https://github.com/DanySK/khttp/commit/727329ede551dcf20f3c203a9ff6f6fc5afbd2db))
+
 ## [1.1.1](https://github.com/DanySK/khttp/compare/1.1.0...1.1.1) (2021-12-17)
 
 
