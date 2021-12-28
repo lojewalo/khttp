@@ -10,14 +10,14 @@
       "matchPackageNames": [
         "org.json:json"
       ],
-      "semanticCommitType": "feat"
+      "semanticCommitScope": "api-deps"
     },
     {
       "description": "Trigger a patch update on some dependencies",
       "matchPackageNames": [
         "org.jetbrains.kotlin.jvm"
       ],
-      "semanticCommitType": "fix"
+      "semanticCommitScope": "core-deps"
     }
   ]
 }
