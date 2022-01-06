@@ -33,3 +33,4 @@ package
 *.iws
 .idea/
 .gradle/
+node_modules/
