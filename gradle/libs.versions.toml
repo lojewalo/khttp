@@ -3,7 +3,7 @@ spek = "2.0.18"
 
 [libraries]
 awaitility = "org.awaitility:awaitility-kotlin:4.2.0"
-json = "org.json:json:20211205"
+json = "org.json:json:20220320"
 spek-dsl-jvm = { module = "org.spekframework.spek2:spek-dsl-jvm", version.ref = "spek" }
 spek-runner-junit5 = { module = "org.spekframework.spek2:spek-runner-junit5", version.ref = "spek" }
 
