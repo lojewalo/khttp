@@ -1,3 +1,18 @@
+### [1.2.1](https://github.com/DanySK/khttp/compare/1.2.0...1.2.1) (2022-04-01)
+
+
+### Build and continuous integration
+
+* **deps:** update danysk/build-check-deploy-gradle-action action to v1.2.8 ([af40a21](https://github.com/DanySK/khttp/commit/af40a2121a8a7a12345bb412158eaf55b93cfae9))
+* **deps:** update danysk/build-check-deploy-gradle-action action to v1.2.9 ([3558542](https://github.com/DanySK/khttp/commit/35585427bcdd8955926958af69bd5ef4cff7b377))
+
+
+### Dependency updates
+
+* **core-deps:** update plugin kotlin-jvm to v1.6.20 ([b230726](https://github.com/DanySK/khttp/commit/b230726459b9e732ee2fe8b09f91751abf9b62ee))
+* **deps:** update dependency gradle to v7.4.2 ([7dd954b](https://github.com/DanySK/khttp/commit/7dd954b4d1892461fd76816633ae29564fd6b0da))
+* **deps:** update plugin publishoncentral to v0.7.15 ([184e889](https://github.com/DanySK/khttp/commit/184e8895debf8998f92f7ca258d7dec18b5db520))
+
 ## [1.2.0](https://github.com/DanySK/khttp/compare/1.1.3...1.2.0) (2022-03-21)
 
 
