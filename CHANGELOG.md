@@ -1,3 +1,32 @@
+## [1.2.3](https://github.com/DanySK/khttp/compare/1.2.2...1.2.3) (2022-06-09)
+
+
+### Build and continuous integration
+
+* **deps:** update actions/checkout action to v3.0.2 ([f1e1b06](https://github.com/DanySK/khttp/commit/f1e1b06be9c3ea2da3dd5a95160c787c393078b1))
+* **deps:** update danysk/build-check-deploy-gradle-action action to v1.2.13 ([af7c1ae](https://github.com/DanySK/khttp/commit/af7c1ae90b54cfa20f5ce323e61c25e0a1503ba8))
+* **deps:** update danysk/build-check-deploy-gradle-action action to v1.2.14 ([db2507c](https://github.com/DanySK/khttp/commit/db2507cf138457411a5bddde123538aa22c2e939))
+* **deps:** update danysk/build-check-deploy-gradle-action action to v1.2.15 ([1f79216](https://github.com/DanySK/khttp/commit/1f79216fc53286403a4e924f3f312f3c60a1882b))
+* **deps:** update danysk/build-check-deploy-gradle-action action to v1.2.16 ([323260e](https://github.com/DanySK/khttp/commit/323260e8a0a73e290107546ca5803818665de570))
+* **deps:** update danysk/build-check-deploy-gradle-action action to v2 ([ea77b9e](https://github.com/DanySK/khttp/commit/ea77b9ea49231ab5d06b3de544e86c2a6c762843))
+* **deps:** update danysk/build-check-deploy-gradle-action action to v2.0.1 ([3b3bff2](https://github.com/DanySK/khttp/commit/3b3bff2c4cc5c25abab008bbfb35a1197a3ccc03))
+* **deps:** update danysk/build-check-deploy-gradle-action action to v2.0.2 ([98f8d7a](https://github.com/DanySK/khttp/commit/98f8d7aad348ebe7fd734849ed17c4115fab676c))
+
+
+### Dependency updates
+
+* **core-deps:** update plugin kotlin-jvm to v1.7.0 ([b577336](https://github.com/DanySK/khttp/commit/b5773368162106f96003a60fd50bfe15d0a4ba3f))
+* **deps:** update dependency semantic-release-preconfigured-conventional-commits to v1.1.6 ([e265e84](https://github.com/DanySK/khttp/commit/e265e847155dcbf62379b3adf8aa8fd2a8ed6acc))
+* **deps:** update dependency semantic-release-preconfigured-conventional-commits to v1.1.7 ([e1c71a6](https://github.com/DanySK/khttp/commit/e1c71a6b19eb87a4f71a1c9c9b91b83c6a5f6e70))
+* **deps:** update node.js to 16.15 ([a07a341](https://github.com/DanySK/khttp/commit/a07a3417e08c4b247ba93db0510554590ca1d4fb))
+* **deps:** update plugin dokka to v1.6.21 ([d78dfdf](https://github.com/DanySK/khttp/commit/d78dfdfe8c850c58266d1a266b01b468c4389ab5))
+* **deps:** update plugin multijvmtesting to v0.3.7 ([d8f9c04](https://github.com/DanySK/khttp/commit/d8f9c04ab173ed043d2fbed7fceabc669ce0a83c))
+* **deps:** update plugin multijvmtesting to v0.4.0 ([4e6327e](https://github.com/DanySK/khttp/commit/4e6327e15ac8a85b6aad767a5959111b0378af43))
+* **deps:** update plugin multijvmtesting to v0.4.1 ([65149df](https://github.com/DanySK/khttp/commit/65149df0217f813c7d8cdc2bc629ef3d1f650b3b))
+* **deps:** update plugin publishoncentral to v0.7.18 ([5441921](https://github.com/DanySK/khttp/commit/5441921a33119de5fd42b9910da3418411f4634c))
+* **deps:** update plugin publishoncentral to v0.7.19 ([7175e8e](https://github.com/DanySK/khttp/commit/7175e8e5df2eef537bc9012a281cc409e633595d))
+* **deps:** update plugin publishoncentral to v0.8.0 ([e3a4901](https://github.com/DanySK/khttp/commit/e3a4901f1b4db8def3481d3d10cc63a98728dc01))
+
 ### [1.2.2](https://github.com/DanySK/khttp/compare/1.2.1...1.2.2) (2022-04-20)
 
 
