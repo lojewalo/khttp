@@ -11,5 +11,5 @@ spek-runner-junit5 = { module = "org.spekframework.spek2:spek-runner-junit5", ve
 dokka = "org.jetbrains.dokka:1.7.10"
 gitSemVer = "org.danilopianini.git-sensitive-semantic-versioning:0.3.0"
 kotlin-jvm = "org.jetbrains.kotlin.jvm:1.7.10"
-multiJvmTesting = "org.danilopianini.multi-jvm-test-plugin:0.4.8"
+multiJvmTesting = "org.danilopianini.multi-jvm-test-plugin:0.4.9"
 publishOnCentral = "org.danilopianini.publish-on-central:2.0.5"
