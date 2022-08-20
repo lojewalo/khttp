@@ -1,5 +1,5 @@
 [versions]
-spek = "2.0.18"
+spek = "2.0.19"
 
 [libraries]
 awaitility = "org.awaitility:awaitility-kotlin:4.2.0"
