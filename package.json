@@ -1,6 +1,6 @@
 {
   "devDependencies": {
-    "semantic-release-preconfigured-conventional-commits": "1.1.11"
+    "semantic-release-preconfigured-conventional-commits": "1.1.12"
   },
   "engines": {
     "node": "16.17"
