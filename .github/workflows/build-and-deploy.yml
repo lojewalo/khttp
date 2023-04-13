@@ -22,7 +22,7 @@ jobs:
     timeout-minutes: 120
     steps:
       - name: Checkout
-        uses: danysk/action-checkout@0.2.7
+        uses: danysk/action-checkout@0.2.8
       - name: Get branch name
         id: branch
         uses: tj-actions/branch-names@v6
